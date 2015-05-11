@@ -98,6 +98,18 @@ run_chroot_cmd apt-get update
 run_chroot_cmd apt-get dist-upgrade -y
 
 # -------------------------------------------------------------------------------------------
+# Base Install
+
+if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-4 ]; then
+  run_chroot_cmd apt-get install -y ubuntu-standard laptop-detect dkms
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-4
+fi
+
+if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-5 ]; then
+  # skip grub install/configure to HDD here
+  run_chroot_cmd apt-get install -y linux-lowlatency linux-image-lowlatency linux-headers-lowlatency
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-5
+fi
 
 # -------------------------------------------------------------------------------------------
 
