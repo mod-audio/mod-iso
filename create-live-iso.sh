@@ -112,8 +112,8 @@ fi
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3 ]; then
   run_chroot_cmd apt-get update
   run_chroot_cmd apt-get install -y software-properties-common wget
-  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.0~kxstudio1_all.deb
-  run_chroot_cmd dpkg -i kxstudio-repos_8.2.0~kxstudio1_all.deb
+  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.1~kxstudio1_all.deb
+  run_chroot_cmd dpkg -i kxstudio-repos_8.2.1~kxstudio1_all.deb
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-3
 fi
 
