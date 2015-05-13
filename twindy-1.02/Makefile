@@ -85,7 +85,6 @@ OBJS = $(OBJDIR)/juce_amalgamated.cpp.o \
 	$(OBJDIR)/TwindyApp.cpp.o \
 	$(OBJDIR)/TwindyErrorDisplay.cpp.o \
 	$(OBJDIR)/TwindyLAF.cpp.o \
-	$(OBJDIR)/TwindyLowerPanel.cpp.o \
 	$(OBJDIR)/TwindyPreferences.cpp.o \
 	$(OBJDIR)/TwindyProperties.cpp.o \
 	$(OBJDIR)/TwindyRootWindow.cpp.o \

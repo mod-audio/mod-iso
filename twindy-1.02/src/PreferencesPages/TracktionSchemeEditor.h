@@ -21,7 +21,7 @@
 #ifndef TRACKTIONSCHEMEEDITOR_H_
 #define TRACKTIONSCHEMEEDITOR_H_
 
-#include "TwindyRootWindow.h"
+#include "../TwindyRootWindow.h"
 
 class DrawableTextButton;
 

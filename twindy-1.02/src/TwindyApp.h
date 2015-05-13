@@ -21,8 +21,6 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#include "juce_amalgamated.h"
-
 namespace ProjectInfo
 {
     const char* const  projectName    = "Twindy";
@@ -31,6 +29,8 @@ namespace ProjectInfo
 }
 
 class TwindyRootWindow;
+
+#include "juce_amalgamated.h"
 
 /// Handles the main application stuff.
 class TwindyApp : public JUCEApplication

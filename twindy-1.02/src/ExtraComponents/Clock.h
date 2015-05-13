@@ -21,9 +21,11 @@
 #ifndef CLOCK_H_
 #define CLOCK_H_
 
+#include "../juce_amalgamated.h"
+
 ///	Simple clock Component.
 class Clock : public Component,
-			  public Timer
+              private Timer
 {
   public:
 	///	Constructor.

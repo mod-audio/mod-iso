@@ -22,6 +22,8 @@
 #ifndef TWINDYTOGGLEBUTTON_H_
 #define TWINDYTOGGLEBUTTON_H_
 
+#include "../juce_amalgamated.h"
+
 ///	ToggleButton subclass which lets you set the colour of the text.
 class TwindyToggleButton : public ToggleButton
 {

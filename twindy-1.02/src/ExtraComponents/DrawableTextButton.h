@@ -22,6 +22,8 @@
 #ifndef DRAWABLETEXTBUTTON_H_
 #define DRAWABLETEXTBUTTON_H_
 
+#include "../juce_amalgamated.h"
+
 ///	A TextButton made out of Drawables.
 /*!
 	This is a simple wrapper class which makes a DrawableButton with similar

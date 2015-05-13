@@ -22,12 +22,13 @@
 #ifndef TWINDYPROPERTIES_H_
 #define TWINDYPROPERTIES_H_
 
+#include "../juce_amalgamated.h"
+
 ///	Simple struct representing a property.
-typedef struct
-{
+struct TwindyProperty {
 	String name;
 	String value;
-} TwindyProperty;
+};
 
 ///	Class to handle the various properties for Twindy.
 /*!

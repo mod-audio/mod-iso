@@ -22,6 +22,8 @@
 #ifndef TRACKTIONSCHEME_H_
 #define TRACKTIONSCHEME_H_
 
+#include "../juce_amalgamated.h"
+
 ///	Helper class for reading from/writing to .tracktionschemes.
 class TracktionScheme
 {

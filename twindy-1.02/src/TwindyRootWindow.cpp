@@ -26,7 +26,6 @@
 #include "TwindyRootWindow.h"
 #include "TwindyLAF.h"
 #include "TwindyUpperPanel.h"
-#include "TwindyLowerPanel.h"
 #include "TwindyWindow.h"
 #include "Clock.h"
 #include "DrawableTextButton.h"
@@ -56,8 +55,6 @@ Component(T("Twindy Window Manager")),
 currentUpperPanelComp(0),
 exitButton(0),
 properties(0),
-lowerWindow(0),
-destinedForLowerPanel(false),
 currentlyInFocus(false)
 {
 	int i;
@@ -171,56 +168,6 @@ currentlyInFocus(false)
 	workspaces->setCurrentTabIndex(1);
 	preferences->updateWorkspaces();
 
-	//Set up lower panel.
-	addAndMakeVisible(lowerPanel = new TwindyLowerPanel());
-	lowerPanel->setOutlineColour(colours.propertyPanelOutline);
-	lowerPanel->setTextColour(colours.propertyPanelText);
-	lowerPanel->setBackgroundColour(colours.propertyPanelBackground);
-
-	//Set up buttons labels.
-	addAndMakeVisible(upperLabel = new Label(T("Upper"), TRANS("Upper")));
-	upperLabel->setColour(Label::textColourId, colours.menuText);
-	upperLabel->setJustificationType(Justification(Justification::centred));
-	upperLabel->setFont(Font(12.0f, Font::bold));
-	addAndMakeVisible(lowerLabel = new Label(T("Lower"), TRANS("Lower")));
-	lowerLabel->setColour(Label::textColourId, colours.menuText);
-	lowerLabel->setJustificationType(Justification(Justification::centred));
-	lowerLabel->setFont(Font(12.0f, Font::bold));
-
-	//Set up buttons to move apps between panels.
-	addAndMakeVisible(moveUp = new DrawableButton(T("MoveUp"),
-					  							  DrawableButton::ImageOnButtonBackground));
-	{
-		Path p;
-		DrawablePath d;
-
-		p.addArrow(50, 90, 50, 10, 20, 60, 40);
-		d.setPath(p);
-		d.setSolidFill(Colours::white);
-
-		moveUp->setImages(&d);
-	}
-	moveUp->setBackgroundColours(colours.yellowButton,
-								 colours.yellowButton.darker(2.5f));
-	moveUp->setConnectedEdges(Button::ConnectedOnRight);
-	moveUp->addButtonListener(this);
-	addAndMakeVisible(moveDown = new DrawableButton(T("MoveDown"),
-					  							    DrawableButton::ImageOnButtonBackground));
-	{
-		Path p;
-		DrawablePath d;
-
-		p.addArrow(50, 10, 50, 90, 20, 60, 40);
-		d.setPath(p);
-		d.setSolidFill(Colours::white);
-
-		moveDown->setImages(&d);
-	}
-	moveDown->setBackgroundColours(colours.yellowButton,
-								   colours.yellowButton.darker(2.5f));
-	moveDown->setConnectedEdges(Button::ConnectedOnLeft);
-	moveDown->addButtonListener(this);
-
 	//Set up buttons.
 	addAndMakeVisible(exitButton = new DrawableTextButton(T("Log Off..."),
 												  		  TRANS("Log Off...")));
@@ -292,70 +239,6 @@ currentlyInFocus(false)
 		leftButton7->setBold();
 	leftButton7->addButtonListener(this);
 
-	addAndMakeVisible(rightButton1 = new DrawableTextButton(T("RightButton1"),
-												  		    TRANS("RightButton1")));
-	rightButton1->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton1->setTextColour(colours.menuText);
-	rightButton1->setButtonText(properties->getProperty(T("RightButton1")).name);
-	if(properties->getNumSubProperties(T("RightButton1")) > 0)
-		rightButton1->setBold();
-	rightButton1->addButtonListener(this);
-	addAndMakeVisible(rightButton2 = new DrawableTextButton(T("RightButton2"),
-												  		    TRANS("RightButton2")));
-	rightButton2->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton2->setTextColour(colours.menuText);
-	rightButton2->setButtonText(properties->getProperty(T("RightButton2")).name);
-	if(properties->getNumSubProperties(T("RightButton2")) > 0)
-		rightButton2->setBold();
-	rightButton2->addButtonListener(this);
-	addAndMakeVisible(rightButton3 = new DrawableTextButton(T("RightButton3"),
-												  		    TRANS("RightButton3")));
-	rightButton3->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton3->setTextColour(colours.menuText);
-	rightButton3->setButtonText(properties->getProperty(T("RightButton3")).name);
-	if(properties->getNumSubProperties(T("RightButton3")) > 0)
-		rightButton3->setBold();
-	rightButton3->addButtonListener(this);
-	addAndMakeVisible(rightButton4 = new DrawableTextButton(T("RightButton4"),
-												  		    TRANS("RightButton4")));
-	rightButton4->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton4->setTextColour(colours.menuText);
-	rightButton4->setButtonText(properties->getProperty(T("RightButton4")).name);
-	if(properties->getNumSubProperties(T("RightButton4")) > 0)
-		rightButton4->setBold();
-	rightButton4->addButtonListener(this);
-	addAndMakeVisible(rightButton5 = new DrawableTextButton(T("RightButton5"),
-												  		    TRANS("RightButton5")));
-	rightButton5->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton5->setTextColour(colours.menuText);
-	rightButton5->setButtonText(properties->getProperty(T("RightButton5")).name);
-	if(properties->getNumSubProperties(T("RightButton5")) > 0)
-		rightButton5->setBold();
-	rightButton5->addButtonListener(this);
-	addAndMakeVisible(rightButton6 = new DrawableTextButton(T("RightButton6"),
-												  		    TRANS("RightButton6")));
-	rightButton6->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton6->setTextColour(colours.menuText);
-	rightButton6->setButtonText(properties->getProperty(T("RightButton6")).name);
-	if(properties->getNumSubProperties(T("RightButton6")) > 0)
-		rightButton6->setBold();
-	rightButton6->addButtonListener(this);
-	addAndMakeVisible(rightButton7 = new DrawableTextButton(T("RightButton7"),
-												  		    TRANS("RightButton7")));
-	rightButton7->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton7->setTextColour(colours.menuText);
-	rightButton7->setButtonText(properties->getProperty(T("RightButton7")).name);
-	if(properties->getNumSubProperties(T("RightButton7")) > 0)
-		rightButton7->setBold();
-	rightButton7->addButtonListener(this);
-
 	//Clock
 	addAndMakeVisible(clock = new Clock());
 	clock->setColour(colours.propertyPanelText);
@@ -426,12 +309,6 @@ TwindyRootWindow::~TwindyRootWindow()
 {
 	long i;
 
-	if(lowerWindow)
-	{
-		lowerWindow->closeWindow();
-		delete lowerWindow;
-	}
-
 	//Wait, in case some of the upperWindows were started from a terminal in the
 	//lowerWindow, in which case upperWindows will need to be updated, or we
 	//may not kill all the programs in the upper panel.
@@ -485,30 +362,8 @@ void TwindyRootWindow::resized()
 	const int buttonHeight = (int)(((float)getHeight()/3.5f)/9.0f);
 	int tempint;
 
-	/*upperPanel->setBounds(10,
-						  30,
-						  (getWidth()-20),
-						  (getHeight()-(getHeight()/3)));*/
-	workspaces->setBounds(0,
-						  0,
-						  getWidth(),
-						  (getHeight()-(getHeight()/3))+25);
-	lowerPanel->setBounds(220,
-						 lowerBorder,
-						 (getWidth()-230),
-						 (getHeight()-lowerBorder-5));
-
-	upperLabel->setBounds(10, lowerBorder-buttonHeight+5, 100, buttonHeight-4);
-	lowerLabel->setBounds(110, lowerBorder-buttonHeight+5, 100, buttonHeight-4);
-
-	moveUp->setBounds((getWidth()-90),
-					  lowerBorder-(buttonHeight/2)-2, 
-					  40, 
-					  buttonHeight);
-	moveDown->setBounds((getWidth()-50),
-					    lowerBorder-(buttonHeight/2)-2, 
-					    40, 
-					    buttonHeight);
+        workspaces->setBounds(0, 0, getWidth(), getHeight());
+	//workspaces->setBounds(0, 0, getWidth(), (getHeight()-(getHeight()/3))+25);
 
 	tempint = lowerBorder;
 	leftButton1->setBounds(10, tempint, 100, buttonHeight);
@@ -524,21 +379,6 @@ void TwindyRootWindow::resized()
 	leftButton6->setBounds(10, tempint, 100, buttonHeight);
 	tempint += buttonHeight;
 	leftButton7->setBounds(10, tempint, 100, buttonHeight);
-
-	tempint = lowerBorder;
-	rightButton1->setBounds(110, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	rightButton2->setBounds(110, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	rightButton3->setBounds(110, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	rightButton4->setBounds(110, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	rightButton5->setBounds(110, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	rightButton6->setBounds(110, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	rightButton7->setBounds(110, tempint, 100, buttonHeight);
 	tempint += buttonHeight;
 
 	tempint += buttonHeight;
@@ -546,10 +386,7 @@ void TwindyRootWindow::resized()
 
 	clock->setBounds((getWidth()-100), 0, 100, 25);
 
-	TwindyErrorDisplay::getInstance()->setBounds((getWidth()-170),
-												 (lowerBorder+13),
-												 160,
-												 (getHeight()-lowerBorder-18));
+	TwindyErrorDisplay::getInstance()->setBounds((getWidth()-170), (lowerBorder+13), 160, (getHeight()-lowerBorder-18));
 }
 
 //----------------------------------------------------------------------------------------------
@@ -574,83 +411,6 @@ void TwindyRootWindow::actionListenerCallback(const String& message)
 		launchExecutable(static_cast<const char *>(properties->getProperty(T("LeftButton6")).value));
 	else if(message == leftButton7->getName())
 		launchExecutable(static_cast<const char *>(properties->getProperty(T("LeftButton7")).value));
-	else if(message == rightButton1->getName())
-	{
-		if(lowerWindow)
-		{
-			closeLowerWindow();
-			delete lowerWindow;
-		}
-
-		destinedForLowerPanel = true;
-		launchExecutable(static_cast<const char *>(properties->getProperty(T("RightButton1")).value));
-	}
-	else if(message == rightButton2->getName())
-	{
-		if(lowerWindow)
-		{
-			closeLowerWindow();
-			delete lowerWindow;
-		}
-
-		destinedForLowerPanel = true;
-		launchExecutable(static_cast<const char *>(properties->getProperty(T("RightButton2")).value));
-	}
-	else if(message == rightButton3->getName())
-	{
-		if(lowerWindow)
-		{
-			closeLowerWindow();
-			delete lowerWindow;
-		}
-
-		destinedForLowerPanel = true;
-		launchExecutable(static_cast<const char *>(properties->getProperty(T("RightButton3")).value));
-	}
-	else if(message == rightButton4->getName())
-	{
-		if(lowerWindow)
-		{
-			closeLowerWindow();
-			delete lowerWindow;
-		}
-
-		destinedForLowerPanel = true;
-		launchExecutable(static_cast<const char *>(properties->getProperty(T("RightButton4")).value));
-	}
-	else if(message == rightButton5->getName())
-	{
-		if(lowerWindow)
-		{
-			closeLowerWindow();
-			delete lowerWindow;
-		}
-
-		destinedForLowerPanel = true;
-		launchExecutable(static_cast<const char *>(properties->getProperty(T("RightButton5")).value));
-	}
-	else if(message == rightButton6->getName())
-	{
-		if(lowerWindow)
-		{
-			closeLowerWindow();
-			delete lowerWindow;
-		}
-
-		destinedForLowerPanel = true;
-		launchExecutable(static_cast<const char *>(properties->getProperty(T("RightButton6")).value));
-	}
-	else if(message == rightButton7->getName())
-	{
-		if(lowerWindow)
-		{
-			closeLowerWindow();
-			delete lowerWindow;
-		}
-
-		destinedForLowerPanel = true;
-		launchExecutable(static_cast<const char *>(properties->getProperty(T("RightButton7")).value));
-	}
 }
 
 //----------------------------------------------------------------------------------------------
@@ -790,129 +550,6 @@ void TwindyRootWindow::buttonClicked(Button* button)
 			launchExecutable(static_cast<const char *>(properties->getProperty(T("LeftButton7")).value));
 		}
 	}
-	else if(button == rightButton1)
-	{
-		if(properties->getNumSubProperties(T("RightButton1")) > 0)
-		{
-			//raiseAllWindows();
-			for(i=0;i<properties->getNumSubProperties(T("RightButton1"));++i)
-				menu.addItem((i+1), properties->getSubProperty(T("RightButton1"), i).name);
-			menuResult = menu.showAt(rightButton1);
-			//raiseAllWindows();
-			if(menuResult > 0)
-				launchLowerPanel(static_cast<const char *>(properties->getSubProperty(T("RightButton1"), (menuResult-1)).value));
-		}
-		else
-		{
-			launchLowerPanel(static_cast<const char *>(properties->getProperty(T("RightButton1")).value));
-		}
-	}
-	else if(button == rightButton2)
-	{
-		if(properties->getNumSubProperties(T("RightButton2")) > 0)
-		{
-			//raiseAllWindows();
-			for(i=0;i<properties->getNumSubProperties(T("RightButton2"));++i)
-				menu.addItem((i+1), properties->getSubProperty(T("RightButton2"), i).name);
-			menuResult = menu.showAt(rightButton2);
-			//raiseAllWindows();
-			if(menuResult > 0)
-				launchLowerPanel(static_cast<const char *>(properties->getSubProperty(T("RightButton2"), (menuResult-1)).value));
-		}
-		else
-		{
-			launchLowerPanel(static_cast<const char *>(properties->getProperty(T("RightButton2")).value));
-		}
-	}
-	else if(button == rightButton3)
-	{
-		if(properties->getNumSubProperties(T("RightButton3")) > 0)
-		{
-			//raiseAllWindows();
-			for(i=0;i<properties->getNumSubProperties(T("RightButton3"));++i)
-				menu.addItem((i+1), properties->getSubProperty(T("RightButton3"), i).name);
-			menuResult = menu.showAt(rightButton3);
-			//raiseAllWindows();
-			if(menuResult > 0)
-				launchLowerPanel(static_cast<const char *>(properties->getSubProperty(T("RightButton3"), (menuResult-1)).value));
-		}
-		else
-		{
-			launchLowerPanel(static_cast<const char *>(properties->getProperty(T("RightButton3")).value));
-		}
-	}
-	else if(button == rightButton4)
-	{
-		if(properties->getNumSubProperties(T("RightButton4")) > 0)
-		{
-			//raiseAllWindows();
-			for(i=0;i<properties->getNumSubProperties(T("RightButton4"));++i)
-				menu.addItem((i+1), properties->getSubProperty(T("RightButton4"), i).name);
-			menuResult = menu.showAt(rightButton4);
-			//raiseAllWindows();
-			if(menuResult > 0)
-				launchLowerPanel(static_cast<const char *>(properties->getSubProperty(T("RightButton4"), (menuResult-1)).value));
-		}
-		else
-		{
-			launchLowerPanel(static_cast<const char *>(properties->getProperty(T("RightButton4")).value));
-		}
-	}
-	else if(button == rightButton5)
-	{
-		if(properties->getNumSubProperties(T("RightButton5")) > 0)
-		{
-			//raiseAllWindows();
-			for(i=0;i<properties->getNumSubProperties(T("RightButton5"));++i)
-				menu.addItem((i+1), properties->getSubProperty(T("RightButton5"), i).name);
-			menuResult = menu.showAt(rightButton5);
-			//raiseAllWindows();
-			if(menuResult > 0)
-				launchLowerPanel(static_cast<const char *>(properties->getSubProperty(T("RightButton5"), (menuResult-1)).value));
-		}
-		else
-		{
-			launchLowerPanel(static_cast<const char *>(properties->getProperty(T("RightButton5")).value));
-		}
-	}
-	else if(button == rightButton6)
-	{
-		if(properties->getNumSubProperties(T("RightButton6")) > 0)
-		{
-			//raiseAllWindows();
-			for(i=0;i<properties->getNumSubProperties(T("RightButton6"));++i)
-				menu.addItem((i+1), properties->getSubProperty(T("RightButton6"), i).name);
-			menuResult = menu.showAt(rightButton6);
-			//raiseAllWindows();
-			if(menuResult > 0)
-				launchLowerPanel(static_cast<const char *>(properties->getSubProperty(T("RightButton6"), (menuResult-1)).value));
-		}
-		else
-		{
-			launchLowerPanel(static_cast<const char *>(properties->getProperty(T("RightButton6")).value));
-		}
-	}
-	else if(button == rightButton7)
-	{
-		if(properties->getNumSubProperties(T("RightButton7")) > 0)
-		{
-			//raiseAllWindows();
-			for(i=0;i<properties->getNumSubProperties(T("RightButton7"));++i)
-				menu.addItem((i+1), properties->getSubProperty(T("RightButton7"), i).name);
-			menuResult = menu.showAt(rightButton7);
-			//raiseAllWindows();
-			if(menuResult > 0)
-				launchLowerPanel(static_cast<const char *>(properties->getSubProperty(T("RightButton7"), (menuResult-1)).value));
-		}
-		else
-		{
-			launchLowerPanel(static_cast<const char *>(properties->getProperty(T("RightButton7")).value));
-		}
-	}
-	else if(button == moveUp)
-		moveLowerToUpper();
-	else if(button == moveDown)
-		moveUpperToLower();
 }
 
 //----------------------------------------------------------------------------------------------
@@ -1041,20 +678,6 @@ void TwindyRootWindow::prefsChanged()
 	leftButton6->setBold(properties->getNumSubProperties(T("LeftButton6")) > 0);
 	leftButton7->setButtonText(properties->getProperty(T("LeftButton7")).name);
 	leftButton7->setBold(properties->getNumSubProperties(T("LeftButton7")) > 0);
-	rightButton1->setButtonText(properties->getProperty(T("RightButton1")).name);
-	rightButton1->setBold(properties->getNumSubProperties(T("RightButton1")) > 0);
-	rightButton2->setButtonText(properties->getProperty(T("RightButton2")).name);
-	rightButton2->setBold(properties->getNumSubProperties(T("RightButton2")) > 0);
-	rightButton3->setButtonText(properties->getProperty(T("RightButton3")).name);
-	rightButton3->setBold(properties->getNumSubProperties(T("RightButton3")) > 0);
-	rightButton4->setButtonText(properties->getProperty(T("RightButton4")).name);
-	rightButton4->setBold(properties->getNumSubProperties(T("RightButton4")) > 0);
-	rightButton5->setButtonText(properties->getProperty(T("RightButton5")).name);
-	rightButton5->setBold(properties->getNumSubProperties(T("RightButton5")) > 0);
-	rightButton6->setButtonText(properties->getProperty(T("RightButton6")).name);
-	rightButton6->setBold(properties->getNumSubProperties(T("RightButton6")) > 0);
-	rightButton7->setButtonText(properties->getProperty(T("RightButton7")).name);
-	rightButton7->setBold(properties->getNumSubProperties(T("RightButton7")) > 0);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -1087,34 +710,6 @@ void TwindyRootWindow::updateColours()
 	colours.yellowButton = tempScheme->getColour(T("yellowButton"));
 	colours.blueButton = tempScheme->getColour(T("blueButton"));
 
-	upperLabel->setColour(Label::textColourId, colours.propertyPanelText);
-	lowerLabel->setColour(Label::textColourId, colours.propertyPanelText);
-
-	{
-		Path p;
-		DrawablePath d;
-
-		p.addArrow(50, 90, 50, 10, 20, 60, 40);
-		d.setPath(p);
-		d.setSolidFill(colours.menuText);
-
-		moveUp->setImages(&d);
-	}
-	moveUp->setBackgroundColours(colours.blueButton,
-								 colours.blueButton.darker(2.5f));
-	{
-		Path p;
-		DrawablePath d;
-
-		p.addArrow(50, 10, 50, 90, 20, 60, 40);
-		d.setPath(p);
-		d.setSolidFill(colours.menuText);
-
-		moveDown->setImages(&d);
-	}
-	moveDown->setBackgroundColours(colours.blueButton,
-								   colours.blueButton.darker(2.5f));
-
 	exitButton->setBackgroundColours(colours.yellowButton,
 									 colours.yellowButton.darker(2.5f));
 	exitButton->setTextColour(colours.menuText);
@@ -1139,31 +734,8 @@ void TwindyRootWindow::updateColours()
 	leftButton7->setBackgroundColours(colours.blueButton,
 									  colours.blueButton.darker(2.5f));
 	leftButton7->setTextColour(colours.menuText);
-	rightButton1->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton1->setTextColour(colours.menuText);
-	rightButton2->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton2->setTextColour(colours.menuText);
-	rightButton3->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton3->setTextColour(colours.menuText);
-	rightButton4->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton4->setTextColour(colours.menuText);
-	rightButton5->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton5->setTextColour(colours.menuText);
-	rightButton6->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton6->setTextColour(colours.menuText);
-	rightButton7->setBackgroundColours(colours.blueButton,
-									   colours.blueButton.darker(2.5f));
-	rightButton7->setTextColour(colours.menuText);
+
 	clock->setColour(prefScheme->getColour(T("propertyPanelText")));
-	lowerPanel->setOutlineColour(colours.propertyPanelOutline);
-	lowerPanel->setTextColour(colours.propertyPanelText);
-	lowerPanel->setBackgroundColour(colours.propertyPanelBackground);
 
 	repaint();
 }
@@ -1199,32 +771,6 @@ void TwindyRootWindow::updateColours()
 			giveWindowFocus(lowerWindow);
 	}
 }*/
-
-//----------------------------------------------------------------------------------------------
-void TwindyRootWindow::launchLowerPanel(JUCE_NAMESPACE::String cmd)
-{
-	if(lowerWindow)
-	{
-		bool test;
-		String tempstr(TRANS("Do you want to close "));
-
-		tempstr << lowerPanel->getTitle() << T("?");
-		test = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
-											TRANS("LowerPanel"),
-											tempstr,
-											TRANS("Yes"),
-											TRANS("No"));
-
-		if(!test)
-			return;
-
-		closeLowerWindow();
-		delete lowerWindow;
-	}
-
-	destinedForLowerPanel = true;
-	launchExecutable(static_cast<const char *>(cmd));
-}
 
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::loadColours(const String& file)

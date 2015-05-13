@@ -21,7 +21,7 @@
 #ifndef WORKSPACEPREFERENCES_H_
 #define WORKSPACEPREFERENCES_H_
 
-#include "TwindyProperties.h"
+#include "../TwindyProperties.h"
 
 class DrawableTextButton;
 

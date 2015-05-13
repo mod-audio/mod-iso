@@ -22,6 +22,8 @@
 #ifndef TWINDYTABS_H_
 #define TWINDYTABS_H_
 
+#include "juce_amalgamated.h"
+
 ///	JUCE TabbedComponent subclass to handle the workspace and preferences tabs.
 class TwindyTabs : public TabbedComponent
 {

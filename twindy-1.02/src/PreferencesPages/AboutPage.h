@@ -21,6 +21,8 @@
 #ifndef ABOUTPAGE_H_
 #define ABOUTPAGE_H_
 
+#include "../juce_amalgamated.h"
+
 ///	All about Twindy.
 class AboutPage : public Component
 {

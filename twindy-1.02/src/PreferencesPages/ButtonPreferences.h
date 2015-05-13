@@ -21,7 +21,7 @@
 #ifndef BUTTONPREFERENCES_H_
 #define BUTTONPREFERENCES_H_
 
-#include "TwindyProperties.h"
+#include "../TwindyProperties.h"
 
 class TwindyToggleButton;
 

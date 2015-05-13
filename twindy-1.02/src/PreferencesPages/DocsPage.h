@@ -21,6 +21,8 @@
 #ifndef DOCSPAGE_H_
 #define DOCSPAGE_H_
 
+#include "../juce_amalgamated.h"
+
 ///	Simple preferences page displaying the Twindy docs.
 class DocsPage : public Component,
 				 public ActionListener

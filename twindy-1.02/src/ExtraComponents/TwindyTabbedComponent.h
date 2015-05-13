@@ -38,10 +38,10 @@
 #ifndef TWINDYTABBEDCOMPONENT_H_
 #define TWINDYTABBEDCOMPONENT_H_
 
+#include "../juce_amalgamated.h"
 
 //==============================================================================
 class TwindyTabbedComponentBasicTab;
-
 
 //==============================================================================
 /**
@@ -49,13 +49,13 @@ class TwindyTabbedComponentBasicTab;
 
     xxx TODO need to document (and probably change a lot of) this class.
 */
-class TwindyTabbedComponent  : public JUCE_NAMESPACE::Component
+class TwindyTabbedComponent  : public Component
 {
 public:
     //==============================================================================
     /** Creates a tabbed component.
     */
-    TwindyTabbedComponent (const JUCE_NAMESPACE::String& name);
+    TwindyTabbedComponent (const String& name);
 
     /** Destructor. */
     ~TwindyTabbedComponent();
@@ -79,17 +79,17 @@ public:
                             int leftRightGap,
                             int topBottomGap);
 
-    void setColours (const JUCE_NAMESPACE::Colour& fillColour,
-                     const JUCE_NAMESPACE::Colour& textColour,
-                     const JUCE_NAMESPACE::Colour& selectedOutlineColour,
-                     const JUCE_NAMESPACE::Colour& normalOutlineColour,
-                     const JUCE_NAMESPACE::Colour& deselectedTabColour);
+    void setColours (const Colour& fillColour,
+                     const Colour& textColour,
+                     const Colour& selectedOutlineColour,
+                     const Colour& normalOutlineColour,
+                     const Colour& deselectedTabColour);
 
-    const JUCE_NAMESPACE::Colour& getFillColour() const             { return fillCol; }
-    const JUCE_NAMESPACE::Colour& getTextColour() const             { return textCol; }
-    const JUCE_NAMESPACE::Colour& getSelectedOutlineColour() const  { return selectedOutlineCol; }
-    const JUCE_NAMESPACE::Colour& getNormalOutlineColour() const    { return normalOutlineCol; }
-    const JUCE_NAMESPACE::Colour& getDeselectedTabColour() const    { return deselectedTabCol; }
+    const Colour& getFillColour() const             { return fillCol; }
+    const Colour& getTextColour() const             { return textCol; }
+    const Colour& getSelectedOutlineColour() const  { return selectedOutlineCol; }
+    const Colour& getNormalOutlineColour() const    { return normalOutlineCol; }
+    const Colour& getDeselectedTabColour() const    { return deselectedTabCol; }
 
     void setOutlineStyle (float roundedCornerSize,
                           float normalOutlineThickness,
@@ -108,7 +108,7 @@ public:
 
     // removes (and deletes the component for) a tab
     void removeTab (int index);
-	void removeTab (TwindyTabbedComponentBasicTab *tab);
+    void removeTab (TwindyTabbedComponentBasicTab *tab);
 
     void clearTabs();
 
@@ -130,7 +130,7 @@ public:
     // Modifier values are those used in Component::mouseDown()
     virtual void tabWasClicked (int newSelectedIndex,
                                 bool clickedTabWasAlreadySelected,
-                                const JUCE_NAMESPACE::ModifierKeys& currentModifiers) = 0;
+                                const ModifierKeys& currentModifiers) = 0;
 
     // call this to set the component that will be used as the main panel
     // of the tabbed box. The old content component will be returned so that
@@ -138,16 +138,16 @@ public:
     // object is deleted, it will also delete its current content component, so
     // if you don't want this to happen, call setContentComponent (0) in your
     // destructor.
-    JUCE_NAMESPACE::Component* setContentComponent (JUCE_NAMESPACE::Component* newContentComp);
+    Component* setContentComponent (Component* newContentComp);
 
-    JUCE_NAMESPACE::Component* getContentComponent() const { return contents; }
+    Component* getContentComponent() const { return contents; }
 
     //==============================================================================
     juce_UseDebuggingNewOperator
 
 protected:
     /** @internal */
-    void paint (JUCE_NAMESPACE::Graphics& g);
+    void paint (Graphics& g);
     /** @internal */
     void resized();
 
@@ -159,14 +159,14 @@ private:
 
     TabOrientation orientation;
     int currentTab, tabAreaWidth, overlapPixels, xGap, yGap, leftTopInset, rightBottomInset;
-    JUCE_NAMESPACE::Colour fillCol, deselectedTabCol, textCol, selectedOutlineCol, normalOutlineCol;
-    JUCE_NAMESPACE::Component* contents;
-    JUCE_NAMESPACE::Component* tabs;
-    JUCE_NAMESPACE::VoidArray tabList;
-    JUCE_NAMESPACE::ScrollBar* scrollbar;
-    JUCE_NAMESPACE::Rectangle contentsPos;
-    JUCE_NAMESPACE::Component* outlineComps[6];
-    JUCE_NAMESPACE::Path outlineShape, strokedOutline;
+    Colour fillCol, deselectedTabCol, textCol, selectedOutlineCol, normalOutlineCol;
+    Component* contents;
+    Component* tabs;
+    VoidArray tabList;
+    ScrollBar* scrollbar;
+    Rectangle contentsPos;
+    Component* outlineComps[6];
+    Path outlineShape, strokedOutline;
     float cornerSize, normalOutlineThickness, selectedOutlineThickness;
 
     void tabsChanged();
@@ -179,12 +179,12 @@ private:
 
 //==============================================================================
 // one of these, or a subclass of it, is used for each tab in a TabbedComponent
-class TwindyTabbedComponentBasicTab  : public JUCE_NAMESPACE::Component
+class TwindyTabbedComponentBasicTab  : public Component
 {
 public:
     /** Creates a tab.
     */
-    TwindyTabbedComponentBasicTab (const JUCE_NAMESPACE::String& text = JUCE_NAMESPACE::String::empty);
+    TwindyTabbedComponentBasicTab (const String& text = String::empty);
 
     /** Destructor. */
     ~TwindyTabbedComponentBasicTab();
@@ -194,17 +194,15 @@ public:
     void activateThisTab();
 
     // use this for custom designs
-    virtual void paintTab (JUCE_NAMESPACE::Graphics& g, bool isTheCurrentTab, const TwindyTabbedComponent* ownerTabbedComp);
+    virtual void paintTab (Graphics& g, bool isTheCurrentTab, const TwindyTabbedComponent* ownerTabbedComp);
 
-    void mouseDown (const JUCE_NAMESPACE::MouseEvent& e);
-    void mouseWheelMove (const JUCE_NAMESPACE::MouseEvent& e,
+    void mouseDown (const MouseEvent& e);
+    void mouseWheelMove (const MouseEvent& e,
                                      float wheelIncrementX,
                                      float wheelIncrementY);
 
-    juce_UseDebuggingNewOperator
-
 private:
-    void paint (JUCE_NAMESPACE::Graphics& g);
+    void paint (Graphics& g);
 
     explicit TwindyTabbedComponentBasicTab (const TwindyTabbedComponentBasicTab&);
 };

@@ -28,22 +28,20 @@
 /*!
 	These should correspond directly to the ones used in tracktionscheme files.
  */
-typedef struct
-{
-	JUCE_NAMESPACE::Colour mainBackground;
-	JUCE_NAMESPACE::Colour tabAreaBackground;
-	JUCE_NAMESPACE::Colour menuText;
-	JUCE_NAMESPACE::Colour propertyPanelBackground;
-	JUCE_NAMESPACE::Colour propertyPanelText;
-	JUCE_NAMESPACE::Colour propertyPanelOutline;
-	JUCE_NAMESPACE::Colour selectedFilterOutline;
-	JUCE_NAMESPACE::Colour yellowButton;
-	JUCE_NAMESPACE::Colour blueButton;
-} TwindyColours;
+struct TwindyColours {
+	Colour mainBackground;
+	Colour tabAreaBackground;
+	Colour menuText;
+	Colour propertyPanelBackground;
+	Colour propertyPanelText;
+	Colour propertyPanelOutline;
+	Colour selectedFilterOutline;
+	Colour yellowButton;
+	Colour blueButton;
+};
 
 class TwindyUpperPanel;
 class TwindyUpperTab;
-class TwindyLowerPanel;
 class TwindyWindow;
 class Clock;
 class DrawableTextButton;
@@ -60,10 +58,10 @@ typedef XID Window;
 	and other controls to perform various Window Manager operations (start
 	programs, logout etc.).
  */
-class TwindyRootWindow : public JUCE_NAMESPACE::Component,
-						 public JUCE_NAMESPACE::ActionListener,
-						 public JUCE_NAMESPACE::ButtonListener,
-						 public JUCE_NAMESPACE::MapRequestCallback
+class TwindyRootWindow : public Component,
+						 public ActionListener,
+						 public ButtonListener,
+						 public MapRequestCallback
 {
   public:
 	///	Constructor.
@@ -72,7 +70,7 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 	~TwindyRootWindow();
 
 	///	Draws the background.
-	void paint(JUCE_NAMESPACE::Graphics &g);
+	void paint(Graphics &g);
 
 	///	Called when the window's resized (this shouldn't happend too often).
 	void resized();
@@ -81,12 +79,12 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 	/*!
 		This probably isn't used anymore, now that we're using ButtonListeners.
 	 */
-	void actionListenerCallback(const JUCE_NAMESPACE::String& message);
+	void actionListenerCallback(const String& message);
 	///	Handles any button pressed events.
-	void buttonClicked(JUCE_NAMESPACE::Button* button);
+	void buttonClicked(Button* button);
 
 	///	Used to set the focus of currently-open windows.
-	//void mouseMove(const JUCE_NAMESPACE::MouseEvent& e);
+	//void mouseMove(const MouseEvent& e);
 
 	///	Called from TwindyTabs to get a pointer to it's workspace contents.
 	TwindyUpperPanel *getUpperPanel(int index) {return upperPanelComps[index];};
@@ -102,12 +100,6 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 	void setVisibleUpperPanel(int index);
 	///	Returns a pointer to the preferences panel.
 	TwindyPreferences *getPreferencesPanel() const {return preferences;};
-
-	///	Called when the close button of the lower panel has been clicked.
-	/*!
-		We check if there's currently a window open, and close it if there is.
-	 */
-	void closeLowerWindow();
 
 	///	Returns the TwindyProperties instance used to set various settings.
 	TwindyProperties *getProperties() const {return properties;};
@@ -135,8 +127,6 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 	///	Launches an executable.
 	void launchExecutable(const char *cmd, bool storePid = false);
 	///	Wrapper to launchExecutable() for lower panel programs.
-	void launchLowerPanel(JUCE_NAMESPACE::String cmd);
-	///	Finds the TwindyWindow (& it's associated tab) with win, and removes/deletes it.
 	void removeWindow(Window win);
 	///	Gives win focus.
 	void giveWindowFocus(TwindyWindow *win);
@@ -154,7 +144,7 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 	void moveUpperToLower();
 
 	///	Loads all the colours we use from a .tracktionscheme file.
-	void loadColours(const JUCE_NAMESPACE::String& file);
+	void loadColours(const String& file);
 	///	Launches all the programs specified in twindyrc.
 	void launchStartupPrograms();
 
@@ -163,70 +153,36 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 	///	TabbedComponent holding all the workspace Components.
 	TwindyTabs *workspaces;
 	///	Array of workspace Components.
-	JUCE_NAMESPACE::OwnedArray<TwindyUpperPanel> upperPanelComps;
+	OwnedArray<TwindyUpperPanel> upperPanelComps;
 	///	The preferences panel.
 	TwindyPreferences *preferences;
 	///	Index of the currently visible workspace Component.
 	int currentUpperPanelComp;
-	///	The lower panel (takes the place of Tracktion's properties panel).
-	TwindyLowerPanel *lowerPanel;
-
-	///	Upper panel buttons label.
-	JUCE_NAMESPACE::Label *upperLabel;
-	///	Lower panel buttons label.
-	JUCE_NAMESPACE::Label *lowerLabel;
-
-	///	Button to move a lower panel app to the upper panel.
-	JUCE_NAMESPACE::DrawableButton *moveUp;
-	///	And vice-versa.
-	JUCE_NAMESPACE::DrawableButton *moveDown;
 
 	///	Exit button.
-	//JUCE_NAMESPACE::TextButton *exitButton;
+	//TextButton *exitButton;
 	DrawableTextButton *exitButton;
 	///	Top left button in the lower left.
-	//JUCE_NAMESPACE::TextButton *leftButton1;
+	//TextButton *leftButton1;
 	DrawableTextButton *leftButton1;
 	///	Top left button in the lower left.
-	//JUCE_NAMESPACE::TextButton *leftButton2;
+	//TextButton *leftButton2;
 	DrawableTextButton *leftButton2;
 	///	Top left button in the lower left.
-	//JUCE_NAMESPACE::TextButton *leftButton3;
+	//TextButton *leftButton3;
 	DrawableTextButton *leftButton3;
 	///	Top left button in the lower left.
-	//JUCE_NAMESPACE::TextButton *leftButton4;
+	//TextButton *leftButton4;
 	DrawableTextButton *leftButton4;
 	///	Top left button in the lower left.
-	//JUCE_NAMESPACE::TextButton *leftButton5;
+	//TextButton *leftButton5;
 	DrawableTextButton *leftButton5;
 	///	Top left button in the lower left.
-	//JUCE_NAMESPACE::TextButton *leftButton6;
+	//TextButton *leftButton6;
 	DrawableTextButton *leftButton6;
 	///	Top left button in the lower left.
-	//JUCE_NAMESPACE::TextButton *leftButton7;
+	//TextButton *leftButton7;
 	DrawableTextButton *leftButton7;
-
-	///	Top right button in the lower left.
-	//JUCE_NAMESPACE::TextButton *rightButton1;
-	DrawableTextButton *rightButton1;
-	///	Top right button in the lower left.
-	//JUCE_NAMESPACE::TextButton *rightButton2;
-	DrawableTextButton *rightButton2;
-	///	Top right button in the lower left.
-	//JUCE_NAMESPACE::TextButton *rightButton3;
-	DrawableTextButton *rightButton3;
-	///	Top right button in the lower left.
-	//JUCE_NAMESPACE::TextButton *rightButton4;
-	DrawableTextButton *rightButton4;
-	///	Top right button in the lower left.
-	//JUCE_NAMESPACE::TextButton *rightButton5;
-	DrawableTextButton *rightButton5;
-	///	Top right button in the lower left.
-	//JUCE_NAMESPACE::TextButton *rightButton6;
-	DrawableTextButton *rightButton6;
-	///	Top right button in the lower left.
-	//JUCE_NAMESPACE::TextButton *rightButton7;
-	DrawableTextButton *rightButton7;
 
 	///	Clock to display the current time.
 	Clock *clock;
@@ -235,14 +191,6 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 	TwindyProperties *properties;
 	///	The colours we use in this window.
 	TwindyColours colours;
-
-	///	The window currently displayed 'in' the lower panel.
-	/*!
-		0 if none is displayed.
-	 */
-	TwindyWindow *lowerWindow;
-	///	This is set to true whenever a program destined for the lowerPanel has just been launched.
-	bool destinedForLowerPanel;
 
 	///	Which panel currently has focus: upper(1), or lower(0).
 	bool currentlyInFocus;
@@ -253,7 +201,7 @@ class TwindyRootWindow : public JUCE_NAMESPACE::Component,
 		it's pid so we can kill it when we quit (only necessary if it's a
 		non-gui app?).
 	 */
-	JUCE_NAMESPACE::Array<pid_t> pidArray;
+	Array<pid_t> pidArray;
 };
 
 #endif

@@ -24,6 +24,8 @@
 class TwindyToggleButton;
 class DrawableTextButton;
 
+#include "../juce_amalgamated.h"
+
 ///	Preferences page for miscellaneous options.
 class MiscPreferences : public Component,
 						public ListBoxModel,

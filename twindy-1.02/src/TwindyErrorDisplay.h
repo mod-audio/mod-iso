@@ -24,26 +24,27 @@
 
 class DrawableTextButton;
 
+#include "juce_amalgamated.h"
+
 ///	Simple struct to hold an error message (heading and message).
-typedef struct
-{
-	JUCE_NAMESPACE::String heading;
-	JUCE_NAMESPACE::String message;
-} ErrorMessage;
+struct ErrorMessage {
+	String heading;
+	String message;
+};
 
 ///	Singleton Component to display any error messages in the lower right corner of the 'root' window.
-class TwindyErrorDisplay : public JUCE_NAMESPACE::Component,
-								  JUCE_NAMESPACE::ButtonListener
+class TwindyErrorDisplay : public Component,
+                           private ButtonListener
 {
   public:
 	///	Returns the single instance of the class, creates it if it doesn't exist.
 	static TwindyErrorDisplay *getInstance();
 
 	///	To handle the Ok button being clicked.
-	void buttonClicked(JUCE_NAMESPACE::Button *button);
+	void buttonClicked(Button *button);
 
 	///	Draws the current error message.
-	void paint(JUCE_NAMESPACE::Graphics &g);
+	void paint(Graphics &g);
 
 	///	We use this to place the Ok button correctly.
 	void resized();
@@ -55,12 +56,12 @@ class TwindyErrorDisplay : public JUCE_NAMESPACE::Component,
 		button, the earliest message is removed from the stack, and the next one
 		is displayed.
 	 */
-	void addErrorMessage(const JUCE_NAMESPACE::String& heading, const JUCE_NAMESPACE::String& message);
+	void addErrorMessage(const String& heading, const String& message);
 
 	///	Sets the colour of the background.
-	void setBackgroundColour(const JUCE_NAMESPACE::Colour& col) {backColour = col;};
+	void setBackgroundColour(const Colour& col) {backColour = col;};
 	///	Sets the colour of the text.
-	void setTextColour(const JUCE_NAMESPACE::Colour& col) {textColour = col;};
+	void setTextColour(const Colour& col) {textColour = col;};
 
   private:
 	///	Constructor.
@@ -72,12 +73,12 @@ class TwindyErrorDisplay : public JUCE_NAMESPACE::Component,
 	DrawableTextButton *ok;
 
 	///	Array of current error messages.
-	JUCE_NAMESPACE::OwnedArray<ErrorMessage> errorArray;
+	OwnedArray<ErrorMessage> errorArray;
 
 	///	Colour to paint the background of the display.
-	JUCE_NAMESPACE::Colour backColour;
+	Colour backColour;
 	///	Colour to paint the text.
-	JUCE_NAMESPACE::Colour textColour;
+	Colour textColour;
 };
 
 #endif

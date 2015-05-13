@@ -22,6 +22,8 @@
 #ifndef TWINDYLAF_H_
 #define TWINDYLAF_H_
 
+#include "juce_amalgamated.h"
+
 ///	Custom LookAndFeel, mainly so we can use a nicer Typeface.
 class TwindyLAF : public LookAndFeel
 {
