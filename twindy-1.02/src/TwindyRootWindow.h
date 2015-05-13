@@ -22,6 +22,8 @@
 #ifndef TWINDYROOTWINDOW_H_
 #define TWINDYROOTWINDOW_H_
 
+#include "juce_amalgamated.h"
+
 ///	A struct containing all the colours we use in the window.
 /*!
 	These should correspond directly to the ones used in tracktionscheme files.

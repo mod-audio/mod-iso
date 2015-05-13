@@ -5,3 +5,4 @@ sleep 1
 
 export DISPLAY=:2.0
 $(dirname $0)/twindy
+killall Xephyr
