@@ -14,6 +14,7 @@ echo "
 export HOME=/root
 export LANG=C
 unset LC_TIME
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 $@
 " | sudo tee ~/livecd/custom/_cmd >/dev/null
 
