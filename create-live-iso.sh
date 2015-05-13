@@ -185,8 +185,6 @@ run_chroot_cmd umount /sys
 # -------------------------------------------------------------------------------------------
 # Create squashfs file
 
-if (false); then
-
 sudo mkdir -p ~/livecd/cd/casper/
 cd ~/livecd/cd/casper/
 sudo rm -f ./filesystem.squashfs
@@ -197,8 +195,6 @@ sudo chmod 777 ./filesystem.size
 sudo chroot ~/livecd/custom dpkg-query -W --showformat='${Package} ${Version}\n' > ./filesystem.manifest
 sudo su root -c "printf $(sudo du -sx --block-size=1 ~/livecd/custom | cut -f1) > ./filesystem.size"
 sudo mksquashfs ~/livecd/custom ./filesystem.squashfs -noappend -comp xz
-
-fi
 
 # -------------------------------------------------------------------------------------------
 # Create ISO artwork
@@ -263,7 +259,7 @@ cd ~/livecd/cd
 sudo xorriso -as mkisofs \
     -r \
     -V "Live-MOD 2015.04" \
-    -o ~/livecd/Live-MOD_2015.04-test1.iso \
+    -o ~/livecd/Live-MOD_2015.04-test2.iso \
     -J \
     -isohybrid-mbr isolinux/isohdpfx.bin \
     -partition_offset 16 \
