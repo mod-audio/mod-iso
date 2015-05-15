@@ -86,131 +86,148 @@ int xErrorHandler(Display *dpy, XErrorEvent *event)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::callbackFunction(void *event)
 {
-	TwindyUpperTab *newTab;
-	TwindyWindow *newWin;
-	XEvent *evt = static_cast<XEvent *>(event);
-	XWindowChanges windowChanges;
-	XTextProperty textProp;
-	String tempstr;
-	Rectangle temprect;
-	Window tempWin;
-	int result;
+    XEvent* const evt = static_cast<XEvent*>(event);
 
-	if(evt->xany.type == MapRequest)
-	{
-		TWINDY_DBG_MESSAGE("MapRequest received.");
-		{
-			int workspaceIndex = currentUpperPanelComp;
-			if(workspaceIndex < 0)
-				workspaceIndex = 0;
+    switch (evt->xany.type)
+    {
+    case MapRequest:
+    {
+        TWINDY_DBG_MESSAGE("MapRequest received.");
 
-			if((upperPanelComps[workspaceIndex]->getCurrentWindow())&&
-			   (upperPanelComps[workspaceIndex]->isWorkspaceVisible()))
-				upperPanelComps[workspaceIndex]->getCurrentWindow()->hide();
+        XTextProperty textProp;
 
-			newTab = new TwindyUpperTab(T("Browser"),
-										colours.propertyPanelText,
-										colours.propertyPanelBackground);
+        int workspaceIndex = currentUpperPanelComp;
+        if (workspaceIndex < 0)
+            workspaceIndex = 1;
 
-			//We add all upper windows to the save set, because we might quit
-			//unexpectedly while all but the currently mapped window are
-			//hidden (unmapped).  This ensures these windows will be mapped if
-			//we quit unexpectedly.
-			XAddToSaveSet(display, evt->xmaprequest.window);
+        if (upperPanelComps[workspaceIndex]->getCurrentWindow() && upperPanelComps[workspaceIndex]->isWorkspaceVisible())
+            upperPanelComps[workspaceIndex]->getCurrentWindow()->hide();
 
-			XSetWindowBorderWidth(display, evt->xmaprequest.window, 0);
-			XMoveWindow(display, evt->xmaprequest.window, 0, 26);
-			XResizeWindow(display, evt->xmaprequest.window, getWidth(), getHeight()-26);
-			XMapWindow(display, evt->xmaprequest.window);
-			XSetInputFocus(display, evt->xmaprequest.window, RevertToPointerRoot, CurrentTime);
+        TwindyUpperTab* const newTab = new TwindyUpperTab(T("Browser"),
+                                                          colours.propertyPanelText,
+                                                          colours.propertyPanelBackground);
 
-			//Make sure we get notified when the window's title changes.
-			XSelectInput(display, evt->xmaprequest.window, PropertyChangeMask);
+        //We add all upper windows to the save set, because we might quit
+        //unexpectedly while all but the currently mapped window are
+        //hidden (unmapped).  This ensures these windows will be mapped if
+        //we quit unexpectedly.
+        XAddToSaveSet(display, evt->xmaprequest.window);
 
-			if (XGetWMName(display, evt->xmaprequest.window, &textProp))
-			{
-				newTab->setName((const char *)(textProp.value));
-				free(textProp.value); //?
-			}
+        XSetWindowBorderWidth(display, evt->xmaprequest.window, 0);
 
-			newWin = new TwindyWindow(display, evt->xmaprequest.window);
-			upperPanelComps[workspaceIndex]->addWindow(newWin, newTab);
-		}
-	}
-	else if(evt->xany.type == ConfigureRequest)
-	{
-		TWINDY_DBG_MESSAGE("ConfigureRequest received.");
-		tempWin = 0;
+        if (workspaceIndex == 0)
+        {
+            XMoveWindow(display, evt->xmaprequest.window, 0, 26);
+            XResizeWindow(display, evt->xmaprequest.window, getWidth(), getHeight()-26);
+        }
+        else
+        {
+            XMoveWindow(display, evt->xmaprequest.window, 162, 37);
+            XResizeWindow(display, evt->xmaprequest.window, getWidth()-162-13, getHeight()-37-13);
+        }
 
-		{
-			/*if(!evt->xconfigurerequest.window)
-			{
-				TwindyErrorDisplay::getInstance()->addErrorMessage(T("Error"),
-																   T("Received a ConfigureRequest for a window we don't have?"));
-				return;
-			}*/
-			windowChanges.x = 0;
-			windowChanges.y = 26;
-			windowChanges.width = getWidth();
-			windowChanges.height = getHeight()-26;
-			windowChanges.sibling = evt->xconfigurerequest.above;
-			windowChanges.stack_mode = evt->xconfigurerequest.detail;
-			result = XConfigureWindow(display,
-							 evt->xconfigurerequest.window,
-							 evt->xconfigurerequest.value_mask,
-							 &windowChanges);
-		}
-	}
-	else if(evt->xany.type == UnmapNotify)
-	{
-		TWINDY_DBG_MESSAGE("UnmapNotify received.");
-		//I don't think we need to handle this...
-		//removeWindow(evt->xdestroywindow.window);
-	}
-	else if(evt->xany.type == DestroyNotify)
-	{
-		TWINDY_DBG_MESSAGE("DestroyNotify received.");
-		removeWindow(evt->xdestroywindow.window);
-	}
-	else if(evt->xany.type == LeaveNotify)
-	{
-		TWINDY_DBG_MESSAGE("LeaveNotify received.");
+        XMapWindow(display, evt->xmaprequest.window);
+        XSetInputFocus(display, evt->xmaprequest.window, RevertToPointerRoot, CurrentTime);
+
+        //Make sure we get notified when the window's title changes.
+        XSelectInput(display, evt->xmaprequest.window, PropertyChangeMask);
+
+        if (XGetWMName(display, evt->xmaprequest.window, &textProp))
+        {
+            newTab->setName((const char*)(textProp.value));
+            XFree(textProp.value); //?
+        }
+
+        TwindyWindow* const newWin = new TwindyWindow(display, evt->xmaprequest.window);
+        upperPanelComps[workspaceIndex]->addWindow(newWin, newTab);
+        break;
+    }
+    case ConfigureRequest:
+    {
+        TWINDY_DBG_MESSAGE("ConfigureRequest received.");
+
+        // FIXME
+
+        XWindowChanges windowChanges;
+
+        if (currentUpperPanelComp == 0)
+        {
+            windowChanges.x = 0;
+            windowChanges.y = 26;
+            windowChanges.width = getWidth();
+            windowChanges.height = getHeight()-26;
+        }
+        else
+        {
+            windowChanges.x = 162;
+            windowChanges.y = 37;
+            windowChanges.width = getWidth()-162-13;
+            windowChanges.height = getHeight()-37-13;
+        }
+
+        windowChanges.sibling = evt->xconfigurerequest.above;
+        windowChanges.stack_mode = evt->xconfigurerequest.detail;
+
+        XConfigureWindow(display, evt->xconfigurerequest.window, evt->xconfigurerequest.value_mask, &windowChanges);
+        break;
+    }
+    case UnmapNotify:
+    {
+        TWINDY_DBG_MESSAGE("UnmapNotify received.");
+        //I don't think we need to handle this...
+        //removeWindow(evt->xdestroywindow.window);
+        break;
+    }
+    case DestroyNotify:
+    {
+        TWINDY_DBG_MESSAGE("DestroyNotify received.");
+
+        removeWindow(evt->xdestroywindow.window);
+        break;
+    }
+    case EnterNotify:
+    {
+        TWINDY_DBG_MESSAGE("EnterNotify received.");
 #if 0
-		//Not sure why, but window is always Twindy's window, not the window
-		//we've entered, so we have to figure out which window we're supposed to
-		//be giving focus to...
-		temprect.setBounds(10, 30, (getWidth()-20), (getHeight()-270));
-		if(temprect.contains(evt->xcrossing.x_root, evt->xcrossing.y_root))
-		{
-			if(currentUpperPanelComp > -1)
-			{
-				if(upperPanelComps[currentUpperPanelComp]->getCurrentWindow())
-				{
-					XSetInputFocus(display,
-								   upperPanelComps[currentUpperPanelComp]->getCurrentWindow()->getWindow(),
-								   RevertToPointerRoot,
-								   CurrentTime);
-				}
-			}
-		}
+        break;
+    }
+    case LeaveNotify:
+    {
+        TWINDY_DBG_MESSAGE("LeaveNotify received.");
 #endif
-	}
-	else if(evt->xany.type == EnterNotify)
-	{
-		TWINDY_DBG_MESSAGE("EnterNotify received.");
-	}
-	else if(evt->xany.type == PropertyNotify)
-	{
-		TWINDY_DBG_MESSAGE("PropertyNotify received.");
-		if(evt->xproperty.atom == XA_WM_NAME)
-			redrawWindowName(evt->xproperty.window);
-	}
+
+        if (currentUpperPanelComp < 0 || isCurrentlyBlockedByAnotherModalComponent())
+            return;
+
+        Rectangle temprect;
+
+        if (currentUpperPanelComp == 0)
+            temprect.setBounds(0, 26, getWidth(), getHeight()-26);
+        else
+            temprect.setBounds(162, 37, getWidth()-162-13, getHeight()-37-13);
+
+        if (temprect.contains(evt->xcrossing.x_root, evt->xcrossing.y_root))
+        {
+            if (TwindyWindow* const window = upperPanelComps[currentUpperPanelComp]->getCurrentWindow())
+                XSetInputFocus(display, window->getWindow(), RevertToPointerRoot, CurrentTime);
+        }
+        break;
+    }
+    case PropertyNotify:
+    {
+        TWINDY_DBG_MESSAGE("PropertyNotify received.");
+
+        if (evt->xproperty.atom == XA_WM_NAME)
+            redrawWindowName(evt->xproperty.window);
+        break;
+    }
+    }
 }
 
 //----------------------------------------------------------------------------------------------
 Window TwindyRootWindow::getActualWindow()
 {
-	return reinterpret_cast<Window>(static_cast<ComponentPeer *>(getPeer())->getNativeHandle());
+    return reinterpret_cast<Window>(static_cast<ComponentPeer *>(getPeer())->getNativeHandle());
 }
 
 //----------------------------------------------------------------------------------------------

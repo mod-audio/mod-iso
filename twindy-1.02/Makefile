@@ -109,6 +109,11 @@ $(BINDIR)/twindy: $(OBJS)
 	@echo "Linking libcarla_utils$(LIB_EXT)"
 	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs freetype2 x11 xext xinerama) -lpthread -ldl -o $@
 
+$(BINDIR)/twindy-dbg: $(OBJS)
+	-@mkdir -p $(BINDIR)
+	@echo "Linking libcarla_utils$(LIB_EXT)"
+	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs freetype2 x11 xext xinerama) -lpthread -ldl -o $@
+
 # --------------------------------------------------------------
 
 -include $(OBJS:%.o=%.d)
