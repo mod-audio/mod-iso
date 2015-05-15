@@ -266,54 +266,48 @@ void TwindyUpperPanel::closeWindow(TwindyUpperTab *tab, int index)
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-TwindyUpperTab::TwindyUpperTab(const String &text, Colour textCol, Colour fillCol):
-TwindyTabbedComponentBasicTab(text)
+TwindyUpperTab::TwindyUpperTab(const String& text, Colour textCol, Colour fillCol)
+    : TwindyTabbedComponentBasicTab(text),
+      textColor(textCol),
+      fillColor(fillCol)
 {
-	this->text = textCol;
-	fill = fillCol;
+    addAndMakeVisible(closeButton = new ShapeButton(T("closeButton"), textCol, textCol, fillCol.darker()));
 
-	addAndMakeVisible(closeButton = new ShapeButton(T("closeButton"),
-													textCol,
-													textCol,
-													fill.darker()));
-	closeButton->addButtonListener(this);
-	Path x;
-	x.addLineSegment(0.0f, 0.0f, 10.0f, 10.0f, 3.0f);
-	x.addLineSegment(10.0f, 0.0f, 0.0f, 10.0f, 3.0f);
-	closeButton->setShape(x, false, true, true);
+    Path x;
+    x.addLineSegment(0.0f, 0.0f, 10.0f, 10.0f, 3.0f);
+    x.addLineSegment(10.0f, 0.0f, 0.0f, 10.0f, 3.0f);
+    closeButton->setShape(x, false, true, true);
+    closeButton->addButtonListener(this);
 }
 
 //------------------------------------------------------------------------------
 TwindyUpperTab::~TwindyUpperTab()
 {
-	deleteAllChildren();
+    deleteAllChildren();
 }
 
 //------------------------------------------------------------------------------
-void TwindyUpperTab::paintTab(Graphics &g,
-							  bool isTheCurrentTab,
-							  const TabbedComponent *ownerTabbedComp)
+void TwindyUpperTab::paintTab(Graphics &g, bool, const TwindyTabbedComponent*)
 {
-	g.setColour ((isMouseOver()) ? Colour::contrasting (text, fill)
-                                 : text);
+    g.setFont(jmin(20.0f, getHeight() * 0.8f));
+    g.setColour(isMouseOver() ? Colour::contrasting(textColor, fillColor) : textColor);
 
-    g.setFont (jmin (20.0f, getHeight() * 0.8f));
-
-    g.drawText (getName(), 4, 2, getWidth() - 8, getHeight() - 4,
-                Justification::centred, true);
+    g.drawText(getName(), 4, 2, getWidth() - 8, getHeight() - 4, Justification::centred, true);
 }
 
 //------------------------------------------------------------------------------
 void TwindyUpperTab::resized()
 {
-	closeButton->setBounds(6, 6, 15, 15);
+    closeButton->setBounds(6, 6, 15, 15);
 }
 
 //------------------------------------------------------------------------------
-void TwindyUpperTab::buttonClicked(JUCE_NAMESPACE::Button* button)
+void TwindyUpperTab::buttonClicked(Button* button)
 {
-	TwindyUpperPanel *parent = static_cast<TwindyUpperPanel *>(getParentComponent()->getParentComponent());
+    if (button != closeButton)
+        return;
 
-	if(button == closeButton)
-		parent->closeTab(this);
+    if (Component* const parent1 = getParentComponent())
+        if (TwindyUpperPanel* const parent2 = static_cast<TwindyUpperPanel*>(parent1->getParentComponent()))
+            parent2->closeTab(this);
 }

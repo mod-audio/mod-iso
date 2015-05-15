@@ -60,15 +60,15 @@ Component()
 	pathLabel->setFont(Font(16.0f, Font::bold));
 	addAndMakeVisible(pathEditor = new TextEditor());
 
-	currentColours.mainBackground = root->getColours(0).mainBackground;
-	currentColours.tabAreaBackground = root->getColours(0).tabAreaBackground;
-	currentColours.menuText = root->getColours(0).menuText;
-	currentColours.propertyPanelBackground = root->getColours(0).propertyPanelBackground;
-	currentColours.propertyPanelText = root->getColours(0).propertyPanelText;
-	currentColours.propertyPanelOutline = root->getColours(0).propertyPanelOutline;
-	currentColours.selectedFilterOutline = root->getColours(0).selectedFilterOutline;
-	currentColours.yellowButton = root->getColours(0).yellowButton;
-	currentColours.blueButton = root->getColours(0).blueButton;
+	currentColours.mainBackground = root->getColours().mainBackground;
+	currentColours.tabAreaBackground = root->getColours().tabAreaBackground;
+	currentColours.menuText = root->getColours().menuText;
+	currentColours.propertyPanelBackground = root->getColours().propertyPanelBackground;
+	currentColours.propertyPanelText = root->getColours().propertyPanelText;
+	currentColours.propertyPanelOutline = root->getColours().propertyPanelOutline;
+	currentColours.selectedFilterOutline = root->getColours().selectedFilterOutline;
+	currentColours.yellowButton = root->getColours().yellowButton;
+	currentColours.blueButton = root->getColours().blueButton;
 	TwindyProperties *prop = root->getProperties();
 	pathEditor->setText(prop->getProperty(T("TracktionScheme")).name);
 	colours->updateContent();
@@ -143,15 +143,15 @@ void TracktionSchemeEditor::buttonClicked(Button *button)
 
 	if(button == newButton)
 	{
-		currentColours.mainBackground = root->getColours(0).mainBackground;
-		currentColours.tabAreaBackground = root->getColours(0).tabAreaBackground;
-		currentColours.menuText = root->getColours(0).menuText;
-		currentColours.propertyPanelBackground = root->getColours(0).propertyPanelBackground;
-		currentColours.propertyPanelText = root->getColours(0).propertyPanelText;
-		currentColours.propertyPanelOutline = root->getColours(0).propertyPanelOutline;
-		currentColours.selectedFilterOutline = root->getColours(0).selectedFilterOutline;
-		currentColours.yellowButton = root->getColours(0).yellowButton;
-		currentColours.blueButton = root->getColours(0).blueButton;
+		currentColours.mainBackground = root->getColours().mainBackground;
+		currentColours.tabAreaBackground = root->getColours().tabAreaBackground;
+		currentColours.menuText = root->getColours().menuText;
+		currentColours.propertyPanelBackground = root->getColours().propertyPanelBackground;
+		currentColours.propertyPanelText = root->getColours().propertyPanelText;
+		currentColours.propertyPanelOutline = root->getColours().propertyPanelOutline;
+		currentColours.selectedFilterOutline = root->getColours().selectedFilterOutline;
+		currentColours.yellowButton = root->getColours().yellowButton;
+		currentColours.blueButton = root->getColours().blueButton;
 		colours->updateContent();
 		pathEditor->setText(T(""));
 	}

@@ -35,10 +35,10 @@
 #undef KeyPress
 #include "juce_amalgamated.h"
 
-void killZombies(int thing)
+void killZombies(int)
 {
-	TWINDY_DBG_MESSAGE("Killing zombie...");
-	wait(NULL);
+    TWINDY_DBG_MESSAGE("Killing zombie...");
+    wait(nullptr);
 }
 
 BEGIN_JUCE_NAMESPACE
@@ -53,34 +53,32 @@ END_JUCE_NAMESPACE
 #include <iostream>
 #include <sstream>
 
-int xErrorHandler(Display *dpy, XErrorEvent *event)
+static int xErrorHandler(Display* const dpy, XErrorEvent* const event)
 {
-	Window rootWindow;
+    const ::Window rootWindow = RootWindow(dpy, DefaultScreen(dpy));
 
-	rootWindow = RootWindow(dpy, DefaultScreen(dpy));
+    // I can't help feeling I should be doing something more than this here, but
+    // I don't know what I could do - this is just to avoid gedit crashing Twindy
+    // when you close it from it's file menu, and it doesn't seem to do any harm
+    // if we just ignore the error...
+    if (event->error_code == BadWindow)
+    {
+        TWINDY_DBG_MESSAGE("Got a BadWindow error from somewhere...  Hmm...");
+    }
+    else if(event->error_code == BadAccess && event->resourceid == rootWindow)
+    {
+        std::cout << "BadAccess Error: Another window manager is probably running. Quitting." << std::endl;
+        exit(1);
+    }
+    else
+    {
+        std::string tempstr;
+        tempstr = "X Error: ";
+        tempstr += event->error_code;
+        TWINDY_DBG_MESSAGE(tempstr);
+    }
 
-	//I can't help feeling I should be doing something more than this here, but
-	//I don't know what I could do - this is just to avoid gedit crashing Twindy
-	//when you close it from it's file menu, and it doesn't seem to do any harm
-	//if we just ignore the error...
-	if(event->error_code == BadWindow)
-		TWINDY_DBG_MESSAGE("Got a BadWindow error from somewhere...  Hmm...");
-	else if((event->error_code == BadAccess) &&
-			(event->resourceid == rootWindow))
-	{
-		std::cout << "BadAccess Error: Another window manager is probably";
-		std::cout << " running.  Quitting." << std::endl;
-		exit(1);
-	}
-	else
-	{
-		std::string tempstr;
-		tempstr = "X Error: ";
-		tempstr += event->error_code;
-		TWINDY_DBG_MESSAGE(tempstr);
-	}
-
-	return 0;
+    return 0;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -345,9 +343,8 @@ void TwindyRootWindow::removeWindow(Window win)
 }
 
 //----------------------------------------------------------------------------------------------
-void TwindyRootWindow::giveWindowFocus(TwindyWindow *win)
+void TwindyRootWindow::giveWindowFocus(TwindyWindow*)
 {
-	
 }
 
 //----------------------------------------------------------------------------------------------
@@ -378,28 +375,10 @@ void TwindyRootWindow::redrawWindowName(Window win)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::raiseAllWindows()
 {
-	ComponentPeer *twindy;
+    if (currentUpperPanelComp > -1 && upperPanelComps[currentUpperPanelComp]->getNumWindows() > 0)
+        XRaiseWindow(display, upperPanelComps[currentUpperPanelComp]->getCurrentWindow()->getWindow());
 
-	if(currentUpperPanelComp > -1)
-	{
-		if(upperPanelComps[currentUpperPanelComp]->getNumWindows() > 0)
-		{
-			XRaiseWindow(display,
-						 upperPanelComps[currentUpperPanelComp]->getCurrentWindow()->getWindow());
-		}
-	}
-
-	//We get crashes if Twindy loses focus after a PopupMenu has been shown.
-	//This should fix that.
-	twindy = static_cast<ComponentPeer *>(getPeer());
-	XSetInputFocus(display,
-				   RootWindow(display, DefaultScreen(display)),
-				   RevertToPointerRoot,
-				   CurrentTime);
+    // We get crashes if Twindy loses focus after a PopupMenu has been shown.
+    // This should fix that.
+    XSetInputFocus(display, RootWindow(display, DefaultScreen(display)), RevertToPointerRoot, CurrentTime);
 }
-
-//----------------------------------------------------------------------------------------------
-/*Window WindowHandle::getHandle() const
-{
-	return handle;
-}*/

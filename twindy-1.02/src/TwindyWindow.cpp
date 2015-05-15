@@ -50,56 +50,6 @@ TwindyWindow::~TwindyWindow()
 	//XDestroyWindow(display, window);
 }
 
-/*///-----------------------------------------------------------------------------
-void TwindyWindow::initialiseWindow()
-{
-	unsigned int i;
-	Window rootWindow2;
-	Window parentWindow;
-	Window *childrenNew;
-	unsigned int numChildrenNew;
-	bool foundNewWindow = false;
-
-	XQueryTree(display,
-			   DefaultRootWindow(display),
-			   &rootWindow2,
-			   &parentWindow,
-			   &childrenNew,
-			   &numChildrenNew);
-	std::cout << "numChildrenNew: " << numChildrenNew << std::endl;
-
-	if((numChildrenOld > 0) && (numChildrenNew > numChildrenOld))
-	{
-		window = new Window;
-		///	Get the Window handle for the new window.
-		for(i=0;i<numChildrenOld;i++)
-		{
-			std::cout << "childrenOld[" << i << "]:" << childrenOld[i] << std::endl;
-			std::cout << "childrenNew[" << i << "]:" << childrenNew[i] << std::endl;
-			if(childrenOld[i] != childrenNew[i])
-			{
-				*window = childrenNew[i];
-				foundNewWindow = true;
-				break;
-			}
-		}
-		if(!foundNewWindow)
-			*window = childrenNew[i];
-	}
-
-	XFree(childrenOld);
-	XFree(childrenNew);
-
-	XSetWindowBorderWidth(display, *window, 0);
-	XSetInputFocus(display, *window, RevertToPointerRoot, CurrentTime);
-	//Reparent the window so that it closes when Twindy does.
-	std::cout << "JUCE rootWindow: " << rootWindow << std::endl;
-	XReparentWindow(display, *window, rootWindow, 0, 0);
-	XMapRaised(display, *window);
-
-	isShowing = true;
-}*/
-
 ///-----------------------------------------------------------------------------
 void TwindyWindow::closeWindow()
 {

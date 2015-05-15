@@ -100,7 +100,7 @@ class TwindyRootWindow : public Component,
 	///	Returns the TwindyProperties instance used to set various settings.
 	TwindyProperties *getProperties() const {return properties;};
 	///	Returns the colour scheme for the indexed workspace.
-	const TwindyColours& getColours(int index) {return colours;};
+	const TwindyColours& getColours() {return colours;};
 	///	Returns a pointer to the clock, so we can change it's properties.
 	Clock *getClock() const {return clock;};
 
@@ -134,10 +134,6 @@ class TwindyRootWindow : public Component,
 		PopupMenu has been displayed.
 	 */
 	void raiseAllWindows();
-	///	Moves the lower window to the top panel.
-	void moveLowerToUpper();
-	///	Moves the currently-selected upper window to the lower panel.
-	void moveUpperToLower();
 
 	///	Loads all the colours we use from a .tracktionscheme file.
 	void loadColours(const String& file);

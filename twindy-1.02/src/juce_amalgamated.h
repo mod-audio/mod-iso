@@ -127,7 +127,7 @@
 /** Comment out this macro to disable building of ALSA device support on Linux.
 */
 #ifndef JUCE_ALSA
-  #define JUCE_ALSA 1
+  #define JUCE_ALSA 0
 #endif
 
 /** Comment out this macro if you don't want to enable QuickTime or if you don't
@@ -898,6 +898,8 @@ typedef wchar_t                     juce_wchar;
 /** Returns the larger of two values. */
 forcedinline int    jmax (const int a, const int b) throw()                                   { return (a < b) ? b : a; }
 /** Returns the larger of two values. */
+forcedinline uint   jmax (const uint a, const uint b) throw()                                 { return (a < b) ? b : a; }
+/** Returns the larger of two values. */
 forcedinline int64  jmax (const int64 a, const int64 b) throw()                               { return (a < b) ? b : a; }
 /** Returns the larger of two values. */
 forcedinline float  jmax (const float a, const float b) throw()                               { return (a < b) ? b : a; }
@@ -924,6 +926,8 @@ inline double jmax (const double a, const double b, const double c, const double
 
 /** Returns the smaller of two values. */
 inline int    jmin (const int a, const int b) throw()                                         { return (a > b) ? b : a; }
+/** Returns the smaller of two values. */
+inline uint   jmin (const uint a, const uint b) throw()                                       { return (a > b) ? b : a; }
 /** Returns the smaller of two values. */
 inline int64  jmin (const int64 a, const int64 b) throw()                                     { return (a > b) ? b : a; }
 /** Returns the smaller of two values. */
@@ -18412,9 +18416,9 @@ public:
             }
             else
             {
-                components.b = (uint8) jmin (0xff, (components.b * 0xff) / alpha);
-                components.g = (uint8) jmin (0xff, (components.g * 0xff) / alpha);
-                components.r = (uint8) jmin (0xff, (components.r * 0xff) / alpha);
+                components.b = (uint8) jmin (0xffU, (components.b * 0xff) / alpha);
+                components.g = (uint8) jmin (0xffU, (components.g * 0xff) / alpha);
+                components.r = (uint8) jmin (0xffU, (components.r * 0xff) / alpha);
             }
         }
     }

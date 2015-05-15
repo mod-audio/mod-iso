@@ -27,70 +27,24 @@
 #include "TwindyErrorDisplay.h"
 
 //------------------------------------------------------------------------------
-TwindyTabs::TwindyTabs():
-TabbedComponent(TabbedButtonBar::TabsAtTop),
-preferences(false)
-{
-	
-}
-
-//------------------------------------------------------------------------------
-TwindyTabs::~TwindyTabs()
-{
-	
-}
-
-//------------------------------------------------------------------------------
-Component *TwindyTabs::createPanelComponentForTab(const int tabIndex,
-  										  		  const String& tabName,
-  										  		  bool& componentCanBeDeleted)
-{
-	componentCanBeDeleted = false;
-	if(tabIndex == 0)
-	{
-		TwindyRootWindow *parent = static_cast<TwindyRootWindow *>(getParentComponent());
-
-		if(parent)
-			return parent->getPreferencesPanel();
-		else
-		{
-			TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Preferences Tab Error"),
-															   TRANS("TwindyTabs has no parent!"));
-			return 0;
-		}
-	}
-	else
-	{
-		TwindyRootWindow *parent = static_cast<TwindyRootWindow *>(getParentComponent());
-
-		if(parent)
-		{
-			//-1 because tab 0 is always the preferences panel.
-			return parent->getUpperPanel(tabIndex-1);
-		}
-		else
-		{
-			TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Workspace Tab Error"),
-															   TRANS("TwindyTabs has no parent!"));
-			return 0;
-		}
-	}
-}
+TwindyTabs::TwindyTabs()
+    : TabbedComponent(TabbedButtonBar::TabsAtTop),
+      preferences(false) {}
 
 //------------------------------------------------------------------------------
 void TwindyTabs::currentTabChanged(const int newCurrentTabIndex,
-						   		   const String& newCurrentTabName)
+                                   const String& newCurrentTabName)
 {
-	TwindyRootWindow *parent = static_cast<TwindyRootWindow *>(getParentComponent());
+    TwindyRootWindow* const parent = static_cast<TwindyRootWindow*>(getParentComponent());
 
-	if(parent)
-		parent->setVisibleUpperPanel(newCurrentTabIndex-1);
+    if (parent != nullptr)
+        parent->setVisibleUpperPanel(newCurrentTabIndex-1);
 
-	if(newCurrentTabName == TRANS("Preferences"))
-		preferences = true;
-	else if(preferences)
-		preferences = false;
+    if (newCurrentTabName == TRANS("Preferences"))
+        preferences = true;
+    else if (preferences)
+        preferences = false;
 
-	if(parent)
-		parent->updateColours();
+    if (parent != nullptr)
+        parent->updateColours();
 }

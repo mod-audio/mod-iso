@@ -71,7 +71,7 @@ $(OBJDIR)/PreferencesPages/%.cpp.o: src/PreferencesPages/%.cpp
 $(OBJDIR)/juce_amalgamated.cpp.o: src/juce_amalgamated.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling $<"
-	$(CXX) $< $(BUILD_CXX_FLAGS) $(shell pkg-config --cflags freetype2 x11 xext xinerama) -w -c -o $@
+	$(CXX) $< $(BUILD_CXX_FLAGS) $(shell pkg-config --cflags alsa freetype2 x11 xext xinerama) -w -c -o $@
 
 clean:
 	rm -f $(OBJS)
@@ -98,21 +98,21 @@ OBJS = $(OBJDIR)/juce_amalgamated.cpp.o \
 	$(OBJDIR)/ExtraComponents/TwindyTabbedComponent.cpp.o \
 	$(OBJDIR)/ExtraComponents/TwindyToggleButton.cpp.o \
 	$(OBJDIR)/PreferencesPages/AboutPage.cpp.o \
+	$(OBJDIR)/PreferencesPages/AudioPreferences.cpp.o \
 	$(OBJDIR)/PreferencesPages/ButtonPreferences.cpp.o \
 	$(OBJDIR)/PreferencesPages/MiscPreferences.cpp.o \
 	$(OBJDIR)/PreferencesPages/StartupPreferences.cpp.o \
-	$(OBJDIR)/PreferencesPages/TracktionSchemeEditor.cpp.o \
-	$(OBJDIR)/PreferencesPages/WorkspacePreferences.cpp.o
+	$(OBJDIR)/PreferencesPages/TracktionSchemeEditor.cpp.o
 
 $(BINDIR)/twindy: $(OBJS)
 	-@mkdir -p $(BINDIR)
 	@echo "Linking libcarla_utils$(LIB_EXT)"
-	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs freetype2 x11 xext xinerama) -lpthread -ldl -o $@
+	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs alsa freetype2 x11 xext xinerama) -lpthread -ldl -o $@
 
 $(BINDIR)/twindy-dbg: $(OBJS)
 	-@mkdir -p $(BINDIR)
 	@echo "Linking libcarla_utils$(LIB_EXT)"
-	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs freetype2 x11 xext xinerama) -lpthread -ldl -o $@
+	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs alsa freetype2 x11 xext xinerama) -lpthread -ldl -o $@
 
 # --------------------------------------------------------------
 

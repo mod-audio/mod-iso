@@ -204,9 +204,7 @@ public:
     virtual void paintTab (Graphics& g, bool isTheCurrentTab, const TwindyTabbedComponent* ownerTabbedComp);
 
     void mouseDown (const MouseEvent& e);
-    void mouseWheelMove (const MouseEvent& e,
-                                     float wheelIncrementX,
-                                     float wheelIncrementY);
+    void mouseWheelMove (const MouseEvent& e, float wheelIncrementX, float wheelIncrementY);
 
 private:
     void paint (Graphics& g);

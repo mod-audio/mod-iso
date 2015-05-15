@@ -83,9 +83,9 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	int getNumWindows() const {return windows.size();};
 
 	///	Sets this workspace's name.
-	void setName(const JUCE_NAMESPACE::String& newName);
+	void setName(const String& newName);
 	///	Returns this workspace's name.
-	const JUCE_NAMESPACE::String& getName() const {return name;};
+	const String& getName() const {return name;};
 
 	///	This is called whenever a new tab is selected.
 	/*!
@@ -94,14 +94,14 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	 */
 	void tabWasClicked(int newSelectedIndex,
 					   bool clickedTabWasAlreadySelected,
-  					   const JUCE_NAMESPACE::ModifierKeys &currentModifiers);
+  					   const ModifierKeys &currentModifiers);
 
 	///	We override this to pass the event on to TwindyRootWindow.
 	/*!
 		We need to pass it on to TwindyRootWindow because we want to give the
 		current window focus when the mouse is over it.
 	 */
-	void mouseMove(const JUCE_NAMESPACE::MouseEvent& e);
+	void mouseMove(const MouseEvent& e);
 
 	///	Indicates that the user has clicked close on one of our tabs.
 	void closeTab(TwindyUpperTab *tab);
@@ -110,9 +110,9 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	/*!
 		\param path The path to the tracktionscheme specified in twindyrc.
 	 */
-	void setSchemePath(const JUCE_NAMESPACE::String& path);
+	void setSchemePath(const String& path);
 	///	Returns this panel's colours (the path to the tracktionscheme).
-	const JUCE_NAMESPACE::String& getSchemePath() const {return coloursPath;};
+	const String& getSchemePath() const {return coloursPath;};
 	///	Returns a pointer to this panel's colour scheme.
 	TracktionScheme *getTracktionScheme() const {return colours;};
   private:
@@ -126,15 +126,15 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	bool dontShowHideWindows;
 
 	///	What windows are in this workspace.
-	JUCE_NAMESPACE::OwnedArray<TwindyWindow> windows;
+	OwnedArray<TwindyWindow> windows;
 	///	Index to the currently visible window in this workspace.
 	int visibleWindow;
 
 	///	This workspace's name (what's displayed on the tab).
-	JUCE_NAMESPACE::String name;
+	String name;
 
 	///	Path to this panel's colours.
-	JUCE_NAMESPACE::String coloursPath;
+	String coloursPath;
 	///	The panel's actual colours.
 	TracktionScheme *colours;
 };
@@ -146,32 +146,31 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	*nice*-looking font.
  */
 class TwindyUpperTab : public TwindyTabbedComponentBasicTab,
-					   public JUCE_NAMESPACE::ButtonListener
+                       public ButtonListener
 {
-  public:
-	///	Constructor.
-	TwindyUpperTab(const JUCE_NAMESPACE::String &text, JUCE_NAMESPACE::Colour textCol, JUCE_NAMESPACE::Colour fill);
-	///	Destructor.
-	~TwindyUpperTab();
+public:
+    /// Constructor.
+    TwindyUpperTab(const String& text, Colour textCol, Colour fillCol);
+    /// Destructor.
+    ~TwindyUpperTab() override;
 
-	///	We alter this slightly to use a nicer font.
-	void paintTab(JUCE_NAMESPACE::Graphics &g,
-  				  bool isTheCurrentTab,
-  				  const JUCE_NAMESPACE::TabbedComponent *ownerTabbedComp);
+    /// We alter this slightly to use a nicer font.
+    void paintTab(Graphics& g, bool isTheCurrentTab, const TwindyTabbedComponent* ownerTabbedComp) override;
 
-  	///	So the close button gets placed correctly.
-	void resized();
+    /// So the close button gets placed correctly.
+    void resized() override;
 
-	///	So we're notified when the close button is clicked.
-	void buttonClicked(JUCE_NAMESPACE::Button* button);
-  private:
-	///	The button used to close the window associated with this tab.
-	JUCE_NAMESPACE::ShapeButton *closeButton;
+    /// So we're notified when the close button is clicked.
+    void buttonClicked(Button* button) override;
 
-	///	Needed in paintTab.
-	JUCE_NAMESPACE::Colour text;
-	///	Needed in paintTab.
-	JUCE_NAMESPACE::Colour fill;
+private:
+    /// The button used to close the window associated with this tab.
+    ShapeButton* closeButton;
+
+    /// Needed in paintTab.
+    Colour textColor;
+    /// Needed in paintTab.
+    Colour fillColor;
 };
 
 #endif

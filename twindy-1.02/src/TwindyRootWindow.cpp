@@ -60,7 +60,6 @@ currentlyInFocus(false)
         upperPanelComps[0] = nullptr;
         upperPanelComps[1] = nullptr;
 
-	int i;
 	TwindyProperty tempProp;
 
 	//Construct this first to make sure we get any error messages that might be
@@ -157,7 +156,6 @@ currentlyInFocus(false)
 	}
 
 	workspaces->setCurrentTabIndex(1);
-	preferences->updateWorkspaces();
 
 	//Set up buttons.
 	addAndMakeVisible(exitButton = new DrawableTextButton(T("Log Off..."),
@@ -306,8 +304,8 @@ TwindyRootWindow::~TwindyRootWindow()
 	Thread::yield();
 
 	//Kill any programs we ran at startup.
-	for(i=0;i<pidArray.size();++i)
-		kill(pidArray[i], SIGTERM);
+	for (i=0;i<pidArray.size();++i)
+            kill(pidArray[i], SIGTERM);
 
 	//Remove error display first, so we don't try and delete it twice.
 	removeChildComponent(TwindyErrorDisplay::getInstance());
@@ -315,7 +313,6 @@ TwindyRootWindow::~TwindyRootWindow()
 	deleteAllChildren();
 
 	delete preferences;
-
 	delete properties;
 }
 
@@ -546,33 +543,31 @@ void TwindyRootWindow::buttonClicked(Button* button)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::setVisibleUpperPanel(int index)
 {
-	//Hide currently-visible window, if this isn't the preferences panel.
-	if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
-            if (upperPanelComps[currentUpperPanelComp] != nullptr)
-                upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(false);
+    // Hide currently-visible window, if this isn't the preferences panel.
+    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
+        if (TwindyUpperPanel* const panel = upperPanelComps[currentUpperPanelComp])
+            panel->setWorkspaceIsVisible(false);
 
-	//Set currentUpperPanelComp, making sure index doesn't point to a non-
-	//existant tab.
-	if (index > 1)
-            index = 1;
-        if (upperPanelComps[index] != nullptr)
-            currentUpperPanelComp = index;
-        else
-            currentUpperPanelComp = -1;
+    // Set currentUpperPanelComp, making sure index doesn't point to a non-existant tab.
+    if (index > 1)
+        index = 1;
+    if (index >= 0 && index < 2 && upperPanelComps[index] != nullptr)
+        currentUpperPanelComp = index;
+    else
+        currentUpperPanelComp = -1;
 
-	//Show newly-visible window, if it isn't the preferences panel.
-	if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
-            upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(true);
+    // Show newly-visible window, if it isn't the preferences panel.
+    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
+        upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(true);
 }
 
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::prefsChanged()
 {
-	int i, j;
-	TracktionScheme *prefScheme;
+	const TracktionScheme* prefScheme;
 
-	if(!exitButton)
-		return;
+	if (! exitButton)
+            return;
 
 	//Remove all the current tabs, so we can reset the colours.
 	workspaces->clearTabs();
@@ -611,61 +606,53 @@ void TwindyRootWindow::prefsChanged()
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::updateColours()
 {
-	TracktionScheme *tempScheme;
-	TracktionScheme *prefScheme;
+    const TracktionScheme* tempScheme;
+    const TracktionScheme* prefScheme;
 
-	if(!exitButton)
-		return;
+    if (! exitButton)
+        return;
 
-	if(currentUpperPanelComp == -1)
-	{
-		tempScheme = preferences->getTracktionScheme();
-		prefScheme = tempScheme;
-	}	
-	else
-	{
-		tempScheme = upperPanelComps[currentUpperPanelComp]->getTracktionScheme();
-		prefScheme = preferences->getTracktionScheme();
-	}
+    if (currentUpperPanelComp == -1)
+    {
+        tempScheme = preferences->getTracktionScheme();
+        prefScheme = tempScheme;
+    }
+    else
+    {
+        tempScheme = upperPanelComps[currentUpperPanelComp]->getTracktionScheme();
+        prefScheme = preferences->getTracktionScheme();
+    }
 
-	colours.mainBackground = tempScheme->getColour(T("mainBackground"));
-	colours.tabAreaBackground = prefScheme->getColour(T("tabAreaBackground"));
-	colours.menuText = tempScheme->getColour(T("menuText"));
-	colours.propertyPanelBackground = tempScheme->getColour(T("propertyPanelBackground"));
-	colours.propertyPanelText = tempScheme->getColour(T("propertyPanelText"));
-	colours.propertyPanelOutline = tempScheme->getColour(T("propertyPanelOutline"));
-	colours.selectedFilterOutline = tempScheme->getColour(T("selectedFilterOutline"));
-	colours.yellowButton = tempScheme->getColour(T("yellowButton"));
-	colours.blueButton = tempScheme->getColour(T("blueButton"));
+    colours.mainBackground = tempScheme->getColour(T("mainBackground"));
+    colours.tabAreaBackground = prefScheme->getColour(T("tabAreaBackground"));
+    colours.menuText = tempScheme->getColour(T("menuText"));
+    colours.propertyPanelBackground = tempScheme->getColour(T("propertyPanelBackground"));
+    colours.propertyPanelText = tempScheme->getColour(T("propertyPanelText"));
+    colours.propertyPanelOutline = tempScheme->getColour(T("propertyPanelOutline"));
+    colours.selectedFilterOutline = tempScheme->getColour(T("selectedFilterOutline"));
+    colours.yellowButton = tempScheme->getColour(T("yellowButton"));
+    colours.blueButton = tempScheme->getColour(T("blueButton"));
 
-	exitButton->setBackgroundColours(colours.yellowButton,
-									 colours.yellowButton.darker(2.5f));
-	exitButton->setTextColour(colours.menuText);
-	leftButton1->setBackgroundColours(colours.blueButton,
-									  colours.blueButton.darker(2.5f));
-	leftButton1->setTextColour(colours.menuText);
-	leftButton2->setBackgroundColours(colours.blueButton,
-									  colours.blueButton.darker(2.5f));
-	leftButton2->setTextColour(colours.menuText);
-	leftButton3->setBackgroundColours(colours.blueButton,
-									  colours.blueButton.darker(2.5f));
-	leftButton3->setTextColour(colours.menuText);
-	leftButton4->setBackgroundColours(colours.blueButton,
-									  colours.blueButton.darker(2.5f));
-	leftButton4->setTextColour(colours.menuText);
-	leftButton5->setBackgroundColours(colours.blueButton,
-									  colours.blueButton.darker(2.5f));
-	leftButton5->setTextColour(colours.menuText);
-	leftButton6->setBackgroundColours(colours.blueButton,
-									  colours.blueButton.darker(2.5f));
-	leftButton6->setTextColour(colours.menuText);
-	leftButton7->setBackgroundColours(colours.blueButton,
-									  colours.blueButton.darker(2.5f));
-	leftButton7->setTextColour(colours.menuText);
+    exitButton->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
+    exitButton->setTextColour(colours.menuText);
+    leftButton1->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+    leftButton1->setTextColour(colours.menuText);
+    leftButton2->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+    leftButton2->setTextColour(colours.menuText);
+    leftButton3->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+    leftButton3->setTextColour(colours.menuText);
+    leftButton4->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+    leftButton4->setTextColour(colours.menuText);
+    leftButton5->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+    leftButton5->setTextColour(colours.menuText);
+    leftButton6->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+    leftButton6->setTextColour(colours.menuText);
+    leftButton7->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+    leftButton7->setTextColour(colours.menuText);
 
-	clock->setColour(prefScheme->getColour(T("propertyPanelText")));
+    clock->setColour(prefScheme->getColour(T("propertyPanelText")));
 
-	repaint();
+    repaint();
 }
 
 //----------------------------------------------------------------------------------------------

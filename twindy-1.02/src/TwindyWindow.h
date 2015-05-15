@@ -40,9 +40,6 @@ class TwindyWindow
 	///	Destructor.
 	~TwindyWindow();
 
-	///	Finds the window in the Xserver window tree.
-	//void initialiseWindow();
-
 	///	Called to close the window/program.
 	/*!
 		Note: This does \emph not get called from the destructor, because

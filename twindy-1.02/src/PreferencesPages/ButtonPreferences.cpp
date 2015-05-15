@@ -235,9 +235,7 @@ void TwindyButtonPreferences::paintOverChildren(Graphics &g)
 }
 
 //------------------------------------------------------------------------------
-void TwindyButtonPreferences::setColours(const Colour& backCol,
-										 const Colour& textCol,
-										 const Colour& buttonCol)
+void TwindyButtonPreferences::setColours(const Colour& backCol, const Colour& textCol, const Colour& buttonCol)
 {
 	backgroundColour = backCol;
 	textColour = textCol;

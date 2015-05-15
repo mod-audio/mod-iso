@@ -24,26 +24,20 @@
 
 #include "juce_amalgamated.h"
 
-///	JUCE TabbedComponent subclass to handle the workspace and preferences tabs.
+/// JUCE TabbedComponent subclass to handle the workspace and preferences tabs.
 class TwindyTabs : public TabbedComponent
 {
-  public:
-	///	Constructor.
-	TwindyTabs();
-	///	Destructor.
-	~TwindyTabs();
+public:
+    /// Constructor.
+    TwindyTabs();
 
-	///	Creates the Component for the indexed tab.
-	Component *createPanelComponentForTab(const int tabIndex,
-  										  const String& tabName,
-  										  bool& componentCanBeDeleted);
+    /// We use this to determine when to hide/show windows.
+    void currentTabChanged(const int newCurrentTabIndex,
+                           const String& newCurrentTabName) override;
 
-	///	We use this to determine when to hide/show windows.
-	void currentTabChanged(const int newCurrentTabIndex,
-						   const String& newCurrentTabName);
-  private:
-	///	We use this to determine when the user's on the Preferences panel.
-	bool preferences;
+private:
+    /// We use this to determine when the user's on the Preferences panel.
+    bool preferences;
 };
 
 #endif
