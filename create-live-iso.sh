@@ -68,6 +68,8 @@ if [ ! -d ~/livecd/custom/var/mod-live ]; then
   sudo mkdir ~/livecd/custom/var/mod-live
 fi
 
+sudo touch ~/livecd/custom/var/mod-live/using-live-iso
+
 # -------------------------------------------------------------------------------------------
 # enable network
 
@@ -140,7 +142,8 @@ fi
 # -------------------------------------------------------------------------------------------
 # Full install
 
-run_chroot_cmd apt-get install -y kxstudio-meta-live-conflicts \
+run_chroot_cmd apt-get install -y --no-install-recommends \
+    kxstudio-default-settings kxstudio-meta-live-conflicts \
     acpid alsa-base alsa-utils pm-utils xdg-utils xorg \
     casper lupin-casper \
     openbox obconf obmenu \
