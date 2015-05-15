@@ -123,7 +123,7 @@ void TwindyRootWindow::callbackFunction(void *event)
         else
         {
             XMoveWindow(display, evt->xmaprequest.window, 162, 37);
-            XResizeWindow(display, evt->xmaprequest.window, getWidth()-162-13, getHeight()-37-13);
+            XResizeWindow(display, evt->xmaprequest.window, getWidth()-162-12, getHeight()-37-12);
         }
 
         XMapWindow(display, evt->xmaprequest.window);
@@ -161,8 +161,8 @@ void TwindyRootWindow::callbackFunction(void *event)
         {
             windowChanges.x = 162;
             windowChanges.y = 37;
-            windowChanges.width = getWidth()-162-13;
-            windowChanges.height = getHeight()-37-13;
+            windowChanges.width = getWidth()-162-12;
+            windowChanges.height = getHeight()-37-12;
         }
 
         windowChanges.sibling = evt->xconfigurerequest.above;
@@ -188,7 +188,7 @@ void TwindyRootWindow::callbackFunction(void *event)
     case EnterNotify:
     {
         TWINDY_DBG_MESSAGE("EnterNotify received.");
-#if 0
+#if 1
         break;
     }
     case LeaveNotify:
@@ -340,7 +340,7 @@ void TwindyRootWindow::launchExecutable(const char *cmd, bool storePid)
 void TwindyRootWindow::removeWindow(Window win)
 {
     //upperPanel->removeWindow(win);
-    for(int i=0;i<upperPanelComps.size();++i)
+    for(int i=0;i<2;++i)
             upperPanelComps[i]->removeWindow(win);
 }
 
@@ -353,29 +353,26 @@ void TwindyRootWindow::giveWindowFocus(TwindyWindow *win)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::redrawWindowName(Window win)
 {
-	int i, j;
-	String tempstr;
-	XTextProperty textProp;
-	TwindyUpperTab *tempTab;
+    if (TwindyUpperPanel* const panel = upperPanelComps[1])
+    {
+        for (int j=0, numWindows=panel->getNumWindows(); j<numWindows; ++j)
+        {
+            if (panel->getWindow(j)->getWindow() != win)
+                continue;
 
-	//Update the upper window's text if necessary.
-	for(i=0;i<upperPanelComps.size();++i)
-	{
-		for(j=0;j<upperPanelComps[i]->getNumWindows();++j)
-		{
-			if(upperPanelComps[i]->getWindow(j)->getWindow() == win)
-			{
-				if(XGetWMName(display, win, &textProp))
-				{
-					tempstr = (const char *)(textProp.value);
-					tempTab = static_cast<TwindyUpperTab *>(upperPanelComps[i]->getTabComponent(j));
-					tempTab->setName(tempstr);
-					repaint();
-					free(textProp.value); //?
-				}
-			}
-		}
-	}
+            XTextProperty textProp;
+
+            if (XGetWMName(display, win, &textProp))
+            {
+                const String tempstr = (const char*)(textProp.value);
+                TwindyUpperTab* const tempTab = static_cast<TwindyUpperTab*>(panel->getTabComponent(j));
+                tempTab->setName(tempstr);
+                repaint();
+
+                XFree(textProp.value); //?
+            }
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------

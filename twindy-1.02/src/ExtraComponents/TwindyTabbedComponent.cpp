@@ -203,8 +203,9 @@ private:
 
 
 //==============================================================================
-TwindyTabbedComponent::TwindyTabbedComponent (const String& name)
+TwindyTabbedComponent::TwindyTabbedComponent (const String& name, OperationMode m)
     : Component (name),
+      mode (m),
       orientation (TabsAtTop),
       currentTab (-1),
       tabAreaWidth (25),
@@ -227,6 +228,9 @@ TwindyTabbedComponent::TwindyTabbedComponent (const String& name)
 
     addChildComponent (scrollbar = new ScrollBar (true));
     scrollbar->addListener ((TwindyTabHolderComponent*)tabs);
+
+    if (mode == ModeMOD)
+        return;
 
     for (int i = 6; --i >= 0;)
         addAndMakeVisible (outlineComps[i] = new TwindyTabEdgeDrawComponent());
@@ -408,11 +412,18 @@ void TwindyTabbedComponent::tabsChanged()
 
 void TwindyTabbedComponent::paint (Graphics& g)
 {
+    if (mode == ModeMOD)
+    {
+        g.setColour (Colour());
+        g.fillRect (getBounds());
+        return;
+    }
+
 	const int lowerBorder = static_cast<int>(getHeight());
 	int textHeight = 425;
 	float textStretch = 8.0f;
 	int textStart;
-	Font tempFont(16.0f, Font::bold);
+	Font tempFont(30.0f, Font::bold);
 
 	g.setFont(tempFont);
 
@@ -421,10 +432,7 @@ void TwindyTabbedComponent::paint (Graphics& g)
 	textStretch = (float)textHeight * (8.0f/425.0f);
 
 	g.setColour(fillCol);
-	g.drawTextAsPath(T("Twindy"),
-					 AffineTransform::identity.scaled(textStretch, 6.0f).
-					 followedBy(AffineTransform::identity.rotated(-1.570796327f).
-					 followedBy(AffineTransform::identity.translated(100, textStart))));
+	g.drawText(T("MOD"), 5, 400, 150, 200, Justification::bottomLeft, true);
 
     if (contents == 0 || !contents->isOpaque())
     {
@@ -435,6 +443,9 @@ void TwindyTabbedComponent::paint (Graphics& g)
 
 void TwindyTabbedComponent::resized()
 {
+    if (mode == ModeMOD)
+        return;
+
     scrollbar->setCurrentRange (scrollbar->getCurrentRangeStart(),
                                 (scrollbar->isVertical()) ? tabs->getHeight()
                                                           : tabs->getWidth());
@@ -581,13 +592,16 @@ void TwindyTabbedComponent::resized()
             p.lineTo (cx1, cy2);
             p.closeSubPath();
         }
+        if (mode == ModePreferences)
+            outlineShape = p.createPathWithRoundedCorners (cornerSize);
+        else
+            outlineShape = p;
     }
     else
     {
         p.addRectangle (cx1, cy1, cx2 - cx1, cy2 - cy1);
+        outlineShape = p;
     }
-
-    outlineShape = p.createPathWithRoundedCorners (cornerSize);
 
     strokedOutline.clear();
     PathStrokeType strokeType ((selectedTab != 0) ? selectedOutlineThickness

@@ -28,8 +28,8 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
-TwindyUpperPanel::TwindyUpperPanel():
-TwindyTabbedComponent(T("Upper Panel")),
+TwindyUpperPanel::TwindyUpperPanel(bool isMOD):
+TwindyTabbedComponent(T("Upper Panel"), isMOD ? TwindyTabbedComponent::ModeMOD : TwindyTabbedComponent::ModeDev),
 workspaceVisible(false),
 dontShowHideWindows(false),
 visibleWindow(-1)
@@ -75,8 +75,7 @@ void TwindyUpperPanel::setWorkspaceIsVisible(bool val)
 }
 
 //------------------------------------------------------------------------------
-void TwindyUpperPanel::addWindow(TwindyWindow *newWindow,
-								 TwindyUpperTab *newTab)
+void TwindyUpperPanel::addWindow(TwindyWindow *newWindow, TwindyUpperTab *newTab)
 {
 	addTab(getNumTabs(), newTab);
 	windows.add(newWindow);
@@ -181,8 +180,8 @@ void TwindyUpperPanel::setName(const String& newName)
 
 //------------------------------------------------------------------------------
 void TwindyUpperPanel::tabWasClicked(int newSelectedIndex,
-					   				 bool clickedTabWasAlreadySelected,
-  					   				 const ModifierKeys &currentModifiers)
+                                     bool clickedTabWasAlreadySelected,
+                                     const ModifierKeys &currentModifiers)
 {
 	if(!clickedTabWasAlreadySelected)
 	{

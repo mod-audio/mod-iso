@@ -53,14 +53,12 @@ class TwindyTabbedComponent  : public Component
 {
 public:
     //==============================================================================
-    /** Creates a tabbed component.
-    */
-    TwindyTabbedComponent (const String& name);
-
-    /** Destructor. */
-    ~TwindyTabbedComponent();
-
-    //==============================================================================
+    enum OperationMode
+    {
+        ModePreferences,
+        ModeMOD,
+        ModeDev
+    };
     enum TabOrientation
     {
         TabsAtTop,
@@ -68,6 +66,14 @@ public:
         TabsAtLeft,
         TabsAtRight
     };
+
+    //==============================================================================
+    /** Creates a tabbed component.
+    */
+    TwindyTabbedComponent (const String& name, enum OperationMode);
+
+    /** Destructor. */
+    ~TwindyTabbedComponent();
 
     // set the position and size of the tab area.
     // If the tabs are on the left/right, tabAreaSize is the width of this area,
@@ -157,6 +163,7 @@ private:
     friend class TwindyTabbedComponentBasicTab;
     friend class TwindyTabEdgeDrawComponent;
 
+    OperationMode mode;
     TabOrientation orientation;
     int currentTab, tabAreaWidth, overlapPixels, xGap, yGap, leftTopInset, rightBottomInset;
     Colour fillCol, deselectedTabCol, textCol, selectedOutlineCol, normalOutlineCol;

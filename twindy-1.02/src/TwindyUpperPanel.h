@@ -41,7 +41,7 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 {
   public:
 	///	Constructor.
-	TwindyUpperPanel();
+	TwindyUpperPanel(bool isMOD);
 	///	Destructor.
 	~TwindyUpperPanel();
 

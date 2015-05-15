@@ -88,11 +88,7 @@ class TwindyRootWindow : public Component,
 
 	///	Called from TwindyTabs to get a pointer to it's workspace contents.
 	TwindyUpperPanel *getUpperPanel(int index) {return upperPanelComps[index];};
-	///	Returns the number of workspaces currently available.
-	/*!
-		Does not include the preferences page.
-	 */
-	int getNumUpperPanels() const {return upperPanelComps.size();};
+
 	///	Called from TwindyTabs to tell us which tab is currently visible.
 	/*!
 		-1 means the preferences tab is visible.
@@ -153,7 +149,7 @@ class TwindyRootWindow : public Component,
 	///	TabbedComponent holding all the workspace Components.
 	TwindyTabs *workspaces;
 	///	Array of workspace Components.
-	OwnedArray<TwindyUpperPanel> upperPanelComps;
+	TwindyUpperPanel* upperPanelComps[2];
 	///	The preferences panel.
 	TwindyPreferences *preferences;
 	///	Index of the currently visible workspace Component.

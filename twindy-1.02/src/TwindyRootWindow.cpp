@@ -57,6 +57,9 @@ exitButton(0),
 properties(0),
 currentlyInFocus(false)
 {
+        upperPanelComps[0] = nullptr;
+        upperPanelComps[1] = nullptr;
+
 	int i;
 	TwindyProperty tempProp;
 
@@ -114,57 +117,45 @@ currentlyInFocus(false)
 	preferences = new TwindyPreferences();
 	preferences->setTracktionScheme(properties->getProperty(T("TracktionScheme")).name);
 	preferences->setPrefColours(colours.propertyPanelBackground,
-								colours.propertyPanelText,
-								colours.selectedFilterOutline,
-								colours.propertyPanelOutline,
-								colours.mainBackground,
-								colours.blueButton);
-	preferences->setTabOrientation(TwindyTabbedComponent::TabsAtLeft,
-								   150,
-								   150,
-								   1);
-	workspaces->addTab(TRANS("Preferences"),
-					   colours.mainBackground, 
-					   preferences, 
-					   false);
+                                    colours.propertyPanelText,
+                                    colours.selectedFilterOutline,
+                                    colours.propertyPanelOutline,
+                                    colours.mainBackground,
+                                    colours.blueButton);
+	preferences->setTabOrientation(TwindyTabbedComponent::TabsAtLeft, 150, 150, 1);
+	workspaces->addTab(TRANS("Preferences"), colours.mainBackground, preferences, false);
 	workspaces->setCurrentTabIndex(0);
-	//Load workspaces.
-	tempProp = properties->getProperty(T("Workspace"));
-	if(tempProp.name == T("nil"))
+
+	// Setup workspaces.
+
 	{
-		//It's an older twindyrc, with no Workspace entries, and we need to
-		//update it.
-		TWINDY_DBG_MESSAGE("Pre-v0.40 twindyrc, updating workspaces.");
-		tempProp.name = T(".");
-		tempProp.value = T(".");
-		properties->setProperty(T("Workspace"), tempProp);
-		tempProp.name = T("Workspace 1");
-		tempProp.value = T("~/.twindy/Default.tracktionscheme");
-		properties->setSubProperty(T("Workspace"), tempProp);
+            TwindyUpperPanel* const panelMOD = new TwindyUpperPanel(true);
+            panelMOD->setName(T("MOD Workspace"));
+            panelMOD->setTabOrientation(TwindyTabbedComponent::TabsAtLeft, 150, 150, 1);
+
+            TwindyUpperPanel* const panelDEV = new TwindyUpperPanel(false);
+            panelDEV->setName(T("Dev Tools"));
+            panelDEV->setTabOrientation(TwindyTabbedComponent::TabsAtLeft, 150, 150, 1);
+
+            panelMOD->setColours(colours.propertyPanelBackground,
+                                 colours.propertyPanelText,
+                                 colours.selectedFilterOutline,
+                                 colours.propertyPanelOutline,
+                                 colours.mainBackground);
+
+            panelDEV->setColours(colours.propertyPanelBackground,
+                                 colours.propertyPanelText,
+                                 colours.selectedFilterOutline,
+                                 colours.propertyPanelOutline,
+                                 colours.mainBackground);
+
+            upperPanelComps[0] = panelMOD;
+            upperPanelComps[1] = panelDEV;
+
+            workspaces->addTab("MOD Workspace", Colour(37, 37, 37), panelMOD, false);
+            workspaces->addTab("Dev Tools",     Colour(37, 37, 37), panelDEV, false);
 	}
-	for(i=0;i<properties->getNumSubProperties(T("Workspace"));++i)
-	{
-		TracktionScheme *tempScheme;
-		upperPanelComps.add(new TwindyUpperPanel());
-		upperPanelComps[i]->setName(properties->getSubProperty(T("Workspace"),
-															   i).name);
-		upperPanelComps[i]->setSchemePath(properties->getSubProperty(T("Workspace"),
-															  i).value);
-		tempScheme = upperPanelComps[i]->getTracktionScheme();
-		upperPanelComps[i]->setColours(tempScheme->getColour(T("propertyPanelBackground")),
-									   tempScheme->getColour(T("propertyPanelText")),
-									   tempScheme->getColour(T("selectedFilterOutline")),
-									   tempScheme->getColour(T("propertyPanelOutline")),
-									   tempScheme->getColour(T("mainBackground")));
-		upperPanelComps[i]->setTabOrientation(TwindyTabbedComponent::TabsAtLeft,
-											  150,
-											  150,
-											  1);
-		workspaces->addTab(upperPanelComps[i]->getName(),
-						   tempScheme->getColour(T("mainBackground")),
-						   upperPanelComps[i],
-						   false);
-	}
+
 	workspaces->setCurrentTabIndex(1);
 	preferences->updateWorkspaces();
 
@@ -556,20 +547,22 @@ void TwindyRootWindow::buttonClicked(Button* button)
 void TwindyRootWindow::setVisibleUpperPanel(int index)
 {
 	//Hide currently-visible window, if this isn't the preferences panel.
-	if((currentUpperPanelComp < upperPanelComps.size())&&
-	   (currentUpperPanelComp > -1))
-		upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(false);
+	if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
+            if (upperPanelComps[currentUpperPanelComp] != nullptr)
+                upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(false);
 
 	//Set currentUpperPanelComp, making sure index doesn't point to a non-
 	//existant tab.
-	if(index >= upperPanelComps.size())
-		index = (upperPanelComps.size()-1);
-	currentUpperPanelComp = index;
+	if (index > 1)
+            index = 1;
+        if (upperPanelComps[index] != nullptr)
+            currentUpperPanelComp = index;
+        else
+            currentUpperPanelComp = -1;
 
 	//Show newly-visible window, if it isn't the preferences panel.
-	if((currentUpperPanelComp < upperPanelComps.size())&&
-	   (currentUpperPanelComp > -1))
-		upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(true);
+	if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
+            upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(true);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -581,53 +574,6 @@ void TwindyRootWindow::prefsChanged()
 	if(!exitButton)
 		return;
 
-	//Handle workspace changes.
-	int newWorkspaces;
-	int oldWorkspaces;
-	newWorkspaces = properties->getNumSubProperties(T("Workspace"));
-	oldWorkspaces = upperPanelComps.size();
-	if(newWorkspaces < oldWorkspaces)
-	{
-		for(i=(oldWorkspaces-1);i>=newWorkspaces;--i)
-		{
-			std::string tempstr;
-
-			tempstr = "extraWS no.";
-			tempstr += i;
-			TWINDY_DBG_MESSAGE(tempstr);
-			//Move any newly-orphaned windows to the first valid workspace.
-			for(j=(upperPanelComps[i]->getNumWindows()-1);j>=0;--j)
-			{
-				tempstr = "extraWindow no.";
-				tempstr += j;
-				TWINDY_DBG_MESSAGE(tempstr);
-				TwindyUpperTab *newTab = new TwindyUpperTab(T("Browser"),
-															colours.propertyPanelText,
-															colours.propertyPanelBackground);
-				upperPanelComps[newWorkspaces-1]->addWindow(upperPanelComps[i]->getWindow(j),
-															newTab);
-				tempstr = "Added to WS no.";
-				tempstr += newWorkspaces-1;
-				TWINDY_DBG_MESSAGE(tempstr);
-				upperPanelComps[i]->removeIndexedWindow(j);
-			}
-			//Now it's okay, remove the workspace.
-			upperPanelComps.remove(i);
-		}
-	}
-	else if(newWorkspaces > oldWorkspaces)
-	{
-		//Add any new workspaces.
-		for(i=oldWorkspaces;i<newWorkspaces;++i)
-		{
-			TwindyUpperPanel *tempPanel = new TwindyUpperPanel();
-			tempPanel ->setTabOrientation(TwindyTabbedComponent::TabsAtLeft,
-										  150,
-										  150,
-										  1);
-			upperPanelComps.add(tempPanel);
-		}
-	}
 	//Remove all the current tabs, so we can reset the colours.
 	workspaces->clearTabs();
 
@@ -640,28 +586,10 @@ void TwindyRootWindow::prefsChanged()
 								prefScheme->getColour(T("propertyPanelOutline")),
 								prefScheme->getColour(T("mainBackground")),
 								prefScheme->getColour(T("blueButton")));
-	workspaces->addTab(TRANS("Preferences"),
-					   prefScheme->getColour(T("mainBackground")),
-					   preferences,
-					   false);
-	for(i=0;i<properties->getNumSubProperties(T("Workspace"));++i)
-	{
-		TracktionScheme *tempScheme;
-		upperPanelComps[i]->setName(properties->getSubProperty(T("Workspace"),
-															   i).name);
-		upperPanelComps[i]->setSchemePath(properties->getSubProperty(T("Workspace"),
-															  i).value);
-		tempScheme = upperPanelComps[i]->getTracktionScheme();
-		upperPanelComps[i]->setColours(tempScheme->getColour(T("propertyPanelBackground")),
-									   tempScheme->getColour(T("propertyPanelText")),
-									   tempScheme->getColour(T("selectedFilterOutline")),
-									   tempScheme->getColour(T("propertyPanelOutline")),
-									   tempScheme->getColour(T("mainBackground")));
-		workspaces->addTab(upperPanelComps[i]->getName(),
-						   tempScheme->getColour(T("mainBackground")),
-						   upperPanelComps[i],
-						   false);
-	}
+	workspaces->addTab(TRANS("Preferences"), prefScheme->getColour(T("mainBackground")), preferences, false);
+
+	workspaces->addTab(T("MOD Workspace"), Colour(37, 37, 37), upperPanelComps[0], false);
+        workspaces->addTab(T("Dev Tools"),     Colour(37, 37, 37), upperPanelComps[1], false);
 
 	//Set button colours.
 	leftButton1->setButtonText(properties->getProperty(T("LeftButton1")).name);

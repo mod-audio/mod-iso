@@ -31,7 +31,7 @@
 
 //------------------------------------------------------------------------------
 TwindyPreferences::TwindyPreferences():
-TwindyTabbedComponent(T("Twindy Preferences"))
+TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences)
 {
 	realColours = new TracktionScheme(T("~/.twindy/Default.tracktionscheme"));
 	buttons = new TwindyButtonPreferences();

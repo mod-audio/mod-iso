@@ -41,6 +41,7 @@ Component()
 	tempProp->name = T("Preferences");
 	tempProp->value = prop->getProperty(T("TracktionScheme")).name;
 	workspaces.add(tempProp);
+#if 0
 	for(i=0;i<prop->getNumSubProperties(T("Workspace"));++i)
 	{
 		tempProp = new TwindyProperty;
@@ -48,6 +49,7 @@ Component()
 		tempProp->value = prop->getSubProperty(T("Workspace"), i).value;
 		workspaces.add(tempProp);
 	}
+#endif
 
 	//Workspace name editor
 	addAndMakeVisible(textLabel = new Label(T("wtL"), TRANS("Name:")));
