@@ -47,6 +47,10 @@ public:
                         const Colour& deselectedTabColour,
                         const Colour& buttonColour);
 
+    // Set the embed mixer window used in audio tab
+    void setMixerPid(pid_t pid);
+    void setMixerWindow(TwindyWindow* window);
+
     /// Called to set the tracktion scheme used by the preferences page.
     void setTracktionScheme(const String& path);
 
@@ -56,11 +60,23 @@ public:
     /// Called to save any changes made to the TwindyProperties instance.
     void saveChanges();
 
+    // Get mixer window.
+    TwindyWindow* getMixerWindow() const { return mixerWindow; }
+
+protected:
+    // Called when this component's visiblility changes.
+    void visibilityChanged() override;
+
 private:
     /// The current tracktionscheme for the preferences page.
     TracktionScheme realColours;
     /// The varius preferences pages
     AudioPreferences audio;
+    // etc
+
+    // Used for audio mixer
+    pid_t mixerPid;
+    TwindyWindow* mixerWindow;
 };
 
 #endif

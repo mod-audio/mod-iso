@@ -56,12 +56,10 @@ private:
     ComboBox deviceBox, sampleRateBox, bufferSizeBox;
     DrawableText title, subtitle1, subtitle2, labelAdvanced, labelBufSize, labelSampleRate;
 
-    // Used for mixer
-    pid_t mixerPid;
-    TwindyWindow* mixerWindow;
-
     // StringArrays for device discovery.
     StringArray inputNames, outputNames, inputIds, outputIds;
+
+    friend class TwindyPreferences;
 };
 
 #endif

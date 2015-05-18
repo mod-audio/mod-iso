@@ -20,11 +20,14 @@
 
 #include "juce_amalgamated.h"
 #include "TwindyPreferences.h"
+#include "TwindyWindow.h"
 
 //------------------------------------------------------------------------------
 TwindyPreferences::TwindyPreferences()
     : TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences),
-      realColours(T("~/.twindy/Default.tracktionscheme"))
+      realColours(T("~/.twindy/Default.tracktionscheme")),
+      mixerPid(-1),
+      mixerWindow(nullptr)
 {
     addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Audio")));
     addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("MIDI")));
@@ -40,6 +43,9 @@ TwindyPreferences::TwindyPreferences()
 TwindyPreferences::~TwindyPreferences()
 {
     setContentComponent(nullptr);
+
+    if (mixerPid > 0)
+        kill(mixerPid, SIGTERM);
 }
 
 //------------------------------------------------------------------------------
@@ -47,10 +53,15 @@ void TwindyPreferences::tabWasClicked(int newSelectedIndex,
                                       bool clickedTabWasAlreadySelected,
                                       const ModifierKeys& currentModifiers)
 {
+    if (newSelectedIndex != 0 && mixerWindow != nullptr)
+        mixerWindow->hide();
+
     switch (newSelectedIndex)
     {
     case 0:
         setContentComponent(&audio);
+        if (mixerWindow != nullptr)
+            mixerWindow->show();
         break;
     default:
         setContentComponent(nullptr);
@@ -72,6 +83,39 @@ void TwindyPreferences::setPrefColours(const Colour& fillColour,
 }
 
 //------------------------------------------------------------------------------
+void TwindyPreferences::setMixerPid(pid_t p)
+{
+    if (mixerPid > 0)
+    {
+        printf("Killing previous mixer pid %li\n", (long int)p);
+        ::kill(mixerPid, SIGTERM);
+    }
+
+    mixerPid = p;
+}
+
+//------------------------------------------------------------------------------
+void TwindyPreferences::setMixerWindow(TwindyWindow* w)
+{
+    if (mixerWindow != nullptr)
+    {
+        printf("Deleting previous mixer instance %p\n", w);
+        mixerWindow->closeWindow();
+        delete mixerWindow;
+    }
+
+    mixerWindow = w;
+
+    if (w == nullptr || ! isVisible())
+        return;
+
+    if (getCurrentlySelectedTab() == 0)
+        w->show();
+    else
+        w->hide();
+}
+
+//------------------------------------------------------------------------------
 void TwindyPreferences::setTracktionScheme(const String& path)
 {
     //realColours = TracktionScheme(path);
@@ -82,4 +126,20 @@ void TwindyPreferences::saveChanges()
 {
     //if (getContentComponent() == &audio)
     //    audio.saveChanges();
+}
+
+//------------------------------------------------------------------------------
+void TwindyPreferences::visibilityChanged()
+{
+    if (mixerWindow == nullptr)
+        return;
+
+    if (! isVisible())
+    {
+        mixerWindow->hide();
+    }
+    else if (getCurrentlySelectedTab() == 0)
+    {
+        mixerWindow->show();
+    }
 }

@@ -10,7 +10,7 @@ CXX ?= g++
 # --------------------------------------------------------------
 # Set build and link flags
 
-BASE_FLAGS = -Wall -Wextra -pipe -MD -MP -DLINUX -DPHIL_LIGHT -Isrc -Isrc/ExtraComponents -Isrc/PreferencesPages
+BASE_FLAGS = -Wall -pipe -MD -MP -DLINUX -DPHIL_LIGHT -Isrc -Isrc/ExtraComponents -Isrc/PreferencesPages
 BASE_OPTS  = -O2 -mtune=generic -msse -msse2 -fdata-sections -ffunction-sections -fPIC -DPIC
 LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
 

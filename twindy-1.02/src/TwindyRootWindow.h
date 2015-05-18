@@ -145,9 +145,9 @@ class TwindyRootWindow : public Component,
 	///	TabbedComponent holding all the workspace Components.
 	TwindyTabs *workspaces;
 	///	Array of workspace Components.
-	TwindyUpperPanel* upperPanelComps[2];
+	Array<TwindyUpperPanel*> upperPanelComps;
 	///	The preferences panel.
-	TwindyPreferences *preferences;
+	TwindyPreferences* preferences;
 	///	Index of the currently visible workspace Component.
 	int currentUpperPanelComp;
 
@@ -183,9 +183,6 @@ class TwindyRootWindow : public Component,
 	TwindyProperties *properties;
 	///	The colours we use in this window.
 	TwindyColours colours;
-
-	///	Which panel currently has focus: upper(1), or lower(0).
-	bool currentlyInFocus;
 
 	///	An array of the pids for all the programs we started at startup.
 	/*!

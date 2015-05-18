@@ -20,7 +20,9 @@
 
 #include "AudioPreferences.h"
 #include "../TwindyApp.h"
+#include "../TwindyErrorDisplay.h"
 #include "../TwindyProperties.h"
+#include "../TwindyPreferences.h"
 #include "../TwindyRootWindow.h"
 #include "../ExtraComponents/TwindyToggleButton.h"
 #include "../ExtraComponents/DrawableTextButton.h"
@@ -296,9 +298,7 @@ AudioPreferences::AudioPreferences()
     : Component(),
       deviceBox("deviceBox"),
       sampleRateBox("sampleRateBox"),
-      bufferSizeBox("bufferSizeBox"),
-      mixerPid(-1),
-      mixerWindow(nullptr)/*,
+      bufferSizeBox("bufferSizeBox")/*,
       title("title", ""),
       subtitle("subtitle", ""),
       labelAdvanced("labelAdvanced", ""),
@@ -361,9 +361,6 @@ AudioPreferences::AudioPreferences()
 //------------------------------------------------------------------------------
 AudioPreferences::~AudioPreferences()
 {
-    if (mixerPid > 0)
-        kill(mixerPid, SIGTERM);
-
     //deleteAllChildren();
 }
 
@@ -427,7 +424,8 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     if (deviceBox.getSelectedItemIndex() < 0)
         return;
 
-    const String deviceId(deviceBox.getText());
+    //const String deviceId(deviceBox.getText());
+    const String deviceId(outputIds[deviceBox.getSelectedId()-1]);
 
     uint minChansOut = 0;
     uint maxChansOut = 0;
@@ -435,7 +433,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     uint maxChansIn = 0;
     Array<uint> bufferSizes;
     Array<double> sampleRates;
-    getDeviceProperties(outputIds[deviceBox.getSelectedId()-1],
+    getDeviceProperties(deviceId,
                         minChansOut, maxChansOut, minChansIn, maxChansIn,
                         bufferSizes, sampleRates, true, true);
 
@@ -491,5 +489,29 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
             index = 1 + std::floor(float(bufferSizes.size())/2.0f);
 
         bufferSizeBox.setSelectedId(index);
+    }
+
+    String command;
+    command << "konsole -e alsamixer -D ";
+    command << deviceId.upToFirstOccurrenceOf(T(","), false, false);
+
+    printf("Running command: %s\n", command.toUTF8());
+
+    const pid_t pid = vfork();
+
+    switch (pid)
+    {
+    case 0: //Child process - successful.
+        execlp("/bin/sh", "sh", "-c", (const char *)command, NULL);
+        exit(1);
+        break;
+    case -1: //Parent process - unsuccessful.
+        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
+                                                           TRANS("Could not start mixer executable."));
+        break;
+    default: //Parent process - successful.
+        // FIXME
+        ((TwindyPreferences*)getParentComponent()->getParentComponent())->setMixerPid(pid);
+        break;
     }
 }

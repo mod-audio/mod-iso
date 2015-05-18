@@ -52,14 +52,10 @@ extern Display* display;
 //----------------------------------------------------------------------------------------------
 TwindyRootWindow::TwindyRootWindow():
 Component(T("Twindy Window Manager")),
-currentUpperPanelComp(0),
+currentUpperPanelComp(1),
 exitButton(0),
-properties(0),
-currentlyInFocus(false)
+properties(0)
 {
-        upperPanelComps[0] = nullptr;
-        upperPanelComps[1] = nullptr;
-
 	TwindyProperty tempProp;
 
 	//Construct this first to make sure we get any error messages that might be
@@ -112,6 +108,7 @@ currentlyInFocus(false)
 	//workspaces->setOutline(colours.mainBackground, 0);
 	workspaces->setOutline(0);
 	workspaces->setIndent(10);
+
 	//Setup up preferences tab.
 	preferences = new TwindyPreferences();
 	preferences->setTracktionScheme(properties->getProperty(T("TracktionScheme")).name);
@@ -148,8 +145,8 @@ currentlyInFocus(false)
                                  colours.propertyPanelOutline,
                                  colours.mainBackground);
 
-            upperPanelComps[0] = panelMOD;
-            upperPanelComps[1] = panelDEV;
+            upperPanelComps.add(panelMOD);
+            upperPanelComps.add(panelDEV);
 
             workspaces->addTab("MOD Workspace", Colour(37, 37, 37), panelMOD, false);
             workspaces->addTab("Dev Tools",     Colour(37, 37, 37), panelDEV, false);
@@ -543,21 +540,23 @@ void TwindyRootWindow::buttonClicked(Button* button)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::setVisibleUpperPanel(int index)
 {
+    const int upperPanelCompSize = upperPanelComps.size();
+
     // Hide currently-visible window, if this isn't the preferences panel.
-    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
+    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < upperPanelCompSize)
         if (TwindyUpperPanel* const panel = upperPanelComps[currentUpperPanelComp])
             panel->setWorkspaceIsVisible(false);
 
     // Set currentUpperPanelComp, making sure index doesn't point to a non-existant tab.
     if (index > 1)
         index = 1;
-    if (index >= 0 && index < 2 && upperPanelComps[index] != nullptr)
+    if (index >= 0 && index < upperPanelCompSize && upperPanelComps[index] != nullptr)
         currentUpperPanelComp = index;
     else
         currentUpperPanelComp = -1;
 
     // Show newly-visible window, if it isn't the preferences panel.
-    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < 2)
+    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < upperPanelCompSize)
         upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(true);
 }
 
@@ -583,8 +582,11 @@ void TwindyRootWindow::prefsChanged()
 								prefScheme->getColour(T("blueButton")));
 	workspaces->addTab(TRANS("Preferences"), prefScheme->getColour(T("mainBackground")), preferences, false);
 
-	workspaces->addTab(T("MOD Workspace"), Colour(37, 37, 37), upperPanelComps[0], false);
-        workspaces->addTab(T("Dev Tools"),     Colour(37, 37, 37), upperPanelComps[1], false);
+        for (int i=0, size=upperPanelComps.size(); i<size; ++i)
+        {
+            if (TwindyUpperPanel* const panel = upperPanelComps[i])
+                workspaces->addTab(panel->getName(), Colour(37, 37, 37), panel, false);
+        }
 
 	//Set button colours.
 	leftButton1->setButtonText(properties->getProperty(T("LeftButton1")).name);
@@ -654,38 +656,6 @@ void TwindyRootWindow::updateColours()
 
     repaint();
 }
-
-//----------------------------------------------------------------------------------------------
-/*void TwindyRootWindow::mouseMove(const MouseEvent& e)
-{
-	Rectangle temprect;
-
-	//std::cout << "...MouseMove()..." << std::endl;
-	//std::cout << "...currentlyInFocus = " << currentlyInFocus << "..." << std::endl;
-
-	//upperPanel first.
-	temprect.setBounds(10, 30, (getWidth()-20), (getHeight()-270));
-	if((temprect.contains(e.getScreenX(), e.getScreenY())) &&
-	   (!currentlyInFocus))
-	{
-		currentlyInFocus = true;
-
-		if(upperWindow > -1)
-			giveWindowFocus(upperWindows[upperWindow]);
-		return;
-	}
-
-	//Now lowerPanel first.
-	temprect.setBounds(220, (getHeight()-225), (getWidth()-400), 220);
-	if((temprect.contains(e.getScreenX(), e.getScreenY())) &&
-	   (currentlyInFocus))
-	{
-		currentlyInFocus = false;
-
-		if(lowerWindow)
-			giveWindowFocus(lowerWindow);
-	}
-}*/
 
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::loadColours(const String& file)

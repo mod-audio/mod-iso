@@ -19,22 +19,41 @@
 //	----------------------------------------------------------------------------
 
 #include "juce_amalgamated.h"
+#include "TwindyErrorDisplay.h"
 #include "TwindyUpperPanel.h"
 #include "TwindyRootWindow.h"
 #include "TracktionScheme.h"
 
 #include <iostream>
+#include <unistd.h>
 
 using namespace std;
 
 //------------------------------------------------------------------------------
-TwindyUpperPanel::TwindyUpperPanel(bool isMOD):
-TwindyTabbedComponent(T("Upper Panel"), isMOD ? TwindyTabbedComponent::ModeMOD : TwindyTabbedComponent::ModeDev),
-workspaceVisible(false),
-dontShowHideWindows(false),
-visibleWindow(-1)
+TwindyUpperPanel::TwindyUpperPanel(bool isMOD)
+    : TwindyTabbedComponent(T("Upper Panel"), isMOD ? TwindyTabbedComponent::ModeMOD : TwindyTabbedComponent::ModeDev),
+      workspaceVisible(false),
+      dontShowHideWindows(false),
+      visibleWindow(-1)
 {
-	colours = new TracktionScheme(T("~/.twindy/Default.tracktionscheme"));
+    colours = new TracktionScheme(T("~/.twindy/Default.tracktionscheme"));
+
+    if (! isMOD)
+        return;
+
+    const pid_t pid = vfork();
+
+    switch (pid)
+    {
+    case 0: //Child process - successful.
+        execlp("/bin/sh", "sh", "-c", "mod-app", NULL);
+        exit(1);
+        break;
+    case -1: //Parent process - unsuccessful.
+        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
+                                                           TRANS("Could not start mixer executable."));
+        break;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -152,31 +171,27 @@ void TwindyUpperPanel::removeWindowNoDelete(TwindyWindow *window)
 }
 
 //------------------------------------------------------------------------------
-TwindyWindow *TwindyUpperPanel::getCurrentWindow()
+TwindyWindow* TwindyUpperPanel::getCurrentWindow() const
 {
-	TwindyWindow *retval;
+    if (workspaceVisible && (visibleWindow > -1))
+        return windows[visibleWindow];
 
-	if(workspaceVisible && (visibleWindow > -1))
-		retval = windows[visibleWindow];
-	else
-		retval = 0;
-
-	return retval;
+    return nullptr;
 }
 
 //------------------------------------------------------------------------------
-TwindyWindow *TwindyUpperPanel::getWindow(int index)
+TwindyWindow* TwindyUpperPanel::getWindow(int index) const
 {
-	if(index > windows.size())
-		return 0;
-	else
-		return windows[index];
+    if (index < windows.size())
+        return windows[index];
+
+    return nullptr;
 }
 
 //------------------------------------------------------------------------------
 void TwindyUpperPanel::setName(const String& newName)
 {
-	name = newName;
+    name = newName;
 }
 
 //------------------------------------------------------------------------------

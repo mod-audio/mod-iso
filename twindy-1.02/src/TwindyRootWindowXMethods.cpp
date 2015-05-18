@@ -47,6 +47,7 @@ END_JUCE_NAMESPACE
 
 #include "TwindyRootWindow.h"
 #include "TwindyUpperPanel.h"
+#include "TwindyPreferences.h"
 #include "TwindyWindow.h"
 #include "TwindyErrorDisplay.h"
 #include "TwindyHelperStuff.h"
@@ -92,52 +93,84 @@ void TwindyRootWindow::callbackFunction(void *event)
     {
         TWINDY_DBG_MESSAGE("MapRequest received.");
 
+        String name;
+        int target;
         XTextProperty textProp;
-
-        int workspaceIndex = currentUpperPanelComp;
-        if (workspaceIndex < 0)
-            workspaceIndex = 1;
-
-        if (upperPanelComps[workspaceIndex]->getCurrentWindow() && upperPanelComps[workspaceIndex]->isWorkspaceVisible())
-            upperPanelComps[workspaceIndex]->getCurrentWindow()->hide();
-
-        TwindyUpperTab* const newTab = new TwindyUpperTab(T("Browser"),
-                                                          colours.propertyPanelText,
-                                                          colours.propertyPanelBackground);
+        const ::Window window = evt->xmaprequest.window;
 
         //We add all upper windows to the save set, because we might quit
         //unexpectedly while all but the currently mapped window are
         //hidden (unmapped).  This ensures these windows will be mapped if
         //we quit unexpectedly.
-        XAddToSaveSet(display, evt->xmaprequest.window);
+        XAddToSaveSet(display, window);
 
-        XSetWindowBorderWidth(display, evt->xmaprequest.window, 0);
-
-        if (workspaceIndex == 0)
+        if (XGetWMName(display, window, &textProp))
         {
-            XMoveWindow(display, evt->xmaprequest.window, 0, 26);
-            XResizeWindow(display, evt->xmaprequest.window, getWidth(), getHeight()-26);
-        }
-        else
-        {
-            XMoveWindow(display, evt->xmaprequest.window, 162, 37);
-            XResizeWindow(display, evt->xmaprequest.window, getWidth()-162-12, getHeight()-37-12);
-        }
-
-        XMapWindow(display, evt->xmaprequest.window);
-        XSetInputFocus(display, evt->xmaprequest.window, RevertToPointerRoot, CurrentTime);
-
-        //Make sure we get notified when the window's title changes.
-        XSelectInput(display, evt->xmaprequest.window, PropertyChangeMask);
-
-        if (XGetWMName(display, evt->xmaprequest.window, &textProp))
-        {
-            newTab->setName((const char*)(textProp.value));
+            name = (const char*)(textProp.value);
             XFree(textProp.value); //?
         }
 
-        TwindyWindow* const newWin = new TwindyWindow(display, evt->xmaprequest.window);
-        upperPanelComps[workspaceIndex]->addWindow(newWin, newTab);
+        if (name == T("Konsole") || name == T("Shell"))
+        {
+            target = -1;
+            printf("Mixer detected\n");
+        }
+        else if (name.isEmpty())
+        {
+            target = 0;
+            printf("MOD-App detected\n");
+        }
+        else
+        {
+            target = upperPanelComps.size()-1;
+            printf("name is %s\n", name.toUTF8());
+        }
+
+        XSetWindowBorderWidth(display, window, 0);
+
+        switch (target)
+        {
+        case -1:
+            XMoveWindow(display, window, 162, 250);
+            XResizeWindow(display, window, getWidth()-162-12, getHeight()-250-12);
+            break;
+        case 0:
+            XMoveWindow(display, window, 0, 26);
+            XResizeWindow(display, window, getWidth(), getHeight()-26);
+            break;
+        default:
+            XMoveWindow(display, window, 162, 37);
+            XResizeWindow(display, window, getWidth()-162-12, getHeight()-37-12);
+            break;
+        }
+
+        TwindyWindow* const newWin = new TwindyWindow(display, window);
+
+        if (target >= 0)
+        {
+            if (target > 0 && upperPanelComps[target]->isWorkspaceVisible())
+                if (TwindyWindow* const twindow = upperPanelComps[target]->getCurrentWindow())
+                    twindow->hide();
+
+            XMapWindow(display, window);
+            XSetInputFocus(display, window, RevertToPointerRoot, CurrentTime);
+
+            //Make sure we get notified when the window's title changes.
+            XSelectInput(display, window, PropertyChangeMask);
+
+            TwindyUpperTab* const newTab = new TwindyUpperTab(T("Unnamed"),
+                                                              colours.propertyPanelText,
+                                                              colours.propertyPanelBackground);
+            if (name.isNotEmpty())
+                newTab->setName(name);
+
+            upperPanelComps[target]->addWindow(newWin, newTab);
+        }
+        else
+        {
+            preferences->setMixerWindow(newWin);
+        }
+
         break;
     }
     case ConfigureRequest:
@@ -148,19 +181,26 @@ void TwindyRootWindow::callbackFunction(void *event)
 
         XWindowChanges windowChanges;
 
-        if (currentUpperPanelComp == 0)
+        switch (currentUpperPanelComp)
         {
+        case -1:
+            windowChanges.x = 162;
+            windowChanges.y = 250;
+            windowChanges.width = getWidth()-162-12;
+            windowChanges.height = getHeight()-250-12;
+            break;
+        case 0:
             windowChanges.x = 0;
             windowChanges.y = 26;
             windowChanges.width = getWidth();
             windowChanges.height = getHeight()-26;
-        }
-        else
-        {
+            break;
+        default:
             windowChanges.x = 162;
             windowChanges.y = 37;
             windowChanges.width = getWidth()-162-12;
             windowChanges.height = getHeight()-37-12;
+            break;
         }
 
         windowChanges.sibling = evt->xconfigurerequest.above;
@@ -194,19 +234,34 @@ void TwindyRootWindow::callbackFunction(void *event)
         TWINDY_DBG_MESSAGE("LeaveNotify received.");
 #endif
 
-        if (currentUpperPanelComp < 0 || isCurrentlyBlockedByAnotherModalComponent())
+        if (isCurrentlyBlockedByAnotherModalComponent())
             return;
 
         Rectangle temprect;
 
-        if (currentUpperPanelComp == 0)
+        switch (currentUpperPanelComp)
+        {
+        case -1:
+            temprect.setBounds(162, 250, getWidth()-162-12, getHeight()-250-12);
+            break;
+        case 0:
             temprect.setBounds(0, 26, getWidth(), getHeight()-26);
-        else
-            temprect.setBounds(162, 37, getWidth()-162-13, getHeight()-37-13);
+            break;
+        default:
+            temprect.setBounds(162, 37, getWidth()-162-12, getHeight()-37-12);
+            break;
+        }
 
         if (temprect.contains(evt->xcrossing.x_root, evt->xcrossing.y_root))
         {
-            if (TwindyWindow* const window = upperPanelComps[currentUpperPanelComp]->getCurrentWindow())
+            TwindyWindow* window;
+
+            if (currentUpperPanelComp == -1)
+                window = preferences->getMixerWindow();
+            else
+                window = upperPanelComps[currentUpperPanelComp]->getCurrentWindow();
+
+            if (window != nullptr)
                 XSetInputFocus(display, window->getWindow(), RevertToPointerRoot, CurrentTime);
         }
         break;
@@ -231,49 +286,46 @@ Window TwindyRootWindow::getActualWindow()
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::setupMappingRedirect()
 {
-	int test;
-	struct sigaction act;
-    sigset_t maskSet;
-	XSetWindowAttributes att;
-	//To set the cursor to the usual pointer, rather than that horrible default X...
-	Cursor cursor = XCreateFontCursor(display, XC_left_ptr);
+    XSetWindowAttributes att;
 
-	//Here we just add SubstructureRedirectMask (&...) in order to get notified
-	//when new windows open - the rest are copied from juce_linux_windowing.cpp.
-	//We need them in order to get all the key, mouse etc. events as normal.
-	att.event_mask = SubstructureRedirectMask | //To be told when a program wants to be mapped.
-					 SubstructureNotifyMask | //To be told when a program has quit.
-					 EnterWindowMask | //To be told when the cursor moves over a window.
-					 LeaveWindowMask | //To be told when the cursor leaves a window.
-					 //StructureNotifyMask | //Necessary?
-					 KeyPressMask | KeyReleaseMask |
-					 ButtonPressMask | ButtonReleaseMask | EnterWindowMask |
-					 LeaveWindowMask | PointerMotionMask |KeymapStateMask |
-     				 ExposureMask | StructureNotifyMask | FocusChangeMask;
-	att.cursor = cursor;
-	test = XChangeWindowAttributes(display,
-								   RootWindow(display,
-											  DefaultScreen(display)),
-								   CWEventMask|CWCursor,
-								   &att);
-	if(test == BadAccess)
-	{
-		//Not sure this part is correct - we quit the program in xErrorHandler.
-		TWINDY_DBG_MESSAGE("BadAccess error for XChangeWindowAttributes()");
-		TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-														   TRANS("Failed: BadAccess error (another window's already redirecting the relevant events)."));
-		exit(1);
-	}
+    // Here we just add SubstructureRedirectMask (&...) in order to get notified
+    // when new windows open - the rest are copied from juce_linux_windowing.cpp.
+    // We need them in order to get all the key, mouse etc. events as normal.
+    att.event_mask = SubstructureRedirectMask // To be told when a program wants to be mapped.
+                   | SubstructureNotifyMask   // To be told when a program has quit.
+                   | EnterWindowMask          // To be told when the cursor moves over a window.
+                   | LeaveWindowMask          // To be told when the cursor leaves a window.
+                   | KeyPressMask    | KeyReleaseMask
+                   | ButtonPressMask | ButtonReleaseMask
+                   | KeymapStateMask | PointerMotionMask
+                   | ExposureMask    | FocusChangeMask | StructureNotifyMask;
 
-	//Set up a handler so that zombie processes get killed.
-	sigemptyset(&maskSet);
-	act.sa_handler = killZombies;
-	act.sa_mask = maskSet;
-	act.sa_flags = 0;
-	sigaction(SIGCHLD, &act, NULL);
+    // To set the cursor to the usual pointer, rather than that horrible default X...
+    att.cursor = XCreateFontCursor(display, XC_left_ptr);
 
-	//Set up an X error handler.
-	XSetErrorHandler(xErrorHandler);
+    if (XChangeWindowAttributes(display, RootWindow(display, DefaultScreen(display)),
+                                         CWEventMask|CWCursor, &att) == BadAccess)
+    {
+        //Not sure this part is correct - we quit the program in xErrorHandler.
+        TWINDY_DBG_MESSAGE("BadAccess error for XChangeWindowAttributes()");
+        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
+            TRANS("Failed: BadAccess error (another window's already redirecting the relevant events)."));
+        exit(1);
+    }
+
+    // Set up a handler so that zombie processes get killed.
+    sigset_t maskset;
+    sigemptyset(&maskset);
+
+    struct sigaction act;
+    act.sa_handler  = killZombies;
+    act.sa_restorer = nullptr;
+    act.sa_mask  = maskset;
+    act.sa_flags = 0;
+    sigaction(SIGCHLD, &act, NULL);
+
+    // Set up an X error handler.
+    XSetErrorHandler(xErrorHandler);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -324,8 +376,15 @@ void TwindyRootWindow::launchExecutable(const char *cmd, bool storePid)
 void TwindyRootWindow::removeWindow(Window win)
 {
     //upperPanel->removeWindow(win);
-    for (int i=0;i<2;++i)
-        upperPanelComps[i]->removeWindow(win);
+    if (TwindyWindow* const mixWindow = preferences->getMixerWindow())
+        if (mixWindow->getWindow() == win)
+            preferences->setMixerWindow(nullptr);
+
+    for (int i=upperPanelComps.size(); --i>=0;)
+    {
+        if (TwindyUpperPanel* const panel = upperPanelComps[i])
+            panel->removeWindow(win);
+    }
 }
 
 //----------------------------------------------------------------------------------------------
@@ -361,7 +420,7 @@ void TwindyRootWindow::redrawWindowName(Window win)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::raiseAllWindows()
 {
-    if (currentUpperPanelComp > -1 && upperPanelComps[currentUpperPanelComp]->getNumWindows() > 0)
+    if (currentUpperPanelComp >= 0 && upperPanelComps[currentUpperPanelComp]->getNumWindows() > 0)
         XRaiseWindow(display, upperPanelComps[currentUpperPanelComp]->getCurrentWindow()->getWindow());
 
     // We get crashes if Twindy loses focus after a PopupMenu has been shown.

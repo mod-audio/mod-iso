@@ -73,19 +73,22 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	/*!
 		Returns 0 if this workspace is not visible.
 	 */
-	TwindyWindow *getCurrentWindow();
+	TwindyWindow* getCurrentWindow() const;
+
 	///	Returns a pointer to the indexed window.
 	/*!
 		Returns 0 if the index is invalid.
 	 */
-	TwindyWindow *getWindow(int index);
+	TwindyWindow* getWindow(int index) const;
+
 	///	Returns the number of windows in this workspace.
-	int getNumWindows() const {return windows.size();};
+	int getNumWindows() const { return windows.size(); }
 
 	///	Sets this workspace's name.
 	void setName(const String& newName);
+
 	///	Returns this workspace's name.
-	const String& getName() const {return name;};
+	const String& getName() const { return name; }
 
 	///	This is called whenever a new tab is selected.
 	/*!
@@ -93,8 +96,8 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 		the newly-selected tab.
 	 */
 	void tabWasClicked(int newSelectedIndex,
-					   bool clickedTabWasAlreadySelected,
-  					   const ModifierKeys &currentModifiers);
+	                   bool clickedTabWasAlreadySelected,
+	                   const ModifierKeys &currentModifiers);
 
 	///	We override this to pass the event on to TwindyRootWindow.
 	/*!
