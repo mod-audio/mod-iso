@@ -155,7 +155,7 @@ currentlyInFocus(false)
             workspaces->addTab("Dev Tools",     Colour(37, 37, 37), panelDEV, false);
 	}
 
-	workspaces->setCurrentTabIndex(1);
+	//workspaces->setCurrentTabIndex(1);
 
 	//Set up buttons.
 	addAndMakeVisible(exitButton = new DrawableTextButton(T("Log Off..."),
@@ -337,7 +337,7 @@ void TwindyRootWindow::paint(Graphics &g)
 	textStretch = (float)textHeight * (8.0f/425.0f);
 
 	g.setColour(colours.propertyPanelBackground);
-	g.drawTextAsPath(TRANS("Twindy"),
+	g.drawTextAsPath(TRANS("portalmod.com"),
 					 AffineTransform::identity.scaled(textStretch, 6.0f).
 					 followedBy(AffineTransform::identity.rotated(-1.570796327f).
 					 followedBy(AffineTransform::identity.translated(110, textStart))));

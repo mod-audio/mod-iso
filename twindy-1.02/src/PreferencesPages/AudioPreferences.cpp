@@ -296,8 +296,32 @@ AudioPreferences::AudioPreferences()
     : Component(),
       deviceBox("deviceBox"),
       sampleRateBox("sampleRateBox"),
-      bufferSizeBox("bufferSizeBox")
+      bufferSizeBox("bufferSizeBox"),
+      mixerPid(-1),
+      mixerWindow(nullptr)/*,
+      title("title", ""),
+      subtitle("subtitle", ""),
+      labelAdvanced("labelAdvanced", ""),
+      labelBufSize("labelBufSize", ""),
+      labelSampleRate("labelSampleRate", "")*/
 {
+    Font font;
+    Colour color;
+
+    font = Font(25.0f, Font::bold);
+    title.setText(T("Audio Configuration"), font);
+
+    font = Font(16.0f, Font::plain);
+    subtitle1.setText(T("MOD needs you to configure the Audio Interface."), font);
+    subtitle2.setText(T("Please select your audio device from the list below."), font);
+
+    font = Font(15.0f, Font::plain);
+    labelAdvanced.setText(T("Sample rate and buffer size. Change values only if you know what you're doing."), font);
+
+    font = Font(14.0f, Font::plain);
+    labelBufSize.setText(T("Buffer Size"), font);
+    labelSampleRate.setText(T("Sample Rate"), font);
+
     deviceBox.addListener(this);
     addAndMakeVisible(&deviceBox);
     addAndMakeVisible(&sampleRateBox);
@@ -337,6 +361,9 @@ AudioPreferences::AudioPreferences()
 //------------------------------------------------------------------------------
 AudioPreferences::~AudioPreferences()
 {
+    if (mixerPid > 0)
+        kill(mixerPid, SIGTERM);
+
     //deleteAllChildren();
 }
 
@@ -351,8 +378,8 @@ void AudioPreferences::rescanDevices()
 
     enumerateAlsaSoundcards(inputNames, outputNames, inputIds, outputIds);
 
-    inputNames.appendNumbersToDuplicates (false, true);
-    outputNames.appendNumbersToDuplicates (false, true);
+    inputNames.appendNumbersToDuplicates(false, true);
+    outputNames.appendNumbersToDuplicates(false, true);
 
     for (int i=0, size=outputNames.size(); i<size; ++i)
     {
@@ -368,9 +395,21 @@ void AudioPreferences::rescanDevices()
 //------------------------------------------------------------------------------
 void AudioPreferences::resized()
 {
-    deviceBox.setBounds(10, 5, 250, 20);
-    sampleRateBox.setBounds(20, 30, 240, 20);
-    bufferSizeBox.setBounds(20, 55, 240, 20);
+    deviceBox.setBounds(10, 70, 250, 20);
+    sampleRateBox.setBounds(20, 175, 150, 20);
+    bufferSizeBox.setBounds(200, 175, 150, 20);
+}
+
+//------------------------------------------------------------------------------
+void AudioPreferences::paint(Graphics& g)
+{
+    title.drawAt(g, 10, 25);
+    subtitle1.drawAt(g, 10, 50);
+    subtitle2.drawAt(g, 10, 50 + 15);
+
+    labelAdvanced.drawAt(g, 10, 150);
+    labelSampleRate.drawAt(g, 20, 170);
+    labelBufSize.drawAt(g, 200, 170);
 }
 
 //------------------------------------------------------------------------------
@@ -427,7 +466,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
             index += 1;
         else if ((index = sampleRates.indexOf(44100.0)) != -1)
             index += 1;
-        else if (sampleRates[0] >= 96000)
+        else if (sampleRates[0] >= 96000.0)
             index = 1;
         else
             index = 1 + std::floor(float(sampleRates.size())/2.0f);
@@ -454,280 +493,3 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
         bufferSizeBox.setSelectedId(index);
     }
 }
-
-#if 0
-//------------------------------------------------------------------------------
-void AudioPreferences::buttonClicked(Button *button)
-{
-	TwindyProperty tempProp;
-	TwindyApp *app = static_cast<TwindyApp *>(JUCEApplication::getInstance());
-	TwindyRootWindow *root = app->getRootWindow();
-	TwindyProperties *prop = root->getProperties();
-
-	if(button == includeSeconds)
-	{
-		tempProp.name = T("ClockIncludeSeconds");
-		if(button->getToggleState())
-		{
-			tempProp.value = T("TRUE");
-			root->getClock()->setIncludeSeconds(true);
-		}
-		else
-		{
-			tempProp.value = T("FALSE");
-			root->getClock()->setIncludeSeconds(false);
-		}
-		prop->setProperty(T("ClockIncludeSeconds"), tempProp);
-	}
-	else if(button == use24HourClock)
-	{
-		tempProp.name = T("ClockUse24HourClock");
-		if(button->getToggleState())
-		{
-			tempProp.value = T("TRUE");
-			root->getClock()->setUse24HourClock(true);
-		}
-		else
-		{
-			tempProp.value = T("FALSE");
-			root->getClock()->setUse24HourClock(false);
-		}
-		prop->setProperty(T("ClockUse24HourClock"), tempProp);
-	}
-	else if(button == monthDisplayedFirst)
-	{
-		tempProp.name = T("ClockMonthDisplayedFirst");
-		if(button->getToggleState())
-		{
-			tempProp.value = T("TRUE");
-			root->getClock()->setMonthDisplayedFirst(true);
-		}
-		else
-		{
-			tempProp.value = T("FALSE");
-			root->getClock()->setMonthDisplayedFirst(false);
-		}
-		prop->setProperty(T("ClockMonthDisplayedFirst"), tempProp);
-	}
-	else if(button == localisationDialog)
-	{
-		FileChooser dlg(TRANS("Open localisation file..."),
-						File::nonexistent,
-						String::empty,
-						false);
-
-		if(dlg.browseForFileToOpen())
-		{
-			LocalisedStrings *tempStrings = new LocalisedStrings(dlg.getResult());
-			localisationFile->setText(dlg.getResult().getFullPathName());
-			LocalisedStrings::setCurrentMappings(tempStrings);
-			saveChanges();
-
-			cout << "  loc: Setting text to " << (const char *)dlg.getResult().getFullPathName() << endl;
-			cout << "  loc: language = " << (const char *)tempStrings->getLanguageName() << endl;
-			cout << "  loc: current language = " << (const char *)LocalisedStrings::getCurrentMappings()->getLanguageName() << endl;
-		}
-	}
-
-	root->getClock()->repaint();
-}
-
-//------------------------------------------------------------------------------
-void AudioPreferences::textEditorReturnKeyPressed(TextEditor &editor)
-{
-	if(editor.getName() == T("lF"))
-	{
-		if(localisationFile->getText() == T(""))
-		{
-			cout << "  loc: Resetting text." << endl;
-			LocalisedStrings::setCurrentMappings(0);
-		}
-		else
-		{
-			LocalisedStrings *tempStrings = new LocalisedStrings(File(localisationFile->getText()));
-			LocalisedStrings::setCurrentMappings(tempStrings);
-			cout << "  loc: Setting text to" << (const char *)localisationFile->getText() << endl;
-		}
-	}
-	saveChanges();
-}
-
-//------------------------------------------------------------------------------
-void AudioPreferences::paintListBoxItem(int rowNumber,
-									   Graphics &g,
-									   int width,
-									   int height,
-									   bool rowIsSelected)
-{
-	if(rowIsSelected)
-	{
-		Colour tempCol = backgroundColour.contrasting();
-		if(tempCol.brighter(0.5f) == Colours::white)
-			tempCol = backgroundColour;
-		g.setColour(tempCol.withAlpha(0.2f));
-		g.fillRect(0, 0, width, 25);
-	}
-
-	Font *f = fonts[rowNumber];
-
-	if(f != 0)
-	{
-		f->setHeight(height * 0.7f);
-		f->setBold(false);
-		f->setItalic(false);
-
-		g.setFont(*f);
-		g.setColour(Colours::black);
-
-		g.drawText(f->getTypefaceName(), 
-                   4,
-				   0,
-				   (width-4),
-				   height,
-				   Justification::centredLeft,
-				   true);
-	}
-}
-
-//------------------------------------------------------------------------------
-void AudioPreferences::selectedRowsChanged(int lastRowselected)
-{
-	TwindyProperty tempProp;
-	TwindyApp *app = static_cast<TwindyApp *>(JUCEApplication::getInstance());
-	TwindyRootWindow *root = app->getRootWindow();
-	TwindyProperties *prop = root->getProperties();
-
-	tempProp.name = fonts[lastRowselected]->getTypefaceName();
-	tempProp.value = fonts[lastRowselected]->getTypefaceName();
-	prop->setProperty(T("GlobalFont"), tempProp);
-	//Font::setDefaultSansSerifFontName(tempProp.name);
-	LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypefaceName(tempProp.name);
-	root->repaint();
-}
-
-//------------------------------------------------------------------------------
-void AudioPreferences::paintOverChildren(Graphics &g)
-{
-	//Fonts.
-	g.setColour(backgroundColour.contrasting().withAlpha(0.1f));
-	g.drawRect(8, 23, 254, 284, 1);
-	g.setColour(backgroundColour.contrasting().withAlpha(0.3f));
-	g.drawRect(9, 24, 252, 282, 1);
-
-	//Clock group.
-	g.setOrigin(270, 3);
-	drawGroupComponentOutline(g,
-							  200,
-							  130,
-							  TRANS("Clock Options"),
-							  Justification::left);
-	g.setOrigin(-270, -3);
-
-	//Date separator.
-	g.setColour(backgroundColour.contrasting().withAlpha(0.1f));
-	g.drawRect(403, 98, 54, 24, 1);
-	g.setColour(backgroundColour.contrasting().withAlpha(0.3f));
-	g.drawRect(404, 99, 52, 22, 1);
-
-	//Localisation File.
-	g.setColour(backgroundColour.contrasting().withAlpha(0.1f));
-	g.drawRect(223, 313, 204, 24, 1);
-	g.setColour(backgroundColour.contrasting().withAlpha(0.3f));
-	g.drawRect(224, 314, 202, 22, 1);
-}
-
-//------------------------------------------------------------------------------
-void AudioPreferences::setColours(const Colour& backCol,
-								 const Colour& textCol,
-								 const Colour& buttonCol)
-{
-	backgroundColour = backCol;
-	textColour = textCol;
-
-	fontListLabel->setColour(Label::textColourId, textColour);
-	includeSeconds->setColours(backgroundColour, textColour);
-	use24HourClock->setColours(backgroundColour, textColour);
-	monthDisplayedFirst->setColours(backgroundColour, textColour);
-	dateSepLabel->setColour(Label::textColourId, textColour);
-	localisationLabel->setColour(Label::textColourId, textColour);
-}
-
-//------------------------------------------------------------------------------
-void AudioPreferences::saveChanges()
-{
-	String tempstr;
-	TwindyApp *app = static_cast<TwindyApp *>(JUCEApplication::getInstance());
-	TwindyRootWindow *root = app->getRootWindow();
-
-	if (root)
-	{
-		TwindyProperties *prop = root->getProperties();
-
-		TwindyProperty tempProp;
-		tempProp.name = T("ClockMonthDateSeparator");
-		tempProp.value = dateSeparator->getText();
-		prop->setProperty(T("ClockMonthDateSeparator"), tempProp);
-		root->getClock()->setDateSeparator(tempProp.value);
-		root->getClock()->repaint();
-
-		tempProp.name = T("LocalisationFile");
-		tempProp.value = localisationFile->getText();
-		prop->setProperty(T("LocalisationFile"), tempProp);
-	}
-}
-
-//------------------------------------------------------------------------------
-void AudioPreferences::drawGroupComponentOutline(Graphics& g,
-                                                 int width, int height,
-                                                 const String& text, const Justification& position)
-{
-    const float textH = 15.0f;
-    const float indent = 3.0f;
-    const float textEdgeGap = 4.0f;
-    float cs = 5.0f;
-
-    Font f (textH, Font::bold);
-
-    Path p;
-    float x = indent;
-    float y = f.getAscent() - 3.0f;
-    float w = width - x * 2.0f;
-    float h = height - y  - indent;
-    cs = jmin (cs, w * 0.5f, h * 0.5f);
-    const float cs2 = 2.0f * cs;
-
-    float textW = jlimit (0.0f, f.getStringWidth (text) + textEdgeGap * 2.0f, w - cs2);
-    float textX = cs + textEdgeGap;
-
-    if (position.testFlags (Justification::verticallyCentred))
-        textX = cs + (w - cs2 - textW) * 0.5f;
-    else if (position.testFlags (Justification::right))
-        textX = w - cs - textW - textEdgeGap;
-
-    p.startNewSubPath (x + textX + textW, y);
-    p.lineTo (x + w - cs, y);
-
-    p.addArc (x + w - cs2, y, cs2, cs2, 0, float_Pi * 0.5f);
-    p.lineTo (x + w, y + h - cs);
-
-    p.addArc (x + w - cs2, y + h - cs2, cs2, cs2, float_Pi * 0.5f, float_Pi);
-    p.lineTo (x + cs, y + h);
-
-    p.addArc (x, y + h - cs2, cs2, cs2, float_Pi, float_Pi * 1.5f);
-    p.lineTo (x, y + cs);
-
-    p.addArc (x, y, cs2, cs2, float_Pi * 1.5f, float_Pi * 2.0f);
-    p.lineTo (x + textX, y);
-
-    g.setColour (textColour);
-    g.strokePath (p, PathStrokeType (2.0f));
-
-    g.setColour (textColour);
-    g.setFont (f);
-    g.drawText (text,
-                roundFloatToInt (x + textX), 0,
-                roundFloatToInt (textW),
-                roundFloatToInt (textH),
-                Justification::centred, true);
-}
-#endif

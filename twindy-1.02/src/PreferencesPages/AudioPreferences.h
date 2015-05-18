@@ -21,8 +21,7 @@
 #ifndef MISCPREFERENCES_H_
 #define MISCPREFERENCES_H_
 
-class TwindyToggleButton;
-class DrawableTextButton;
+class TwindyWindow;
 
 #include "../juce_amalgamated.h"
 
@@ -34,94 +33,35 @@ class AudioPreferences : public Component,
                          public TextEditorListener*/
 {
 public:
-    /// Constructor.
+    // Constructor.
     AudioPreferences();
-    /// Destructor.
+
+    // Destructor.
     ~AudioPreferences() override;
 
-    /// Rescan audio devices.
+    // Rescan audio devices.
     void rescanDevices();
 
-    /// Places and sizes the various components.
+    // Places and sizes the various components.
     void resized() override;
 
-    /// Called when a ComboBox has its selected item changed.
+    // Draws the component.
+    void paint(Graphics& g) override;
+
+    // Called when a ComboBox has its selected item changed.
     void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
-#if 0
-	///	Called when a button is clicked.
-	void buttonClicked(Button *button);
-	///	Over-ridden to do nothing.
-	void textEditorTextChanged(TextEditor &editor) {};
-	///	So we know when to update the month separator.
-	void textEditorReturnKeyPressed(TextEditor &editor);
-	///	Over-ridden to do nothing.
-	void textEditorEscapeKeyPressed(TextEditor &editor) {};
-	///	Over-ridden to do nothing.
-	void textEditorFocusLost(TextEditor &editor) {};
-
-	///	The number of menu items.
-	int getNumRows() {return fonts.size();};
-	///	Draws the list box items.
-	void paintListBoxItem(int rowNumber,
-						  Graphics &g,
-						  int width,
-						  int height,
-						  bool rowIsSelected);
-	///	So we get informed when the selected row is changed.
-	void selectedRowsChanged(int lastRowselected);
-	///	To draw a border around the listbox etc.
-	void paintOverChildren(Graphics &g);
-
-	///	Called to set the background colour and text colour.
-	void setColours(const Colour& backCol,
-					const Colour& textCol,
-					const Colour& buttonCol);
-	///	Called to save any changes made to the TwindyProperties instance.
-	/*!
-		This gets called by TwindyPreferences when a preferences tab is changed,	
-		and TwindyTabs when a workspace tab is changed.
-	 */
-	void saveChanges();
-#endif
-
 private:
-      ComboBox deviceBox, sampleRateBox, bufferSizeBox;
-      StringArray inputNames, outputNames, inputIds, outputIds;
+    // Widgets.
+    ComboBox deviceBox, sampleRateBox, bufferSizeBox;
+    DrawableText title, subtitle1, subtitle2, labelAdvanced, labelBufSize, labelSampleRate;
 
-#if 0
-	///	Stolen from LookAndFeel so we can have control over the colour.
-	void drawGroupComponentOutline(Graphics& g, int width, int height, const String& text, const Justification& position);
+    // Used for mixer
+    pid_t mixerPid;
+    TwindyWindow* mixerWindow;
 
-	///	Fonts listbox label.
-	Label *fontListLabel;
-	///	Fonts listbox.
-	ListBox *fontList;
-	///	Clock includeSeconds ToggleButton.
-	TwindyToggleButton *includeSeconds;
-	///	Clock use24HourClock ToggleButton.
-	TwindyToggleButton *use24HourClock;
-	///	Clock monthDisplayedFirst ToggleButton.
-	TwindyToggleButton *monthDisplayedFirst;
-	///	Clock dateSeparator Label.
-	Label *dateSepLabel;
-	///	Clock dateSeparator TextEditor.
-	TextEditor *dateSeparator;
-	///	Localisation file Label.
-	Label *localisationLabel;
-	///	Localisation file TextEditor.
-	TextEditor *localisationFile;
-	///	Localistion file dialog button.
-	DrawableTextButton *localisationDialog;
-
-	///	List of all the fonts on the system.
-	OwnedArray<Font> fonts;
-
-	///	The colour of the background.
-	Colour backgroundColour;
-	///	The colour of the text.
-	Colour textColour;
-#endif
+    // StringArrays for device discovery.
+    StringArray inputNames, outputNames, inputIds, outputIds;
 };
 
 #endif

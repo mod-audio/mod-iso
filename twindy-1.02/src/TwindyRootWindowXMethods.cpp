@@ -279,67 +279,53 @@ void TwindyRootWindow::setupMappingRedirect()
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::launchExecutable(const char *cmd, bool storePid)
 {
-	String instr(cmd);
-	String tempstr;
+    String instr(cmd);
+    String tempstr(cmd);
 
-	if(instr == String::empty)
-	{
-		AlertWindow dlg(TRANS("Run Executable"),
-										TRANS("Choose an executable to run."),
-										AlertWindow::QuestionIcon);
+    if (instr.isEmpty())
+    {
+        AlertWindow dlg(TRANS("Run Executable"), TRANS("Choose an executable to run."), AlertWindow::QuestionIcon);
 
-		dlg.addTextEditor(T("dlgTE"),
-						  T(""),
-						  TRANS("executable:"),
-						  false);
-		dlg.addButton(TRANS("cancel"), 0);
-		dlg.addButton(TRANS("ok"),
-					  1,
-					  KeyPress(KeyPress::returnKey,
-											   ModifierKeys(),
-											   '\r'));
+        dlg.addTextEditor(T("dlgTE"), T(""), TRANS("executable:"), false);
+        dlg.addButton(TRANS("cancel"), 0);
+        dlg.addButton(TRANS("ok"), 1, KeyPress(KeyPress::returnKey, ModifierKeys(), '\r'));
 
-		if(dlg.runModalLoop())
-			tempstr = dlg.getTextEditorContents(T("dlgTE"));
-		else
-			return;
-	}
-	else
-		tempstr = cmd;
+        if (! dlg.runModalLoop())
+            return;
 
-	pid_t pid = fork();
+        tempstr = dlg.getTextEditorContents(T("dlgTE"));
+    }
 
-	switch (pid)
-	{
-		case 0: //Child process - successful.
-			setsid();
-			printf("Starting %s...\n", (const char *)tempstr);
-			execlp("/bin/sh", "sh", "-c", (const char *)tempstr, NULL);
-			//Only get to this point if execlp didn't work.
-			TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-														 	   TRANS("Could not start executable.  Cleaning up."));
-			exit(1);
-			break;
-		case -1: //Parent process - unsuccessful.
-			TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-														 	   TRANS("Could not start executable."));
-			break;
-		default: //Parent process - successful.
-			if(storePid)
-			{
-				std::cout << "Storing pid " << pid << std::endl;
-				pidArray.add(pid);
-			}
-			break;
-	}
+    printf("Starting %s...\n", (const char *)tempstr);
+
+    pid_t pid = vfork();
+
+    switch (pid)
+    {
+    case 0: //Child process - successful.
+        //setsid();
+        execlp("/bin/sh", "sh", "-c", (const char *)tempstr, NULL);
+        exit(1);
+        break;
+    case -1: //Parent process - unsuccessful.
+        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"), TRANS("Could not start executable."));
+        break;
+    default: //Parent process - successful.
+        if (storePid)
+        {
+            std::cout << "Storing pid " << pid << std::endl;
+            pidArray.add(pid);
+        }
+        break;
+    }
 }
 
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::removeWindow(Window win)
 {
     //upperPanel->removeWindow(win);
-    for(int i=0;i<2;++i)
-            upperPanelComps[i]->removeWindow(win);
+    for (int i=0;i<2;++i)
+        upperPanelComps[i]->removeWindow(win);
 }
 
 //----------------------------------------------------------------------------------------------

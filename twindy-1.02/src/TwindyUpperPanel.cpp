@@ -88,31 +88,32 @@ void TwindyUpperPanel::addWindow(TwindyWindow *newWindow, TwindyUpperTab *newTab
 //------------------------------------------------------------------------------
 void TwindyUpperPanel::removeWindow(Window window)
 {
-	int i;
+    for (int i=windows.size();--i>=0;)
+    {
+        if (windows[i]->getWindow() == window)
+        {
+            if ((windows.size()-1) > 0)
+            {
+                visibleWindow--;
+                if (visibleWindow == -1)
+                    visibleWindow = 0;
+            }
+            else
+            {
+                visibleWindow = -1;
+            }
 
-	for(i=0;i<windows.size();i++)
-	{
-		if(windows[i]->getWindow() == window)
-		{
-			if((windows.size()-1) > 0)
-			{
-				visibleWindow--;
-				if(visibleWindow == -1)
-					visibleWindow = 0;
-			}
-			else
-				visibleWindow = -1;
-			removeTab(i);
-			windows.remove(i);
+            removeTab(i);
+            windows.remove(i);
 
-			if(windows.size() > 0)
-			{
-				windows[visibleWindow]->show();
-				setCurrentlySelectedTab(visibleWindow);
-			}
-			break;
-		}
-	}
+            if (windows.size() > 0)
+            {
+                windows[visibleWindow]->show();
+                setCurrentlySelectedTab(visibleWindow);
+            }
+            break;
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
