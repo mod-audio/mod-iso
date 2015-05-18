@@ -26,7 +26,9 @@ TwindyPreferences::TwindyPreferences()
     : TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences),
       realColours(T("~/.twindy/Default.tracktionscheme"))
 {
-    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Audio")));
+    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Audio / MIDI")));
+    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Keyboard")));
+    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Mouse")));
 
     setCurrentlySelectedTab(0);
 }
@@ -46,6 +48,9 @@ void TwindyPreferences::tabWasClicked(int newSelectedIndex,
     {
     case 0:
         setContentComponent(&audio);
+        break;
+    default:
+        setContentComponent(nullptr);
         break;
     }
 }
