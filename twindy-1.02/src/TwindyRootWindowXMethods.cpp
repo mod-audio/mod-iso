@@ -87,6 +87,8 @@ void TwindyRootWindow::callbackFunction(void *event)
 {
     XEvent* const evt = static_cast<XEvent*>(event);
 
+    printf("received %i.\n", evt->xany.type);
+
     switch (evt->xany.type)
     {
     case MapRequest:
@@ -110,7 +112,7 @@ void TwindyRootWindow::callbackFunction(void *event)
             XFree(textProp.value); //?
         }
 
-        if (name == T("Konsole") || name == T("Shell"))
+        if (name == T("Konsole") || name == T("Shell") || name == T("alsamixer"))
         {
             target = -1;
             printf("Mixer detected\n");
@@ -148,12 +150,28 @@ void TwindyRootWindow::callbackFunction(void *event)
 
         if (target >= 0)
         {
-            if (target > 0 && upperPanelComps[target]->isWorkspaceVisible())
-                if (TwindyWindow* const twindow = upperPanelComps[target]->getCurrentWindow())
-                    twindow->hide();
+            TwindyUpperPanel* const panel(upperPanelComps[target]);
+            TwindyWindow*     const twnd(panel->getCurrentWindow());
+
+            if (target == 0)
+            {
+                if (twnd != nullptr)
+                {
+                    //twnd->closeWindow();
+                    panel->removeWindow(twnd->getWindow());
+                    //delete twnd;
+                }
+            }
+            else if (panel->isWorkspaceVisible())
+            {
+                if (twnd != nullptr)
+                    twnd->hide();
+            }
 
             XMapWindow(display, window);
-            XSetInputFocus(display, window, RevertToPointerRoot, CurrentTime);
+
+            if (target == currentUpperPanelComp)
+                XSetInputFocus(display, window, RevertToPointerRoot, CurrentTime);
 
             //Make sure we get notified when the window's title changes.
             XSelectInput(display, window, PropertyChangeMask);
@@ -297,7 +315,7 @@ void TwindyRootWindow::setupMappingRedirect()
                    | LeaveWindowMask          // To be told when the cursor leaves a window.
                    | KeyPressMask    | KeyReleaseMask
                    | ButtonPressMask | ButtonReleaseMask
-                   | KeymapStateMask | PointerMotionMask
+                   | KeymapStateMask | PointerMotionMask | PointerMotionHintMask
                    | ExposureMask    | FocusChangeMask | StructureNotifyMask;
 
     // To set the cursor to the usual pointer, rather than that horrible default X...

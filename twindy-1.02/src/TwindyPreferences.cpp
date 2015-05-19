@@ -26,6 +26,7 @@
 TwindyPreferences::TwindyPreferences()
     : TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences),
       realColours(T("~/.twindy/Default.tracktionscheme")),
+      audio(this),
       mixerPid(-1),
       mixerWindow(nullptr)
 {

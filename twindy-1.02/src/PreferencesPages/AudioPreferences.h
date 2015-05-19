@@ -22,19 +22,18 @@
 #define MISCPREFERENCES_H_
 
 class TwindyWindow;
+class TwindyPreferences;
 
 #include "../juce_amalgamated.h"
 
 /// Preferences page for audio.
 class AudioPreferences : public Component,
-                         public ComboBoxListener/*,
-                         public ListBoxModel,
-                         public ButtonListener,
-                         public TextEditorListener*/
+                         private ButtonListener,
+                         private ComboBoxListener
 {
 public:
     // Constructor.
-    AudioPreferences();
+    AudioPreferences(TwindyPreferences* const p);
 
     // Destructor.
     ~AudioPreferences() override;
@@ -48,18 +47,23 @@ public:
     // Draws the component.
     void paint(Graphics& g) override;
 
+    // Called when the button is clicked.
+    void buttonClicked(Button* button) override;
+
     // Called when a ComboBox has its selected item changed.
     void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
 private:
+    // Parent
+    TwindyPreferences* const prefs;
+
     // Widgets.
+    TextButton applyButton;
     ComboBox deviceBox, sampleRateBox, bufferSizeBox;
     DrawableText title, subtitle1, subtitle2, labelAdvanced, labelBufSize, labelSampleRate;
 
     // StringArrays for device discovery.
     StringArray inputNames, outputNames, inputIds, outputIds;
-
-    friend class TwindyPreferences;
 };
 
 #endif

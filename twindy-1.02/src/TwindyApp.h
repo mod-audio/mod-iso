@@ -30,6 +30,7 @@ namespace ProjectInfo
 
 class TwindyRootWindow;
 
+#include <jack/jack.h>
 #include "juce_amalgamated.h"
 
 /// Handles the main application stuff.
@@ -37,12 +38,13 @@ class TwindyApp : public JUCEApplication
 {
 public:
     /// Constructor.
-    TwindyApp() : win(nullptr) {}
+    TwindyApp();
     /// Destructor.
-    ~TwindyApp() {}
+    ~TwindyApp();
 
     /// Where all the important stuff happens for this class.
     void initialise(const String& commandLine);
+
     /// Not used by us?
     void shutdown();
     void systemRequestedQuit() { quit(); }
@@ -61,9 +63,20 @@ public:
     /// Sets the root window.
     void setRootWindow(TwindyRootWindow* newWin) { win = newWin; }
 
+    // restart services
+    void restartMODApp();
+    bool restartJackd(const String& command);
+
 private:
-    /// The window.
+    // The window.
     TwindyRootWindow* win;
+
+    // The mod-app instance
+    pid_t pidApp, pidJackd;
+
+    // The global jack client
+    jack_client_t* client;
+    bool jackWasStartedBeforeUs;
 };
 
 #endif

@@ -50,17 +50,24 @@ extern Display* display;
 }
 
 //----------------------------------------------------------------------------------------------
-TwindyRootWindow::TwindyRootWindow():
-Component(T("Twindy Window Manager")),
-currentUpperPanelComp(1),
-exitButton(0),
-properties(0)
+TwindyRootWindow::TwindyRootWindow()
+    : Component(T("Twindy Window Manager")),
+      currentUpperPanelComp(1),
+      exitButton(0),
+      properties(0)
 {
-	TwindyProperty tempProp;
+    static_cast<TwindyApp*>(JUCEApplication::getInstance())->setRootWindow(this);
 
-	//Construct this first to make sure we get any error messages that might be
-	//generated from the following code.
-	//addAndMakeVisible(TwindyErrorDisplay::getInstance());
+    //Construct this first to make sure we get any error messages that might be
+    //generated from the following code.
+    TwindyErrorDisplay* const errorDisplay(new TwindyErrorDisplay());
+    jassert(errorDisplay != nullptr);
+    addAndMakeVisible(errorDisplay);
+    errorDisplay->setBackgroundColour(colours.propertyPanelBackground);
+    errorDisplay->setTextColour(colours.propertyPanelText);
+    errorDisplay->toFront(false);
+
+    TwindyProperty tempProp;
 
 	//Load default font.
 	properties = new TwindyProperties();
@@ -74,7 +81,6 @@ properties(0)
 		properties->setProperty(T("GlobalFont"), tempProp);
 	}
 	//Font::setDefaultSansSerifFontName(tempProp.name);
-	static_cast<TwindyApp *>(JUCEApplication::getInstance())->setRootWindow(this);
 
 	{
 		TwindyLAF *laf = new TwindyLAF;
@@ -93,9 +99,6 @@ properties(0)
 
 	//Load colours.
 	loadColours(properties->getProperty(T("TracktionScheme")).name);
-
-	TwindyErrorDisplay::getInstance()->setBackgroundColour(colours.propertyPanelBackground);
-	TwindyErrorDisplay::getInstance()->setTextColour(colours.propertyPanelText);
 
 	//This is so our 'root' window never obscures it's 'children'.
 	setBroughtToFrontOnMouseClick(false);
@@ -343,35 +346,35 @@ void TwindyRootWindow::paint(Graphics &g)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::resized()
 {
-	const int lowerBorder = (int)(getHeight()-((float)getHeight()/3.5f));
-	const int buttonHeight = (int)(((float)getHeight()/3.5f)/9.0f);
-	int tempint;
+    const int lowerBorder = (int)(getHeight()-((float)getHeight()/3.5f));
+    const int buttonHeight = (int)(((float)getHeight()/3.5f)/9.0f);
+    int tempint;
 
-        workspaces->setBounds(0, 0, getWidth(), getHeight());
-	//workspaces->setBounds(0, 0, getWidth(), (getHeight()-(getHeight()/3))+25);
+    workspaces->setBounds(0, 0, getWidth(), getHeight());
+    //workspaces->setBounds(0, 0, getWidth(), (getHeight()-(getHeight()/3))+25);
 
-	tempint = lowerBorder;
-	leftButton1->setBounds(10, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	leftButton2->setBounds(10, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	leftButton3->setBounds(10, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	leftButton4->setBounds(10, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	leftButton5->setBounds(10, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	leftButton6->setBounds(10, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
-	leftButton7->setBounds(10, tempint, 100, buttonHeight);
-	tempint += buttonHeight;
+    tempint = lowerBorder;
+    leftButton1->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
+    leftButton2->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
+    leftButton3->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
+    leftButton4->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
+    leftButton5->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
+    leftButton6->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
+    leftButton7->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
 
-	tempint += buttonHeight;
-	exitButton->setBounds(10, tempint, 100, buttonHeight);
+    tempint += buttonHeight;
+    exitButton->setBounds(10, tempint, 100, buttonHeight);
 
-	clock->setBounds((getWidth()-100), 0, 100, 25);
+    clock->setBounds(getWidth()-100, 0, 100, 25);
 
-	TwindyErrorDisplay::getInstance()->setBounds((getWidth()-170), (lowerBorder+13), 160, (getHeight()-lowerBorder-18));
+    TwindyErrorDisplay::getInstance()->setBounds((getWidth()-170), (lowerBorder+13), 160, (getHeight()-lowerBorder-18));
 }
 
 //----------------------------------------------------------------------------------------------

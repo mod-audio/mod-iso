@@ -23,62 +23,67 @@
 #define TWINDYERRORDISPLAY_H_
 
 class DrawableTextButton;
+class TwindyRootWindow;
 
 #include "juce_amalgamated.h"
 
-///	Simple struct to hold an error message (heading and message).
+/// Simple struct to hold an error message (heading and message).
 struct ErrorMessage {
-	String heading;
-	String message;
+    String heading;
+    String message;
 };
 
-///	Singleton Component to display any error messages in the lower right corner of the 'root' window.
+/// Singleton Component to display any error messages in the lower right corner of the 'root' window.
 class TwindyErrorDisplay : public Component,
                            private ButtonListener
 {
-  public:
-	///	Returns the single instance of the class, creates it if it doesn't exist.
-	static TwindyErrorDisplay *getInstance();
+public:
+    /// Returns the single instance of the class, creates it if it doesn't exist.
+    static TwindyErrorDisplay* getInstance();
 
-	///	To handle the Ok button being clicked.
-	void buttonClicked(Button *button);
+    /// To handle the Ok button being clicked.
+    void buttonClicked(Button *button);
 
-	///	Draws the current error message.
-	void paint(Graphics &g);
+    /// Draws the current error message.
+    void paint(Graphics &g);
 
-	///	We use this to place the Ok button correctly.
-	void resized();
+    /// We use this to place the Ok button correctly.
+    void resized();
 
-	///	Called to display an error message.
-	/*!
-		Error messages are essentially kept in a stack, with the earliest one
-		being the one that is currently displayed.  When the user clicks the Ok
-		button, the earliest message is removed from the stack, and the next one
-		is displayed.
-	 */
-	void addErrorMessage(const String& heading, const String& message);
+    /// Called to display an error message.
+    /*!
+        Error messages are essentially kept in a stack, with the earliest one
+        being the one that is currently displayed.  When the user clicks the Ok
+        button, the earliest message is removed from the stack, and the next one
+        is displayed.
+      */
+    void addErrorMessage(const String& heading, const String& message);
 
-	///	Sets the colour of the background.
-	void setBackgroundColour(const Colour& col) {backColour = col;};
-	///	Sets the colour of the text.
-	void setTextColour(const Colour& col) {textColour = col;};
+    /// Sets the colour of the background.
+    void setBackgroundColour(const Colour& col) { backColour = col; }
 
-  private:
-	///	Constructor.
-	TwindyErrorDisplay();
-	///	Destructor.
-	~TwindyErrorDisplay();
+    /// Sets the colour of the text.
+    void setTextColour(const Colour& col) { textColour = col; }
 
-	///	Ok button used to dismiss an error.
-	DrawableTextButton *ok;
+private:
+    /// Constructor.
+    TwindyErrorDisplay();
 
-	///	Array of current error messages.
-	OwnedArray<ErrorMessage> errorArray;
+    /// Destructor.
+    ~TwindyErrorDisplay();
 
-	///	Colour to paint the background of the display.
-	Colour backColour;
-	///	Colour to paint the text.
-	Colour textColour;
+    /// Ok button used to dismiss an error.
+    DrawableTextButton* ok;
+
+    /// Array of current error messages.
+    OwnedArray<ErrorMessage> errorArray;
+
+    /// Colour to paint the background of the display.
+    Colour backColour;
+    /// Colour to paint the text.
+    Colour textColour;
+
+    friend class TwindyRootWindow;
 };
 
 #endif

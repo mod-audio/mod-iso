@@ -37,23 +37,6 @@ TwindyUpperPanel::TwindyUpperPanel(bool isMOD)
       visibleWindow(-1)
 {
     colours = new TracktionScheme(T("~/.twindy/Default.tracktionscheme"));
-
-    if (! isMOD)
-        return;
-
-    const pid_t pid = vfork();
-
-    switch (pid)
-    {
-    case 0: //Child process - successful.
-        execlp("/bin/sh", "sh", "-c", "mod-app", NULL);
-        exit(1);
-        break;
-    case -1: //Parent process - unsuccessful.
-        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-                                                           TRANS("Could not start mixer executable."));
-        break;
-    }
 }
 
 //------------------------------------------------------------------------------

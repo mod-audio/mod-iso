@@ -294,16 +294,13 @@ static void getDeviceProperties (const String& deviceID,
 using namespace std;
 
 //------------------------------------------------------------------------------
-AudioPreferences::AudioPreferences()
+AudioPreferences::AudioPreferences(TwindyPreferences* const p)
     : Component(),
+      prefs(p),
+      applyButton("applyButton"),
       deviceBox("deviceBox"),
       sampleRateBox("sampleRateBox"),
-      bufferSizeBox("bufferSizeBox")/*,
-      title("title", ""),
-      subtitle("subtitle", ""),
-      labelAdvanced("labelAdvanced", ""),
-      labelBufSize("labelBufSize", ""),
-      labelSampleRate("labelSampleRate", "")*/
+      bufferSizeBox("bufferSizeBox")
 {
     Font font;
     Colour color;
@@ -322,7 +319,12 @@ AudioPreferences::AudioPreferences()
     labelBufSize.setText(T("Buffer Size"), font);
     labelSampleRate.setText(T("Sample Rate"), font);
 
+    applyButton.setButtonText(T("Apply"));
+
+    applyButton.addButtonListener(this);
     deviceBox.addListener(this);
+
+    addAndMakeVisible(&applyButton);
     addAndMakeVisible(&deviceBox);
     addAndMakeVisible(&sampleRateBox);
     addAndMakeVisible(&bufferSizeBox);
@@ -392,6 +394,7 @@ void AudioPreferences::rescanDevices()
 //------------------------------------------------------------------------------
 void AudioPreferences::resized()
 {
+    applyButton.setBounds(270, 68, 50, 25);
     deviceBox.setBounds(10, 70, 250, 20);
     sampleRateBox.setBounds(20, 175, 150, 20);
     bufferSizeBox.setBounds(200, 175, 150, 20);
@@ -407,6 +410,28 @@ void AudioPreferences::paint(Graphics& g)
     labelAdvanced.drawAt(g, 10, 150);
     labelSampleRate.drawAt(g, 20, 170);
     labelBufSize.drawAt(g, 200, 170);
+}
+
+//------------------------------------------------------------------------------
+void AudioPreferences::buttonClicked(Button* button)
+{
+    if (button != &applyButton)
+        return;
+
+    TwindyApp* const app = static_cast<TwindyApp*>(JUCEApplication::getInstance());
+
+    String command;
+    command << "jackd -R -T -d alsa -d ";
+    command << outputIds[deviceBox.getSelectedId()-1];
+    command << " -r ";
+    command << sampleRateBox.getText();
+    command << " -p ";
+    command << bufferSizeBox.getText();
+
+    if (deviceBox.getText().containsIgnoreCase(T("usb")))
+        command << " -n 3";
+
+    app->restartJackd(command);
 }
 
 //------------------------------------------------------------------------------
@@ -492,7 +517,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     }
 
     String command;
-    command << "konsole -e alsamixer -D ";
+    command << "xterm -e alsamixer -D ";
     command << deviceId.upToFirstOccurrenceOf(T(","), false, false);
 
     printf("Running command: %s\n", command.toUTF8());
@@ -510,8 +535,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
                                                            TRANS("Could not start mixer executable."));
         break;
     default: //Parent process - successful.
-        // FIXME
-        ((TwindyPreferences*)getParentComponent()->getParentComponent())->setMixerPid(pid);
+        prefs->setMixerPid(pid);
         break;
     }
 }

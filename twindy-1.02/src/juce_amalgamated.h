@@ -111,7 +111,7 @@
     @see jassert, jassertfalse, Logger
 */
 #ifndef JUCE_LOG_ASSERTIONS
-//  #define JUCE_LOG_ASSERTIONS 1
+ #define JUCE_LOG_ASSERTIONS 1
 #endif
 
 /** Comment out this macro if you haven't got the Steinberg ASIO SDK, without
