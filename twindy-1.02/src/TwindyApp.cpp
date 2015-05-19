@@ -19,13 +19,11 @@
 // ----------------------------------------------------------------------------
 
 #include "TwindyApp.h"
-#include "TwindyErrorDisplay.h"
 #include "TwindyHelperStuff.h"
 #include "TwindyRootWindow.h"
+#include "Utils.h"
 
 #include <iostream>
-#include <sys/wait.h>
-#include <unistd.h>
 
 using namespace std;
 
@@ -41,19 +39,9 @@ TwindyApp::TwindyApp()
 TwindyApp::~TwindyApp()
 {
     jassert(win == nullptr);
-
-    if (client != nullptr)
-    {
-        jack_deactivate(client);
-        jack_client_close(client);
-        client = nullptr;
-    }
-
-    if (pidApp > 0)
-        ::kill(pidApp, SIGTERM);
-
-    if (pidJackd > 0)
-        ::kill(pidJackd, SIGTERM);
+    jassert(client == nullptr);
+    jassert(pidApp == -1);
+    jassert(pidJackd == -1);
 }
 
 ///-----------------------------------------------------------------------------
@@ -82,7 +70,6 @@ void TwindyApp::initialise(const String& commandLine)
     //Font::setDefaultSansSerifFontName("Bitstream Vera Sans");
 
     TWINDY_DBG_MESSAGE("Creating TwindyRootWindow.");
-
     win = new TwindyRootWindow();
     TWINDY_DBG_MESSAGE("TwindyRootWindow created.");
     win->centreWithSize(recadendrum.getWidth(), recadendrum.getHeight());
@@ -90,6 +77,7 @@ void TwindyApp::initialise(const String& commandLine)
     win->toFront(true);
     TWINDY_DBG_MESSAGE("TwindyRootWindow brought to front.");
 
+#if 0
     TWINDY_DBG_MESSAGE("Initial JACK start test.");
 
     printf("testing jack...\n");
@@ -104,22 +92,13 @@ void TwindyApp::initialise(const String& commandLine)
 
     TWINDY_DBG_MESSAGE("Auto-start MOD-APP.");
     restartMODApp();
+#endif
 }
 
 ///-----------------------------------------------------------------------------
 void TwindyApp::shutdown()
 {
-    TWINDY_DBG_MESSAGE("About to delete TwindyRootWindow.");
-    delete win;
-    win = nullptr;
-    TWINDY_DBG_MESSAGE("TwindyRootWindow deleted.");
-}
-
-///-----------------------------------------------------------------------------
-bool TwindyApp::restartJackd(const String& command)
-{
-    if (jackWasStartedBeforeUs)
-        return false;
+    TWINDY_DBG_MESSAGE("About to shutdown.");
 
     if (client != nullptr)
     {
@@ -128,43 +107,56 @@ bool TwindyApp::restartJackd(const String& command)
         client = nullptr;
     }
 
-#if 0
+    if (pidApp > 0)
+    {
+        terminateAndWaitForProcess(pidApp);
+        pidApp = -1;
+    }
+
     if (pidJackd > 0)
     {
-        ::kill(pidJackd, SIGTERM);
-
-        // FIXME
-        //::waitpid(pidJackd, nullptr, 0x0);
-        sleep(1);
+        terminateAndWaitForProcess(pidJackd);
+        pidJackd = -1;
     }
 
-    pidJackd = vfork();
+    TWINDY_DBG_MESSAGE("About to delete TwindyRootWindow.");
+    delete win;
+    win = nullptr;
+    TWINDY_DBG_MESSAGE("TwindyRootWindow deleted.");
+}
 
-    switch (pidJackd)
+///-----------------------------------------------------------------------------
+bool TwindyApp::restartJackd(const StringArray& args)
+{
+    if (jackWasStartedBeforeUs)
+        return false;
+
+    printf("previous client => : %p %li\n", client, (long)pidJackd);
+
+    if (client != nullptr)
     {
-    case 0: //Child process - successful.
-        execlp("/bin/sh", "sh", "-c", command.toUTF8(), NULL);
-        exit(1);
-        break;
-    case -1: //Parent process - unsuccessful.
-        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-                                                           TRANS("Could not start audio service."));
-        return;
+        jack_deactivate(client);
+        jack_client_close(client);
+        client = nullptr;
     }
 
-    sleep(1);
-#else
-    //const File jackdFile = File::getSpecialLocation(File::userHomeDirectory).getChildFile(".jackdrc");
-    //jackdFile.replaceWithText(command);
-#endif
-    printf("starting jackd using this:\n%s\n", command.toUTF8());
+    if (pidJackd > 0)
+    {
+        terminateAndWaitForProcess(pidJackd);
+        pidJackd = -1;
+    }
 
-    client = jack_client_open("mod-twindy", JackNoStartServer, nullptr);
+    if ((pidJackd = startProcess(args)) == -1)
+        return false;
 
+#if 0
+    printf("jack_client_open calling...\n");
+    client = jack_client_open("mod-twindy2", JackNoStartServer, nullptr);
     printf("jack_client_open done!\n");
 
     if (client == nullptr)
         return false;
+#endif
 
     restartMODApp();
     return true;
@@ -175,30 +167,21 @@ void TwindyApp::restartMODApp()
 {
     if (pidApp > 0)
     {
-        ::kill(pidApp, SIGTERM);
-        // FIXME
-        //::waitpid(pidApp, nullptr, 0x0);
-        sleep(1);
+        terminateAndWaitForProcess(pidApp);
+        pidApp = -1;
     }
 
 #define APP_PREFIX "/Shared/Personal/FOSS/GIT/MOD/mod-app/source/"
-    const char* const appWithJack    = APP_PREFIX "mod-app";
-    const char* const appWithoutJack = APP_PREFIX "mod-app --no-autostart";
+    StringArray args;
+    args.add(T(APP_PREFIX "mod-app"));
+
+    //if (client == nullptr)
+    //    args.add(T("--no-autostart"));
 #undef APP_PREFIX
 
-    pidApp = vfork();
+    pidApp = startProcess(args);
 
-    switch (pidApp)
-    {
-    case 0: //Child process - successful.
-        execlp("/bin/sh", "sh", "-c", client ? appWithJack : appWithoutJack, NULL);
-        exit(1);
-        break;
-    case -1: //Parent process - unsuccessful.
-        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-                                                           TRANS("Could not start mod-app."));
-        break;
-    }
+    win->changeToAppTab();
 }
 
 ///-----------------------------------------------------------------------------

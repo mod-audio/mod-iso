@@ -87,8 +87,6 @@ void TwindyRootWindow::callbackFunction(void *event)
 {
     XEvent* const evt = static_cast<XEvent*>(event);
 
-    printf("received %i.\n", evt->xany.type);
-
     switch (evt->xany.type)
     {
     case MapRequest:

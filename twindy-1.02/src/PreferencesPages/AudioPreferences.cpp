@@ -20,13 +20,13 @@
 
 #include "AudioPreferences.h"
 #include "../TwindyApp.h"
-#include "../TwindyErrorDisplay.h"
 #include "../TwindyProperties.h"
 #include "../TwindyPreferences.h"
 #include "../TwindyRootWindow.h"
 #include "../ExtraComponents/TwindyToggleButton.h"
 #include "../ExtraComponents/DrawableTextButton.h"
 #include "../ExtraComponents/Clock.h"
+#include "../Utils.h"
 #include <iostream>
 
 //#define ALSA_PCM_NEW_HW_PARAMS_API
@@ -420,18 +420,26 @@ void AudioPreferences::buttonClicked(Button* button)
 
     TwindyApp* const app = static_cast<TwindyApp*>(JUCEApplication::getInstance());
 
-    String command;
-    command << "jackd -R -T -d alsa -d ";
-    command << outputIds[deviceBox.getSelectedId()-1];
-    command << " -r ";
-    command << sampleRateBox.getText();
-    command << " -p ";
-    command << bufferSizeBox.getText();
+    StringArray args;
+    args.add(T("jackd"));
+    args.add(T("-R"));
+    args.add(T("-T"));
+    args.add(T("-d"));
+    args.add(T("alsa"));
+    args.add(T("-d"));
+    args.add(outputIds[deviceBox.getSelectedId()-1]);
+    args.add(T("-r"));
+    args.add(sampleRateBox.getText());
+    args.add(T("-p"));
+    args.add(bufferSizeBox.getText());
 
     if (deviceBox.getText().containsIgnoreCase(T("usb")))
-        command << " -n 3";
+    {
+        args.add(T("-n"));
+        args.add(T("3"));
+    }
 
-    app->restartJackd(command);
+    app->restartJackd(args);
 }
 
 //------------------------------------------------------------------------------
@@ -516,26 +524,12 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
         bufferSizeBox.setSelectedId(index);
     }
 
-    String command;
-    command << "xterm -e alsamixer -D ";
-    command << deviceId.upToFirstOccurrenceOf(T(","), false, false);
+    StringArray args;
+    args.add(T("konsole"));
+    args.add(T("-e"));
+    args.add(T("alsamixer"));
+    args.add(T("-D"));
+    args.add(deviceId.upToFirstOccurrenceOf(T(","), false, false));
 
-    printf("Running command: %s\n", command.toUTF8());
-
-    const pid_t pid = vfork();
-
-    switch (pid)
-    {
-    case 0: //Child process - successful.
-        execlp("/bin/sh", "sh", "-c", (const char *)command, NULL);
-        exit(1);
-        break;
-    case -1: //Parent process - unsuccessful.
-        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-                                                           TRANS("Could not start mixer executable."));
-        break;
-    default: //Parent process - successful.
-        prefs->setMixerPid(pid);
-        break;
-    }
+    prefs->setMixerPid(startProcess(args));
 }

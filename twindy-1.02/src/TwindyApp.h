@@ -65,7 +65,7 @@ public:
 
     // restart services
     void restartMODApp();
-    bool restartJackd(const String& command);
+    bool restartJackd(const StringArray& args);
 
 private:
     // The window.

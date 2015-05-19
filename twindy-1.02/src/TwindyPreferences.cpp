@@ -21,6 +21,7 @@
 #include "juce_amalgamated.h"
 #include "TwindyPreferences.h"
 #include "TwindyWindow.h"
+#include "Utils.h"
 
 //------------------------------------------------------------------------------
 TwindyPreferences::TwindyPreferences()
@@ -45,8 +46,7 @@ TwindyPreferences::~TwindyPreferences()
 {
     setContentComponent(nullptr);
 
-    if (mixerPid > 0)
-        kill(mixerPid, SIGTERM);
+    terminateAndWaitForProcess(mixerPid);
 }
 
 //------------------------------------------------------------------------------
@@ -86,12 +86,7 @@ void TwindyPreferences::setPrefColours(const Colour& fillColour,
 //------------------------------------------------------------------------------
 void TwindyPreferences::setMixerPid(pid_t p)
 {
-    if (mixerPid > 0)
-    {
-        printf("Killing previous mixer pid %li\n", (long int)p);
-        ::kill(mixerPid, SIGTERM);
-    }
-
+    terminateAndWaitForProcess(mixerPid);
     mixerPid = p;
 }
 

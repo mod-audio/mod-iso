@@ -695,3 +695,9 @@ void TwindyRootWindow::launchStartupPrograms()
 		}
 	}
 }
+
+//----------------------------------------------------------------------------------------------
+void TwindyRootWindow::changeToAppTab()
+{
+    workspaces->setCurrentTabIndex(1);
+}

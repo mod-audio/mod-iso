@@ -117,6 +117,10 @@ class TwindyRootWindow : public Component,
 		Should probably have a more descriptive name...
 	 */
 	void callbackFunction(void *event);
+
+        // go to mod-app tab
+        void changeToAppTab();
+
   private:
 	///	Tells the Xserver to redirect all MapRequest events to this window.
 	void setupMappingRedirect();
