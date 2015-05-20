@@ -35,7 +35,6 @@ void TwindyTabs::currentTabChanged(const int newCurrentTabIndex, const String& n
 {
     if (TwindyRootWindow* const parent = static_cast<TwindyRootWindow*>(getParentComponent()))
     {
-        printf("newCurrentTabIndex = %i\n",newCurrentTabIndex);
         parent->setButtonsVisible(newCurrentTabIndex == 2);
         parent->setVisibleUpperPanel(newCurrentTabIndex-1);
     }
