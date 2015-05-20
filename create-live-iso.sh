@@ -111,12 +111,13 @@ fi
 # ------------------------------------------------------------------------------------
 # install kxstudio-repos package
 
-if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3 ]; then
+if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3b ]; then
   run_chroot_cmd apt-get update
   run_chroot_cmd apt-get install --no-install-recommends -y software-properties-common wget
   run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.1~kxstudio1_all.deb
   run_chroot_cmd dpkg -i kxstudio-repos_8.2.1~kxstudio1_all.deb
-  sudo touch ~/livecd/custom/var/mod-live/initial-setup-3
+  run_chroot_cmd add-apt-repository ppa:kxstudio-debian/kxstudio-mod -y
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-3b
 fi
 
 # ------------------------------------------------------------------------------------
@@ -139,17 +140,13 @@ if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-5 ]; then
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-5
 fi
 
-exit 0
-
 # -------------------------------------------------------------------------------------------
 # Full install
 
-# plymouth nano ufw
-
 run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-conflicts \
-    acpid alsa-base alsa-utils pm-utils xdg-utils xorg xserver-xorg-video-all \
+    acpid alsa-base alsa-utils alsa-firmware pm-utils xdg-utils xorg xserver-xorg-video-all \
     casper lupin-casper nano ufw jackd1 a2jmidid \
-    mod-app mod-sdk mod-sdk-lv2 \
+    mod-app mod-iso mod-sdk mod-sdk-lv2 \
     mod-distortion mod-mda-lv2 mod-pitchshifter mod-utilities \
     artyfx blop-lv2 caps-lv2 fomp sooperlooper-lv2 swh-lv2 tap-lv2 \
     distrho-mini-series distrho-mverb \
@@ -174,9 +171,8 @@ sudo rm ~/livecd/custom/var/mod-live/initial-setup-1
 # -------------------------------------------------------------------------------------------
 # Cleanup
 
-run_chroot_cmd /usr/bin/updatedb.mlocate
+# run_chroot_cmd /usr/bin/updatedb.mlocate
 
-sudo rm -f ~/livecd/custom/_cmd
 sudo rm -f ~/livecd/custom/etc/hosts
 sudo rm -f ~/livecd/custom/etc/resolv.conf
 sudo rm -f ~/livecd/custom/var/kxstudio/*
@@ -187,6 +183,8 @@ run_chroot_cmd ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
 run_chroot_cmd umount /dev/pts
 run_chroot_cmd umount -lf /proc
 run_chroot_cmd umount /sys
+
+sudo rm -f ~/livecd/custom/_cmd
 
 # -------------------------------------------------------------------------------------------
 # Create squashfs file
@@ -264,8 +262,8 @@ cd ~/livecd/cd
 
 sudo xorriso -as mkisofs \
     -r \
-    -V "Live-MOD 2015.04" \
-    -o ~/livecd/Live-MOD_2015.04-test2.iso \
+    -V "Live-MOD 2015.05" \
+    -o ~/livecd/Live-MOD_2015.05-test3.iso \
     -J \
     -isohybrid-mbr isolinux/isohdpfx.bin \
     -partition_offset 16 \
