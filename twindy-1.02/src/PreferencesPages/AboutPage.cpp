@@ -18,216 +18,131 @@
 //	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //	----------------------------------------------------------------------------
 
-#include "juce_amalgamated.h"
 #include "AboutPage.h"
-
-const String AboutPage::version = T("1.01");
+#include "../Utils.h"
 
 //------------------------------------------------------------------------------
-AboutPage::AboutPage():
-Component()
+AboutPage::AboutPage()
+    : Component()
 {
-	String tempstr;
-	Font tempFont(26.0f);
+    const double m(getSystemScaling());
 
-	tempstr = T("Twindy v") + version;
-	addAndMakeVisible(title = new Label(T("title"), tempstr));
-	tempFont.setHeight(28.0f);
-	title->setFont(tempFont);
-	/*title->setColours(textColour,
-					  Colours::transparentBlack,
-					  Colours::transparentBlack,
-					  Colours::transparentBlack,
-					  Colours::transparentBlack,
-					  Colours::transparentBlack);*/
-	title->setColour(Label::textColourId, textColour);
+    String tempstr;
+    Font tempFont(26.0f*m);
+    tempFont.setHeight(28.0f*m);
 
-	tempstr = SystemStats::getJUCEVersion();
-	addAndMakeVisible(juceVersionLabel = new Label(T("juceVersion"), tempstr));
-	tempFont.setHeight(12.0f);
-	juceVersionLabel->setFont(tempFont);
-	/*juceVersionLabel->setColours(textColour,
-								 Colours::transparentBlack,
-								 Colours::transparentBlack,
-								 Colours::transparentBlack,
-								 Colours::transparentBlack,
-								 Colours::transparentBlack);*/
-	juceVersionLabel->setColour(Label::textColourId, textColour);
+    tempstr = T("MOD Live-ISO");
+    addAndMakeVisible(title = new Label(T("title"), tempstr));
+    title->setFont(tempFont);
+    title->setColour(Label::textColourId, textColour);
 
-	tempstr = T("Author:");
-	addAndMakeVisible(authorLabel = new Label(T("authorLabel"), tempstr));
-	tempFont.setBold(true);
-	tempFont.setHeight(14.0f);
-	authorLabel->setFont(tempFont);
-	/*authorLabel->setColours(textColour,
-						    Colours::transparentBlack,
-						    Colours::transparentBlack,
-						    Colours::transparentBlack,
-						    Colours::transparentBlack,
-						    Colours::transparentBlack);*/
-	authorLabel->setColour(Label::textColourId, textColour);
+    tempFont.setBold(true);
+    tempFont.setHeight(14.0f*m);
 
-	tempstr = T("Website:");
-	addAndMakeVisible(websiteLabel = new Label(T("websiteLabel"), tempstr));
-	websiteLabel->setFont(tempFont);
-	/*websiteLabel->setColours(textColour,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack);*/
-	websiteLabel->setColour(Label::textColourId, textColour);
+    tempstr = T("Author:");
+    addAndMakeVisible(authorLabel = new Label(T("authorLabel"), tempstr));
+    authorLabel->setFont(tempFont);
+    authorLabel->setColour(Label::textColourId, textColour);
 
-	tempstr = T("Credits:");
-	addAndMakeVisible(creditsLabel = new Label(T("creditsLabel"), tempstr));
-	creditsLabel->setFont(tempFont);
-	/*creditsLabel->setColours(textColour,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack,
-						     Colours::transparentBlack);*/
-	creditsLabel->setColour(Label::textColourId, textColour);
+    tempstr = T("Website:");
+    addAndMakeVisible(websiteLabel = new Label(T("websiteLabel"), tempstr));
+    websiteLabel->setFont(tempFont);
+    websiteLabel->setColour(Label::textColourId, textColour);
 
-	tempstr = T("About:");
-	addAndMakeVisible(descriptionLabel = new Label(T("descriptionLabel"), tempstr));
-	descriptionLabel->setFont(tempFont);
-	/*descriptionLabel->setColours(textColour,
-							     Colours::transparentBlack,
-							     Colours::transparentBlack,
-							     Colours::transparentBlack,
-							     Colours::transparentBlack,
-							     Colours::transparentBlack);*/
-	descriptionLabel->setColour(Label::textColourId, textColour);
+    tempstr = T("Credits:");
+    addAndMakeVisible(creditsLabel = new Label(T("creditsLabel"), tempstr));
+    creditsLabel->setFont(tempFont);
+    creditsLabel->setColour(Label::textColourId, textColour);
 
-	tempstr = T("License:");
-	addAndMakeVisible(licenseLabel = new Label(T("licenseLabel"), tempstr));
-	licenseLabel->setFont(tempFont);
-	/*licenseLabel->setColours(textColour,
-						   Colours::transparentBlack,
-						   Colours::transparentBlack,
-						   Colours::transparentBlack,
-						   Colours::transparentBlack,
-						   Colours::transparentBlack);*/
-	licenseLabel->setColour(Label::textColourId, textColour);
+    tempstr = T("About:");
+    addAndMakeVisible(descriptionLabel = new Label(T("descriptionLabel"), tempstr));
+    descriptionLabel->setFont(tempFont);
+    descriptionLabel->setColour(Label::textColourId, textColour);
 
-	tempstr = T("Niall Moody");
-	addAndMakeVisible(author = new Label(T("author"), tempstr));
-	tempFont.setBold(false);
-	author->setFont(tempFont);
-	/*author->setColours(textColour,
-					   Colours::transparentBlack,
-					   Colours::transparentBlack,
-					   Colours::transparentBlack,
-					   Colours::transparentBlack,
-					   Colours::transparentBlack);*/
-	author->setColour(Label::textColourId, textColour);
+    tempstr = T("License:");
+    addAndMakeVisible(licenseLabel = new Label(T("licenseLabel"), tempstr));
+    licenseLabel->setFont(tempFont);
+    licenseLabel->setColour(Label::textColourId, textColour);
 
-	tempstr = T("http://www.niallmoody.com/twindy/");
-	addAndMakeVisible(website = new Label(T("website"), tempstr));
-	website->setFont(tempFont);
-	/*website->setColours(textColour,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack);*/
-	website->setColour(Label::textColourId, textColour);
+    tempstr = T("falkTX");
+    addAndMakeVisible(author = new Label(T("author"), tempstr));
+    tempFont.setBold(false);
+    author->setFont(tempFont);
+    author->setColour(Label::textColourId, textColour);
 
-	tempstr = T("Julian Storer, for making the");
-	tempstr << T(" fantastic JUCE library upon which");
-	tempstr << T(" Twindy is based (albeit slightly");
-	tempstr << T(" modified).  See: \n");
-	tempstr << T("http://www.rawmaterialsoftware.com/juce/");
-	addAndMakeVisible(credits = new Label(T("credits"), tempstr));
-	credits->setFont(tempFont);
-	/*credits->setColours(textColour,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack,
-					    Colours::transparentBlack);*/
-	credits->setColour(Label::textColourId, textColour);
+    tempstr = T("https://github.com/portalmod/mod-iso");
+    addAndMakeVisible(website = new Label(T("website"), tempstr));
+    website->setFont(tempFont);
+    website->setColour(Label::textColourId, textColour);
 
-	tempstr = T("Twindy is inspired by the Tracktion DAW (digital audio");
-	tempstr << T(" workstation) software for Windows and OSX, and tries");
-	tempstr << T(" to apply a similar workflow to a window manager.");
-	tempstr << T("  The aim is to keep things as simple as possible while");
-	tempstr << T(" still looking clean and respectable, with all options");
-	tempstr << T(" accessable via the gui.");
-	addAndMakeVisible(description = new Label(T("description"), tempstr));
-	description->setFont(tempFont);
-	/*description->setColours(textColour,
-							Colours::transparentBlack,
-							Colours::transparentBlack,
-							Colours::transparentBlack,
-							Colours::transparentBlack,
-							Colours::transparentBlack);*/
-	description->setColour(Label::textColourId, textColour);
+    tempstr  = T("Niall Moody, for making Twindy. See: http://www.niallmoody.com/twindy/\n");
+    tempstr << T("Julian Storer, for making JUCE. See: http://www.rawmaterialsoftware.com/juce/");
+    addAndMakeVisible(credits = new Label(T("credits"), tempstr));
+    credits->setFont(tempFont);
+    credits->setColour(Label::textColourId, textColour);
 
-	tempstr = T("GPL - see the COPYING file for details.");
-	addAndMakeVisible(license = new Label(T("license"), tempstr));
-	license->setFont(tempFont);
-	/*license->setColours(textColour,
-						Colours::transparentBlack,
-						Colours::transparentBlack,
-						Colours::transparentBlack,
-						Colours::transparentBlack,
-						Colours::transparentBlack);*/
-	license->setColour(Label::textColourId, textColour);
+    tempstr  = T("Publications, products, content or services referenced herein or on the website are the exclusive");
+    tempstr << T(" trademarks or servicemarks of MOD.\nOther product and company names mentioned in the site may be the");
+    tempstr << T(" trademarks of their respective owners.\nAll software is available under the GPL license, see");
+    tempstr << T(" https://www.gnu.org/licenses/gpl-2.0.html for details.");
+    addAndMakeVisible(description = new Label(T("description"), tempstr));
+    description->setFont(tempFont);
+    description->setColour(Label::textColourId, textColour);
+
+    tempstr = T("GPL - see the COPYING file for details.");
+    addAndMakeVisible(license = new Label(T("license"), tempstr));
+    license->setFont(tempFont);
+    license->setColour(Label::textColourId, textColour);
 }
 
 //------------------------------------------------------------------------------
 AboutPage::~AboutPage()
 {
-	deleteAllChildren();
+    deleteAllChildren();
 }
 
 //------------------------------------------------------------------------------
 void AboutPage::resized()
 {
-	title->setBounds((getWidth()/2)-100, 5, 200, 30);
-	juceVersionLabel->setBounds((getWidth()/2)+80, 20, 75, 25);
+    const double m(getSystemScaling());
 
-	authorLabel->setBounds((getWidth()/2)-200, 40, 75, 25);
-	websiteLabel->setBounds((getWidth()/2)-200, 57, 75, 25);
-	creditsLabel->setBounds((getWidth()/2)-200, 90, 75, 25);
-	descriptionLabel->setBounds((getWidth()/2)-200, 160, 75, 25);
-	licenseLabel->setBounds((getWidth()/2)-200, 270, 75, 25);
+    title->setBounds((getWidth()/2)-100*m, 5*m, 200*m, 30*m);
 
-	author->setBounds((getWidth()/2)-125, 40, 275, 25);
-	website->setBounds((getWidth()/2)-125, 57, 275, 25);
-	credits->setBounds((getWidth()/2)-125, 90, 275, 65);
-	description->setBounds((getWidth()/2)-125, 160, 275, 105);
-	license->setBounds((getWidth()/2)-125, 270, 275, 25);
+    authorLabel->setBounds((getWidth()/2)-200*m, 40*m, 75*m, 25*m);
+    websiteLabel->setBounds((getWidth()/2)-200*m, 57*m, 75*m, 25*m);
+    creditsLabel->setBounds((getWidth()/2)-200*m, 90*m, 75*m, 25);
+    descriptionLabel->setBounds((getWidth()/2)-200*m, 160*m, 75*m, 25*m);
+    licenseLabel->setBounds((getWidth()/2)-200*m, 320*m, 75*m, 25*m);
+
+    author->setBounds((getWidth()/2)-125*m, 40*m, 275*m, 25*m);
+    website->setBounds((getWidth()/2)-125*m, 57*m, 275*m, 25*m);
+    credits->setBounds((getWidth()/2)-125*m, 90*m, 275*m, 65*m);
+    description->setBounds((getWidth()/2)-125*m, 160*m, 290*m, 155*m);
+    license->setBounds((getWidth()/2)-125*m, 320*m, 275*m, 25*m);
 }
 
 //------------------------------------------------------------------------------
-void AboutPage::paint(Graphics &g)
+void AboutPage::paint(Graphics&)
 {
-	
 }
 
 //------------------------------------------------------------------------------
-void AboutPage::setColours(const Colour& backCol,
-						   const Colour& textCol,
-						   const Colour& buttonCol)
+void AboutPage::setColours(const Colour& backCol, const Colour& textCol, const Colour& buttonCol)
 {
-	backgroundColour = backCol;
-	textColour = textCol;
+    backgroundColour = backCol;
+    textColour = textCol;
 
-	title->setColour(Label::textColourId, textColour);
-	juceVersionLabel->setColour(Label::textColourId, textColour);
+    title->setColour(Label::textColourId, textColour);
 
-	authorLabel->setColour(Label::textColourId, textColour);
-	websiteLabel->setColour(Label::textColourId, textColour);
-	creditsLabel->setColour(Label::textColourId, textColour);
-	descriptionLabel->setColour(Label::textColourId, textColour);
-	licenseLabel->setColour(Label::textColourId, textColour);
+    authorLabel->setColour(Label::textColourId, textColour);
+    websiteLabel->setColour(Label::textColourId, textColour);
+    creditsLabel->setColour(Label::textColourId, textColour);
+    descriptionLabel->setColour(Label::textColourId, textColour);
+    licenseLabel->setColour(Label::textColourId, textColour);
 
-	author->setColour(Label::textColourId, textColour);
-	website->setColour(Label::textColourId, textColour);
-	credits->setColour(Label::textColourId, textColour);
-	description->setColour(Label::textColourId, textColour);
-	license->setColour(Label::textColourId, textColour);
+    author->setColour(Label::textColourId, textColour);
+    website->setColour(Label::textColourId, textColour);
+    credits->setColour(Label::textColourId, textColour);
+    description->setColour(Label::textColourId, textColour);
+    license->setColour(Label::textColourId, textColour);
 }

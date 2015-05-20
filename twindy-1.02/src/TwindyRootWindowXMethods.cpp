@@ -128,7 +128,7 @@ void TwindyRootWindow::callbackFunction(void *event)
             XFree(textProp.value); //?
         }
 
-        if (name == T("Konsole") || name == T("Shell") || name == T("alsamixer"))
+        if (name == T("__mod_mixer__"))
         {
             target = -1;
             printf("Mixer detected\n");
@@ -331,7 +331,7 @@ void TwindyRootWindow::setupMappingRedirect()
                    | LeaveWindowMask          // To be told when the cursor leaves a window.
                    | KeyPressMask    | KeyReleaseMask
                    | ButtonPressMask | ButtonReleaseMask
-                   | KeymapStateMask | PointerMotionMask | PointerMotionHintMask
+                   | KeymapStateMask | PointerMotionMask
                    | ExposureMask    | FocusChangeMask | StructureNotifyMask;
 
     // To set the cursor to the usual pointer, rather than that horrible default X...

@@ -23,6 +23,8 @@
 
 #include "ExtraComponents/TwindyTabbedComponent.h"
 #include "ExtraComponents/TracktionScheme.h"
+
+#include "PreferencesPages/AboutPage.h"
 #include "PreferencesPages/AudioPreferences.h"
 
 /// Preferences page for Twindy.
@@ -72,7 +74,7 @@ private:
     TracktionScheme realColours;
     /// The varius preferences pages
     AudioPreferences audio;
-    // etc
+    AboutPage about;
 
     // Used for audio mixer
     pid_t mixerPid;

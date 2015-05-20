@@ -181,6 +181,10 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton7->setTextColour(colours.menuText);
     leftButton7->addButtonListener(this);
 
+    leftButton4->setVisible(false);
+    leftButton5->setVisible(false);
+    leftButton6->setVisible(false);
+
     //Clock
     addAndMakeVisible(clock = new Clock());
     clock->setColour(colours.propertyPanelText);
@@ -292,12 +296,12 @@ void TwindyRootWindow::resized()
 
     leftButton7->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
     tempint -= coords.buttonHeight;
-    leftButton6->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
-    tempint -= coords.buttonHeight;
-    leftButton5->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
-    tempint -= coords.buttonHeight;
-    leftButton4->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
-    tempint -= coords.buttonHeight;
+    //leftButton6->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
+    //tempint -= coords.buttonHeight;
+    //leftButton5->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
+    //tempint -= coords.buttonHeight;
+    //leftButton4->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
+    //tempint -= coords.buttonHeight;
     leftButton3->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
     tempint -= coords.buttonHeight;
     leftButton2->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
@@ -354,15 +358,18 @@ void TwindyRootWindow::buttonClicked(Button* button)
     }
     else if (button == leftButton5)
     {
-        args.add(T("xterm")); // TODO
+        args.add(T("terminator")); // TODO
     }
     else if (button == leftButton6)
     {
-        args.add(T("xterm")); // TODO
+        args.add(T("terminator")); // TODO
     }
     else if (button == leftButton7)
     {
-        args.add(T("xterm"));
+        args.add(T("terminator"));
+        args.add(T("-u"));
+        args.add(T("-T"));
+        args.add(T("Terminal"));
     }
     else
     {
@@ -538,12 +545,13 @@ void TwindyRootWindow::setButtonsVisible(const bool visible)
         return;
 
     //exitButton->setVisible(visible);
+
     leftButton1->setVisible(visible);
     leftButton2->setVisible(visible);
     leftButton3->setVisible(visible);
-    leftButton4->setVisible(visible);
-    leftButton5->setVisible(visible);
-    leftButton6->setVisible(visible);
+    //leftButton4->setVisible(visible);
+    //leftButton5->setVisible(visible);
+    //leftButton6->setVisible(visible);
     leftButton7->setVisible(visible);
 }
 

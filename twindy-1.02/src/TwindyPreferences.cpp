@@ -28,14 +28,11 @@ TwindyPreferences::TwindyPreferences()
     : TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences),
       realColours(T("~/.twindy/Default.tracktionscheme")),
       audio(this),
+      about(),
       mixerPid(-1),
       mixerWindow(nullptr)
 {
     addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Audio")));
-    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("MIDI")));
-    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Keyboard")));
-    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Mouse")));
-    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Network")));
     addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("About")));
 
     setCurrentlySelectedTab(0);
@@ -64,6 +61,11 @@ void TwindyPreferences::tabWasClicked(int newSelectedIndex,
         if (mixerWindow != nullptr)
             mixerWindow->show();
         break;
+
+    case 1:
+        setContentComponent(&about);
+        break;
+
     default:
         setContentComponent(nullptr);
         break;
@@ -80,7 +82,8 @@ void TwindyPreferences::setPrefColours(const Colour& fillColour,
 {
     setColours(fillColour, textColour, selectedOutlineColour, normalOutlineColour, deselectedTabColour);
 
-    //audio.setColours(fillColour, textColour, buttonColour);
+//     audio.setColours(fillColour, textColour, buttonColour);
+    about.setColours(fillColour, textColour, buttonColour);
 }
 
 //------------------------------------------------------------------------------

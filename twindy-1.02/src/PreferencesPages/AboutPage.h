@@ -42,8 +42,6 @@ class AboutPage : public Component
 					const Colour& textCol,
 					const Colour& buttonCol);
 
-	///	Twindy's current version.
-	static const String version;
   private:
 	///	The colour of the background.
 	Colour backgroundColour;
@@ -52,8 +50,6 @@ class AboutPage : public Component
 
 	///	Twindy title label.
 	Label *title;
-	///	JUCE version label.
-	Label *juceVersionLabel;
 	///	Author label.
 	Label *authorLabel;
 	///	Author text.

@@ -525,7 +525,10 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     }
 
     StringArray args;
-    args.add(T("konsole"));
+    args.add(T("terminator"));
+    args.add(T("-u"));
+    args.add(T("-T"));
+    args.add(T("__mod_mixer__"));
     args.add(T("-e"));
     args.add(T("alsamixer"));
     args.add(T("-D"));
