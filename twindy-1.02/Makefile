@@ -48,15 +48,10 @@ endif
 
 all: $(TARGET)
 
-$(OBJDIR)/%.c.o: src/%.c
+$(OBJDIR)/juce_amalgamated.cpp.o: src/juce_amalgamated.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling $<"
-	$(CC) $< $(BUILD_C_FLAGS) -c -o $@
-
-$(OBJDIR)/%.cpp.o: src/%.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling $<"
-	$(CXX) $< $(BUILD_CXX_FLAGS) -c -o $@
+	$(CXX) $< $(BUILD_CXX_FLAGS) $(shell pkg-config --cflags alsa freetype2 x11 xext xinerama) -w -c -o $@
 
 $(OBJDIR)/ExtraComponents/%.cpp.o: src/ExtraComponents/%.cpp
 	-@mkdir -p $(OBJDIR)/ExtraComponents
@@ -68,10 +63,15 @@ $(OBJDIR)/PreferencesPages/%.cpp.o: src/PreferencesPages/%.cpp
 	@echo "Compiling $<"
 	$(CXX) $< $(BUILD_CXX_FLAGS) -c -o $@
 
-$(OBJDIR)/juce_amalgamated.cpp.o: src/juce_amalgamated.cpp
+$(OBJDIR)/%.cpp.o: src/%.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling $<"
-	$(CXX) $< $(BUILD_CXX_FLAGS) $(shell pkg-config --cflags alsa freetype2 x11 xext xinerama) -w -c -o $@
+	$(CXX) $< $(BUILD_CXX_FLAGS) -c -o $@
+
+$(OBJDIR)/%.c.o: src/%.c
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling $<"
+	$(CC) $< $(BUILD_C_FLAGS) -c -o $@
 
 clean:
 	rm -f $(OBJS)
