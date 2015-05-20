@@ -32,12 +32,7 @@ public:
     TwindyTabs();
 
     /// We use this to determine when to hide/show windows.
-    void currentTabChanged(const int newCurrentTabIndex,
-                           const String& newCurrentTabName) override;
-
-private:
-    /// We use this to determine when the user's on the Preferences panel.
-    bool preferences;
+    void currentTabChanged(const int newCurrentTabIndex, const String& newCurrentTabName) override;
 };
 
 #endif

@@ -419,25 +419,27 @@ void TwindyTabbedComponent::paint (Graphics& g)
         return;
     }
 
-	const int lowerBorder = static_cast<int>(getHeight());
-	int textHeight = 425;
-	float textStretch = 8.0f;
-	int textStart;
-	Font tempFont(30.0f, Font::bold);
+#if 0
+    const int lowerBorder = static_cast<int>(getHeight());
+    int textHeight = 425;
+    float textStretch = 8.0f;
+    int textStart;
+    Font tempFont(30.0f, Font::bold);
 
-	g.setFont(tempFont);
+    g.setFont(tempFont);
 
-	textHeight = (lowerBorder - 50);
-	textStart = lowerBorder - 25;
-	textStretch = (float)textHeight * (8.0f/425.0f);
+    textHeight = (lowerBorder - 50);
+    textStart = lowerBorder - 25;
+    textStretch = (float)textHeight * (8.0f/425.0f);
 
-	g.setColour(fillCol);
-	g.drawText(T("MOD"), 5, 400, 150, 200, Justification::bottomLeft, true);
+    g.setColour(fillCol);
+    g.drawText(T("MOD"), 5, 400, 150, 200, Justification::bottomLeft, true);
+#endif
 
-    if (contents == 0 || !contents->isOpaque())
+    if (contents == nullptr || ! contents->isOpaque())
     {
-        g.setColour (fillCol);
-        g.fillRect (contentsPos);
+        g.setColour(fillCol);
+        g.fillRect(contentsPos);
     }
 }
 
@@ -508,10 +510,11 @@ void TwindyTabbedComponent::resized()
     }
 
     outlinePos = contentsPos;
-	//****Twindy****
-	//Re-wrote this bit, because it seemed to be broken?
-	contentsPos.expand (-xGap/16,
-                        -8 * yGap);
+
+    //****Twindy****
+    //Re-wrote this bit, because it seemed to be broken?
+    contentsPos.expand (-xGap/16, -8 * yGap);
+
     if (contents != 0)
         contents->setBounds (contentsPos);
 
@@ -524,8 +527,7 @@ void TwindyTabbedComponent::resized()
 
     Path p;
 
-    const float thickness = jmin (normalOutlineThickness,
-                                   selectedOutlineThickness);
+    const float thickness = jmin (normalOutlineThickness, selectedOutlineThickness);
 
     // contents box size..
     float cx1 = outlinePos.getX() + thickness;

@@ -28,23 +28,15 @@
 
 //------------------------------------------------------------------------------
 TwindyTabs::TwindyTabs()
-    : TabbedComponent(TabbedButtonBar::TabsAtTop),
-      preferences(false) {}
+    : TabbedComponent(TabbedButtonBar::TabsAtTop) {}
 
 //------------------------------------------------------------------------------
-void TwindyTabs::currentTabChanged(const int newCurrentTabIndex,
-                                   const String& newCurrentTabName)
+void TwindyTabs::currentTabChanged(const int newCurrentTabIndex, const String& newCurrentTabName)
 {
-    TwindyRootWindow* const parent = static_cast<TwindyRootWindow*>(getParentComponent());
-
-    if (parent != nullptr)
+    if (TwindyRootWindow* const parent = static_cast<TwindyRootWindow*>(getParentComponent()))
+    {
+        printf("newCurrentTabIndex = %i\n",newCurrentTabIndex);
+        parent->setButtonsVisible(newCurrentTabIndex == 2);
         parent->setVisibleUpperPanel(newCurrentTabIndex-1);
-
-    if (newCurrentTabName == TRANS("Preferences"))
-        preferences = true;
-    else if (preferences)
-        preferences = false;
-
-    if (parent != nullptr)
-        parent->updateColours();
+    }
 }

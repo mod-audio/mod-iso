@@ -71,6 +71,8 @@ void TwindyErrorDisplay::paint(Graphics& g)
     if (errorArray.size() == 0)
         return;
 
+    printf("paint error\n");
+
     Font tempFont(14.0f, Font::bold);
     ErrorMessage* const error(errorArray.getFirst());
 

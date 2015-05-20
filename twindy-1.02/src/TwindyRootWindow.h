@@ -59,9 +59,8 @@ typedef XID Window;
 	programs, logout etc.).
  */
 class TwindyRootWindow : public Component,
-						 public ActionListener,
-						 public ButtonListener,
-						 public MapRequestCallback
+                         public ButtonListener,
+                         public MapRequestCallback
 {
   public:
 	///	Constructor.
@@ -75,11 +74,6 @@ class TwindyRootWindow : public Component,
 	///	Called when the window's resized (this shouldn't happend too often).
 	void resized();
 
-	///	Handles e.g. button pressed events.
-	/*!
-		This probably isn't used anymore, now that we're using ButtonListeners.
-	 */
-	void actionListenerCallback(const String& message);
 	///	Handles any button pressed events.
 	void buttonClicked(Button* button);
 
@@ -118,7 +112,10 @@ class TwindyRootWindow : public Component,
 	 */
 	void callbackFunction(void *event);
 
-        // go to mod-app tab
+        // Hide or show the dev buttons.
+        void setButtonsVisible(const bool visible);
+
+        // Go to mod-app tab.
         void changeToAppTab();
 
   private:
@@ -144,8 +141,6 @@ class TwindyRootWindow : public Component,
 	///	Launches all the programs specified in twindyrc.
 	void launchStartupPrograms();
 
-	//	The TabbedComponent that takes up the upper panel.
-	//TwindyUpperPanel *upperPanel;
 	///	TabbedComponent holding all the workspace Components.
 	TwindyTabs *workspaces;
 	///	Array of workspace Components.
@@ -155,45 +150,32 @@ class TwindyRootWindow : public Component,
 	///	Index of the currently visible workspace Component.
 	int currentUpperPanelComp;
 
-	///	Exit button.
-	//TextButton *exitButton;
-	DrawableTextButton *exitButton;
-	///	Top left button in the lower left.
-	//TextButton *leftButton1;
-	DrawableTextButton *leftButton1;
-	///	Top left button in the lower left.
-	//TextButton *leftButton2;
-	DrawableTextButton *leftButton2;
-	///	Top left button in the lower left.
-	//TextButton *leftButton3;
-	DrawableTextButton *leftButton3;
-	///	Top left button in the lower left.
-	//TextButton *leftButton4;
-	DrawableTextButton *leftButton4;
-	///	Top left button in the lower left.
-	//TextButton *leftButton5;
-	DrawableTextButton *leftButton5;
-	///	Top left button in the lower left.
-	//TextButton *leftButton6;
-	DrawableTextButton *leftButton6;
-	///	Top left button in the lower left.
-	//TextButton *leftButton7;
-	DrawableTextButton *leftButton7;
+	/// Exit button.
+	DrawableTextButton* exitButton;
+	/// Top left button in the lower left.
+	DrawableTextButton* leftButton1;
+	/// Top left button in the lower left.
+	DrawableTextButton* leftButton2;
+	/// Top left button in the lower left.
+	DrawableTextButton* leftButton3;
+	/// Top left button in the lower left.
+	DrawableTextButton* leftButton4;
+	/// Top left button in the lower left.
+	DrawableTextButton* leftButton5;
+	/// Top left button in the lower left.
+	DrawableTextButton* leftButton6;
+	/// Top left button in the lower left.
+	DrawableTextButton* leftButton7;
 
-	///	Clock to display the current time.
-	Clock *clock;
+	/// Clock to display the current time.
+	Clock* clock;
 
-	///	Object used to read/write various Twindy properties.
-	TwindyProperties *properties;
-	///	The colours we use in this window.
+	/// Object used to read/write various Twindy properties.
+	TwindyProperties* properties;
+	/// The colours we use in this window.
 	TwindyColours colours;
 
-	///	An array of the pids for all the programs we started at startup.
-	/*!
-		If we start a program in the startup sequence, we need to keep a hold of
-		it's pid so we can kill it when we quit (only necessary if it's a
-		non-gui app?).
-	 */
+        /// An array of the pids for the programs we started via Dev buttons.
 	Array<pid_t> pidArray;
 };
 

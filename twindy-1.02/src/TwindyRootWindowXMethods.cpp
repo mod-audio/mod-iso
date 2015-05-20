@@ -51,6 +51,7 @@ END_JUCE_NAMESPACE
 #include "TwindyWindow.h"
 #include "TwindyErrorDisplay.h"
 #include "TwindyHelperStuff.h"
+#include "Utils.h"
 #include <iostream>
 #include <sstream>
 
@@ -85,6 +86,23 @@ static int xErrorHandler(Display* const dpy, XErrorEvent* const event)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::callbackFunction(void *event)
 {
+    const Coordinates& coords(getCoordinates());
+
+    const Rectangle rectMixer(coords.leftTabsWidth+coords.buttonMargin+2,
+                              230+coords.topPadding,
+                              getWidth()-coords.leftTabsWidth-coords.buttonMargin*2-4,
+                              getHeight()-(230+coords.topPadding)-coords.buttonMargin-2);
+
+    const Rectangle rectApp(0,
+                            coords.topPadding+1,
+                            getWidth(),
+                            getHeight()-coords.topPadding-1);
+
+    const Rectangle rectDev(coords.leftTabsWidth+coords.buttonMargin+2,
+                            coords.topPadding+coords.buttonMargin+3,
+                            getWidth()-coords.leftTabsWidth-coords.buttonMargin*2-5,
+                            getHeight()-coords.topPadding-coords.buttonMargin*2-6);
+
     XEvent* const evt = static_cast<XEvent*>(event);
 
     switch (evt->xany.type)
@@ -131,16 +149,18 @@ void TwindyRootWindow::callbackFunction(void *event)
         switch (target)
         {
         case -1:
-            XMoveWindow(display, window, 162, 250);
-            XResizeWindow(display, window, getWidth()-162-12, getHeight()-250-12);
+            XMoveWindow(display, window, rectMixer.getX(), rectMixer.getY());
+            XResizeWindow(display, window, rectMixer.getWidth(), rectMixer.getHeight());
             break;
+
         case 0:
-            XMoveWindow(display, window, 0, 26);
-            XResizeWindow(display, window, getWidth(), getHeight()-26);
+            XMoveWindow(display, window, rectApp.getX(), rectApp.getY());
+            XResizeWindow(display, window, rectApp.getWidth(), rectApp.getHeight());
             break;
+
         default:
-            XMoveWindow(display, window, 162, 37);
-            XResizeWindow(display, window, getWidth()-162-12, getHeight()-37-12);
+            XMoveWindow(display, window, rectDev.getX(), rectDev.getY());
+            XResizeWindow(display, window, rectDev.getWidth(), rectDev.getHeight());
             break;
         }
 
@@ -193,32 +213,28 @@ void TwindyRootWindow::callbackFunction(void *event)
     {
         TWINDY_DBG_MESSAGE("ConfigureRequest received.");
 
-        // FIXME
-
+        Rectangle temprect;
         XWindowChanges windowChanges;
 
         switch (currentUpperPanelComp)
         {
         case -1:
-            windowChanges.x = 162;
-            windowChanges.y = 250;
-            windowChanges.width = getWidth()-162-12;
-            windowChanges.height = getHeight()-250-12;
+            temprect = rectMixer;
             break;
+
         case 0:
-            windowChanges.x = 0;
-            windowChanges.y = 26;
-            windowChanges.width = getWidth();
-            windowChanges.height = getHeight()-26;
+            temprect = rectApp;
             break;
+
         default:
-            windowChanges.x = 162;
-            windowChanges.y = 37;
-            windowChanges.width = getWidth()-162-12;
-            windowChanges.height = getHeight()-37-12;
+            temprect = rectDev;
             break;
         }
 
+        windowChanges.x = temprect.getX();
+        windowChanges.y = temprect.getY();
+        windowChanges.width = temprect.getWidth();
+        windowChanges.height = temprect.getHeight();
         windowChanges.sibling = evt->xconfigurerequest.above;
         windowChanges.stack_mode = evt->xconfigurerequest.detail;
 
@@ -258,13 +274,15 @@ void TwindyRootWindow::callbackFunction(void *event)
         switch (currentUpperPanelComp)
         {
         case -1:
-            temprect.setBounds(162, 250, getWidth()-162-12, getHeight()-250-12);
+            temprect = rectMixer;
             break;
+
         case 0:
-            temprect.setBounds(0, 26, getWidth(), getHeight()-26);
+            temprect = rectApp;
             break;
+
         default:
-            temprect.setBounds(162, 37, getWidth()-162-12, getHeight()-37-12);
+            temprect = rectDev;
             break;
         }
 

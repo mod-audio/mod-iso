@@ -286,53 +286,9 @@ void TwindyProperties::writeConfigFile()
 	tempElement->setAttribute(T("value"), T(""));
 	mainElement.addChildElement(tempElement);
 
-	tempElement = new XmlElement(T("RightButton1"));
-	tempElement->setAttribute(T("name"), T("XTerm"));
-	tempElement->setAttribute(T("value"), T("xterm -bg \"#A0A0BB\""));
-	mainElement.addChildElement(tempElement);
-
-	tempElement = new XmlElement(T("RightButton2"));
-	tempElement->setAttribute(T("name"), T("Gnome Terminal"));
-	tempElement->setAttribute(T("value"), T("gnome-terminal"));
-	mainElement.addChildElement(tempElement);
-
-	tempElement = new XmlElement(T("RightButton3"));
-	tempElement->setAttribute(T("name"), T("Nautilus"));
-	tempElement->setAttribute(T("value"), T("nautilus --browser --no-desktop"));
-	mainElement.addChildElement(tempElement);
-
-	tempElement = new XmlElement(T("RightButton4"));
-	tempElement->setAttribute(T("name"), T("Run App..."));
-	tempElement->setAttribute(T("value"), T(""));
-	mainElement.addChildElement(tempElement);
-
-	tempElement = new XmlElement(T("RightButton5"));
-	tempElement->setAttribute(T("name"), T("Right 5"));
-	tempElement->setAttribute(T("value"), T(""));
-	mainElement.addChildElement(tempElement);
-
-	tempElement = new XmlElement(T("RightButton6"));
-	tempElement->setAttribute(T("name"), T("Right 6"));
-	tempElement->setAttribute(T("value"), T(""));
-	mainElement.addChildElement(tempElement);
-
-	tempElement = new XmlElement(T("RightButton7"));
-	tempElement->setAttribute(T("name"), T("Right 7"));
-	tempElement->setAttribute(T("value"), T(""));
-	mainElement.addChildElement(tempElement);
-
 	tempElement = new XmlElement(T("GlobalFont"));
 	tempElement->setAttribute(T("name"), T("Bitstream Vera Sans"));
 	tempElement->setAttribute(T("value"), T("Bitstream Vera Sans"));
-	mainElement.addChildElement(tempElement);
-
-	tempElement = new XmlElement(T("Workspace"));
-	tempElement->setAttribute(T("name"), T("."));
-	tempElement->setAttribute(T("value"), T("."));
-	tempElement2 = new XmlElement(T("SubProperty"));
-	tempElement2->setAttribute(T("name"), T("Workspace 1"));
-	tempElement2->setAttribute(T("value"), T("~/.twindy/Default.tracktionscheme"));
-	tempElement->addChildElement(tempElement2);
 	mainElement.addChildElement(tempElement);
 
 	mainElement.writeToFile(phil, T(""));

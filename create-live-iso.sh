@@ -113,7 +113,7 @@ fi
 
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3 ]; then
   run_chroot_cmd apt-get update
-  run_chroot_cmd apt-get install -y software-properties-common wget
+  run_chroot_cmd apt-get install --no-install-recommends -y software-properties-common wget
   run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.1~kxstudio1_all.deb
   run_chroot_cmd dpkg -i kxstudio-repos_8.2.1~kxstudio1_all.deb
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-3
@@ -129,30 +129,32 @@ run_chroot_cmd apt-get dist-upgrade -y
 # Base Install + kernel
 
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-4 ]; then
-  run_chroot_cmd apt-get install -y ubuntu-standard laptop-detect dkms
+  run_chroot_cmd apt-get install --no-install-recommends -y ubuntu-standard laptop-detect
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-4
 fi
 
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-5 ]; then
   # skip grub install/configure to HDD here
-  run_chroot_cmd apt-get install -y linux-lowlatency linux-image-lowlatency linux-headers-lowlatency
+  run_chroot_cmd apt-get install --no-install-recommends -y linux-lowlatency linux-image-lowlatency linux-headers-lowlatency
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-5
 fi
+
+exit 0
 
 # -------------------------------------------------------------------------------------------
 # Full install
 
-run_chroot_cmd apt-get install -y --no-install-recommends \
-    kxstudio-default-settings kxstudio-meta-live-conflicts \
-    acpid alsa-base alsa-utils pm-utils xdg-utils xorg \
-    casper lupin-casper \
-    openbox obconf obmenu \
-    cadence jackd2 a2jmidid \
-    mod-app mod-sdk \
+# plymouth nano ufw
+
+run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-conflicts \
+    acpid alsa-base alsa-utils pm-utils xdg-utils xorg xserver-xorg-video-all \
+    casper lupin-casper nano ufw jackd1 a2jmidid \
+    mod-app mod-sdk mod-sdk-lv2 \
     mod-distortion mod-mda-lv2 mod-pitchshifter mod-utilities \
     artyfx blop-lv2 caps-lv2 fomp sooperlooper-lv2 swh-lv2 tap-lv2 \
     distrho-mini-series distrho-mverb \
-    calf-plugins guitarix
+    calf-plugins guitarix \
+    kxstudio-default-settings patchage jaaa japa
 
 # -------------------------------------------------------------------------------------------
 # Remove unneeded packages
@@ -174,10 +176,11 @@ sudo rm ~/livecd/custom/var/mod-live/initial-setup-1
 
 run_chroot_cmd /usr/bin/updatedb.mlocate
 
-sudo rm -rf ~/livecd/custom/tmp/*
-sudo rm -f ~/livecd/custom/var/kxstudio/*
+sudo rm -f ~/livecd/custom/_cmd
 sudo rm -f ~/livecd/custom/etc/hosts
 sudo rm -f ~/livecd/custom/etc/resolv.conf
+sudo rm -f ~/livecd/custom/var/kxstudio/*
+sudo rm -rf ~/livecd/custom/tmp/*
 
 run_chroot_cmd ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
 # run_chroot_cmd find /var/log -type f | while read file; do cat /dev/null | tee $file; done
