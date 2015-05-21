@@ -56,9 +56,13 @@ public:
     // Destructor.
     ~AudioPreferences() override;
 
-    // Rescan audio devices.
-    void rescanDevices();
+    // Get list of devices.
+    StringArray getDeviceList() const;
 
+    // Select device.
+    void selectDevice(const String& dev);
+
+protected:
     // Places and sizes the various components.
     void resized() override;
 
@@ -112,6 +116,9 @@ private:
 
     // StringArrays for device discovery.
     StringArray inputNames, outputNames, inputIds, outputIds;
+
+    // Rescan audio devices.
+    void rescanDevices();
 
     // hide apply now section
     void settingsApplied();

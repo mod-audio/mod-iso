@@ -20,6 +20,7 @@
 
 #include "TwindyApp.h"
 #include "TwindyHelperStuff.h"
+#include "TwindyPreferences.h"
 #include "TwindyRootWindow.h"
 #include "Utils.h"
 
@@ -77,24 +78,17 @@ void TwindyApp::initialise(const String& commandLine)
     win->toFront(true);
     TWINDY_DBG_MESSAGE("TwindyRootWindow brought to front.");
 
+    AlertWindow w(T("Live-MOD"), T("Welcome to Live-MOD!"), AlertWindow::NoIcon);
+    w.addTextBlock(T("Before we begin please select which soundcard you plan to use."));
+    w.addTextBlock(T("If you're not sure which to use, select the first one."));
+    w.addComboBox(T("deviceList"), win->getPreferencesPanel()->getAudioDevices(), T("Soundcard:"));
+    w.addButton(T("Ok"), 5, '\n');
 
-
-#if 0
-    TWINDY_DBG_MESSAGE("Initial JACK start test.");
-
-    printf("testing jack...\n");
-    client = jack_client_open("mod-twindy", JackNoStartServer, nullptr);
-    printf("done!\n");
-
-    if (client != nullptr)
+    if (w.runModalLoop() == 5)
     {
-        jack_client_close(client);
-        jackWasStartedBeforeUs = true;
+        if (ComboBox* const box = w.getComboBoxComponent(T("deviceList")))
+            win->getPreferencesPanel()->selectAudioDevice(box->getText());
     }
-
-    TWINDY_DBG_MESSAGE("Auto-start MOD-APP.");
-    restartMODApp();
-#endif
 }
 
 ///-----------------------------------------------------------------------------

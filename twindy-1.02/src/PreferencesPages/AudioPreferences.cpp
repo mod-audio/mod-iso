@@ -370,28 +370,30 @@ AudioPreferences::~AudioPreferences()
 }
 
 //------------------------------------------------------------------------------
-void AudioPreferences::rescanDevices()
+StringArray AudioPreferences::getDeviceList() const
 {
-    deviceBox.clear();
-    inputNames.clear();
-    inputIds.clear();
-    outputNames.clear();
-    outputIds.clear();
+    StringArray devices;
 
-    enumerateAlsaSoundcards(inputNames, outputNames, inputIds, outputIds);
+    devices.add(deviceBox.getText());
 
-    inputNames.appendNumbersToDuplicates(false, true);
-    outputNames.appendNumbersToDuplicates(false, true);
+    for (int i=0, numItems=deviceBox.getNumItems(); i<numItems; ++i)
+        devices.addIfNotAlreadyThere(deviceBox.getItemText(i));
 
-    for (int i=0, size=outputNames.size(); i<size; ++i)
+    return devices;
+}
+
+//------------------------------------------------------------------------------
+void AudioPreferences::selectDevice(const String& dev)
+{
+    for (int i=deviceBox.getNumItems(); --i>=0;)
     {
-        const String& name(outputNames[i]);
-
-        if (name.startsWith(T("Loopback, Loopback PCM")))
+        if (deviceBox.getItemText(i) != dev)
             continue;
 
-        deviceBox.addItem(name, i+1);
+        deviceBox.setSelectedItemIndex(i);
     }
+
+    buttonClicked(&applyButton);
 }
 
 //------------------------------------------------------------------------------
@@ -591,6 +593,31 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     args.add(deviceId.upToFirstOccurrenceOf(T(","), false, false));
 
     prefs->setMixerPid(startProcess(args));
+}
+
+//------------------------------------------------------------------------------
+void AudioPreferences::rescanDevices()
+{
+    deviceBox.clear();
+    inputNames.clear();
+    inputIds.clear();
+    outputNames.clear();
+    outputIds.clear();
+
+    enumerateAlsaSoundcards(inputNames, outputNames, inputIds, outputIds);
+
+    inputNames.appendNumbersToDuplicates(false, true);
+    outputNames.appendNumbersToDuplicates(false, true);
+
+    for (int i=0, size=outputNames.size(); i<size; ++i)
+    {
+        const String& name(outputNames[i]);
+
+        if (name.startsWith(T("Loopback, Loopback PCM")))
+            continue;
+
+        deviceBox.addItem(name, i+1);
+    }
 }
 
 //------------------------------------------------------------------------------

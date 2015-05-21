@@ -65,6 +65,12 @@ public:
     // Get mixer window.
     TwindyWindow* getMixerWindow() const { return mixerWindow; }
 
+    // Get list of audio devices
+    StringArray getAudioDevices() const { return audio.getDeviceList(); }
+
+    // Select device, used during initialization
+    void selectAudioDevice(const String& dev) { audio.selectDevice(dev); }
+
 protected:
     // Called when this component's visiblility changes.
     void visibilityChanged() override;
