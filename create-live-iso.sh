@@ -116,6 +116,7 @@ if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3b ]; then
   run_chroot_cmd apt-get install --no-install-recommends -y software-properties-common wget
   run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.1~kxstudio1_all.deb
   run_chroot_cmd dpkg -i kxstudio-repos_8.2.1~kxstudio1_all.deb
+  run_chroot_cmd rm kxstudio-repos_8.2.1~kxstudio1_all.deb
   run_chroot_cmd add-apt-repository ppa:kxstudio-debian/kxstudio-mod -y
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-3b
 fi
@@ -143,15 +144,22 @@ fi
 # -------------------------------------------------------------------------------------------
 # Full install
 
-run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-conflicts \
+run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-conflicts kxstudio-artwork \
     acpid alsa-base alsa-utils alsa-firmware pm-utils xdg-utils xorg xserver-xorg-video-all \
-    casper lupin-casper mod-artwork lightdm nano ufw jackd1 a2jmidid \
+    casper lupin-casper dmz-cursor-theme lightdm plymouth nano ufw jackd1 a2jmidid \
     mod-app mod-iso mod-sdk mod-sdk-lv2 \
     mod-distortion mod-mda-lv2 mod-pitchshifter mod-utilities \
     artyfx blop-lv2 caps-lv2 fomp sooperlooper-lv2 swh-lv2 tap-lv2 \
     distrho-mini-series distrho-mverb \
     calf-plugins guitarix \
     kxstudio-default-settings patchage jaaa japa
+
+if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-6b ]; then
+  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio-mod/+files/mod-artwork_20150204.2_all.deb
+  run_chroot_cmd dpkg -i mod-artwork_20150204.2_all.deb
+  run_chroot_cmd rm mod-artwork_20150204.2_all.deb
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-6b
+fi
 
 # -------------------------------------------------------------------------------------------
 # Remove unneeded packages
