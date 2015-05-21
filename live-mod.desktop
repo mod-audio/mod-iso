@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Live-MOD
+Comment=This session will start the Live-MOD session
+Exec=twindy
+TryExec=twindy
+Type=Application
