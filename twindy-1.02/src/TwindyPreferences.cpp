@@ -98,7 +98,6 @@ void TwindyPreferences::setMixerWindow(TwindyWindow* w)
 {
     if (mixerWindow != nullptr)
     {
-        printf("Deleting previous mixer instance %p\n", w);
         mixerWindow->closeWindow();
         delete mixerWindow;
     }

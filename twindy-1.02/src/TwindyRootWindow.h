@@ -52,6 +52,8 @@ class TwindyPreferences;
 typedef unsigned long XID;
 typedef XID Window;
 
+static const uint upperPanelCompSize = 2;
+
 ///	This is the main part of the program.
 /*!
 	It forms the root window (?) for the Window Manager, and provides buttons
@@ -87,7 +89,7 @@ class TwindyRootWindow : public Component,
 	/*!
 		-1 means the preferences tab is visible.
 	 */
-	void setVisibleUpperPanel(int index);
+	void setVisibleUpperPanel(uint index);
 	///	Returns a pointer to the preferences panel.
 	TwindyPreferences *getPreferencesPanel() const {return preferences;};
 
@@ -98,8 +100,6 @@ class TwindyRootWindow : public Component,
 	///	Returns a pointer to the clock, so we can change it's properties.
 	Clock *getClock() const {return clock;};
 
-	///	Called to update the various user-controllable preferences.
-	void prefsChanged();
 	///	Called to update the colours of the various (visible) Components.
 	void updateColours();
 
@@ -138,17 +138,15 @@ class TwindyRootWindow : public Component,
 
 	///	Loads all the colours we use from a .tracktionscheme file.
 	void loadColours(const String& file);
-	///	Launches all the programs specified in twindyrc.
-	void launchStartupPrograms();
 
 	///	TabbedComponent holding all the workspace Components.
 	TwindyTabs *workspaces;
 	///	Array of workspace Components.
-	Array<TwindyUpperPanel*> upperPanelComps;
+	TwindyUpperPanel* upperPanelComps[2];
 	///	The preferences panel.
 	TwindyPreferences* preferences;
 	///	Index of the currently visible workspace Component.
-	int currentUpperPanelComp;
+	uint currentUpperPanelComp;
 
 	/// Exit button.
 	DrawableTextButton* exitButton;

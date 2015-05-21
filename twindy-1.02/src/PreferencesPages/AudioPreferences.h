@@ -75,16 +75,46 @@ private:
     // Parent
     TwindyPreferences* const prefs;
 
-    // Array for cached info
+    // Cached info
     DeviceInfoMapping cachedDevInfo;
+
+    // Current settings
+    struct CurrentSetting {
+        String deviceId;
+        String bufferSize;
+        String sampleRate;
+        bool deviceIdChanged;
+        bool bufferSizeChanged;
+        bool sampleRateChanged;
+        bool changed;
+
+        CurrentSetting() noexcept
+            : bufferSize(0),
+              sampleRate(0.0),
+              deviceIdChanged(false),
+              bufferSizeChanged(false),
+              sampleRateChanged(false),
+              changed(false) {}
+
+        bool check() noexcept
+        {
+            changed = (deviceIdChanged || bufferSizeChanged || sampleRateChanged);
+            return changed;
+        }
+
+    } curSettings;
 
     // Widgets.
     TextButton applyButton;
     ComboBox deviceBox, sampleRateBox, bufferSizeBox;
     DrawableText title, subtitle1, subtitle2, labelAdvanced, labelBufSize, labelSampleRate;
+    DrawableText labelSettingsChanged1, labelSettingsChanged2;
 
     // StringArrays for device discovery.
     StringArray inputNames, outputNames, inputIds, outputIds;
+
+    // hide apply now section
+    void settingsApplied();
 };
 
 #endif

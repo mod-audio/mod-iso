@@ -88,11 +88,6 @@ void TwindyRootWindow::callbackFunction(void *event)
 {
     const Coordinates& coords(getCoordinates());
 
-    const Rectangle rectMixer(coords.leftTabsWidth+coords.buttonMargin+2,
-                              230+coords.topPadding,
-                              getWidth()-coords.leftTabsWidth-coords.buttonMargin*2-4,
-                              getHeight()-(230+coords.topPadding)-coords.buttonMargin-2);
-
     const Rectangle rectApp(0,
                             coords.topPadding+1,
                             getWidth(),
@@ -103,6 +98,11 @@ void TwindyRootWindow::callbackFunction(void *event)
                             getWidth()-coords.leftTabsWidth-coords.buttonMargin*2-5,
                             getHeight()-coords.topPadding-coords.buttonMargin*2-6);
 
+    const Rectangle rectMixer(coords.leftTabsWidth+coords.buttonMargin+2,
+                              230+coords.topPadding,
+                              getWidth()-coords.leftTabsWidth-coords.buttonMargin*2-4,
+                              getHeight()-(230+coords.topPadding)-coords.buttonMargin-2);
+
     XEvent* const evt = static_cast<XEvent*>(event);
 
     switch (evt->xany.type)
@@ -112,7 +112,7 @@ void TwindyRootWindow::callbackFunction(void *event)
         TWINDY_DBG_MESSAGE("MapRequest received.");
 
         String name;
-        int target;
+        uint target;
         XTextProperty textProp;
         const ::Window window = evt->xmaprequest.window;
 
@@ -130,7 +130,7 @@ void TwindyRootWindow::callbackFunction(void *event)
 
         if (name == T("__mod_mixer__"))
         {
-            target = -1;
+            target = 2;
             printf("Mixer detected\n");
         }
         else if (name.isEmpty())
@@ -138,17 +138,21 @@ void TwindyRootWindow::callbackFunction(void *event)
             target = 0;
             printf("MOD-App detected\n");
         }
+        else if (true)
+        {
+            target = 1;
+            printf("name is %s\n", name.toUTF8());
+        }
         else
         {
-            target = upperPanelComps.size()-1;
-            printf("name is %s\n", name.toUTF8());
+            return;
         }
 
         XSetWindowBorderWidth(display, window, 0);
 
         switch (target)
         {
-        case -1:
+        case upperPanelCompSize:
             XMoveWindow(display, window, rectMixer.getX(), rectMixer.getY());
             XResizeWindow(display, window, rectMixer.getWidth(), rectMixer.getHeight());
             break;
@@ -166,7 +170,7 @@ void TwindyRootWindow::callbackFunction(void *event)
 
         TwindyWindow* const newWin = new TwindyWindow(display, window);
 
-        if (target >= 0)
+        if (target < upperPanelCompSize)
         {
             TwindyUpperPanel* const panel(upperPanelComps[target]);
             TwindyWindow*     const twnd(panel->getCurrentWindow());
@@ -218,7 +222,7 @@ void TwindyRootWindow::callbackFunction(void *event)
 
         switch (currentUpperPanelComp)
         {
-        case -1:
+        case upperPanelCompSize:
             temprect = rectMixer;
             break;
 
@@ -273,7 +277,7 @@ void TwindyRootWindow::callbackFunction(void *event)
 
         switch (currentUpperPanelComp)
         {
-        case -1:
+        case upperPanelCompSize:
             temprect = rectMixer;
             break;
 
@@ -290,7 +294,7 @@ void TwindyRootWindow::callbackFunction(void *event)
         {
             TwindyWindow* window;
 
-            if (currentUpperPanelComp == -1)
+            if (currentUpperPanelComp == upperPanelCompSize)
                 window = preferences->getMixerWindow();
             else
                 window = upperPanelComps[currentUpperPanelComp]->getCurrentWindow();
@@ -414,7 +418,7 @@ void TwindyRootWindow::removeWindow(Window win)
         if (mixWindow->getWindow() == win)
             preferences->setMixerWindow(nullptr);
 
-    for (int i=upperPanelComps.size(); --i>=0;)
+    for (int i=upperPanelCompSize; --i>=0;)
     {
         if (TwindyUpperPanel* const panel = upperPanelComps[i])
             panel->removeWindow(win);

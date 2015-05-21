@@ -311,6 +311,8 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
     font = Font(16.0f, Font::plain);
     subtitle1.setText(T("MOD needs you to configure the Audio Interface."), font);
     subtitle2.setText(T("Please select your audio device from the list below."), font);
+    labelSettingsChanged1.setText(T("Audio device settings have been changed,"), font);
+    labelSettingsChanged2.setText(T("click 'Apply Now' to restart the audio service."), font);
 
     font = Font(15.0f, Font::plain);
     labelAdvanced.setText(T("Sample rate and buffer size. Change values only if you know what you're doing."), font);
@@ -319,8 +321,7 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
     labelBufSize.setText(T("Buffer Size"), font);
     labelSampleRate.setText(T("Sample Rate"), font);
 
-    applyButton.setButtonText(T("Apply"));
-
+    applyButton.setButtonText(T("Apply Now"));
     applyButton.addButtonListener(this);
     deviceBox.addListener(this);
 
@@ -358,6 +359,8 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
 
     // fallback
     deviceBox.setSelectedItemIndex(0);
+
+    settingsApplied();
 }
 
 //------------------------------------------------------------------------------
@@ -394,10 +397,10 @@ void AudioPreferences::rescanDevices()
 //------------------------------------------------------------------------------
 void AudioPreferences::resized()
 {
-    applyButton.setBounds(270, 68, 50, 25);
     deviceBox.setBounds(10, 70, 250, 20);
-    sampleRateBox.setBounds(20, 175, 150, 20);
-    bufferSizeBox.setBounds(200, 175, 150, 20);
+    applyButton.setBounds(getWidth()/2, 70, 100, 25);
+    sampleRateBox.setBounds(20, 160, 150, 20);
+    bufferSizeBox.setBounds(200, 160, 150, 20);
 }
 
 //------------------------------------------------------------------------------
@@ -406,10 +409,15 @@ void AudioPreferences::paint(Graphics& g)
     title.drawAt(g, 10, 25);
     subtitle1.drawAt(g, 10, 50);
     subtitle2.drawAt(g, 10, 50 + 15);
+    labelAdvanced.drawAt(g, 10, 140);
+    labelSampleRate.drawAt(g, 20, 155);
+    labelBufSize.drawAt(g, 200, 155);
 
-    labelAdvanced.drawAt(g, 10, 150);
-    labelSampleRate.drawAt(g, 20, 170);
-    labelBufSize.drawAt(g, 200, 170);
+    if (curSettings.changed)
+    {
+        labelSettingsChanged1.drawAt(g, getWidth()/2, 50);
+        labelSettingsChanged2.drawAt(g, getWidth()/2, 50 + 15);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -417,6 +425,10 @@ void AudioPreferences::buttonClicked(Button* button)
 {
     if (button != &applyButton)
         return;
+
+    curSettings.deviceId   = outputIds[deviceBox.getSelectedId()-1];
+    curSettings.bufferSize = bufferSizeBox.getText();
+    curSettings.sampleRate = sampleRateBox.getText();
 
     TwindyApp* const app = static_cast<TwindyApp*>(JUCEApplication::getInstance());
 
@@ -427,11 +439,11 @@ void AudioPreferences::buttonClicked(Button* button)
     args.add(T("-d"));
     args.add(T("alsa"));
     args.add(T("-d"));
-    args.add(outputIds[deviceBox.getSelectedId()-1]);
+    args.add(curSettings.deviceId);
     args.add(T("-r"));
-    args.add(sampleRateBox.getText());
+    args.add(curSettings.sampleRate);
     args.add(T("-p"));
-    args.add(bufferSizeBox.getText());
+    args.add(curSettings.bufferSize);
 
     if (deviceBox.getText().containsIgnoreCase(T("usb")))
     {
@@ -445,6 +457,20 @@ void AudioPreferences::buttonClicked(Button* button)
 //------------------------------------------------------------------------------
 void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
+    if (comboBoxThatHasChanged == &bufferSizeBox)
+    {
+        curSettings.bufferSizeChanged = (curSettings.bufferSize != bufferSizeBox.getText());
+        applyButton.setVisible(curSettings.check());
+        return;
+    }
+
+    if (comboBoxThatHasChanged == &sampleRateBox)
+    {
+        curSettings.sampleRateChanged = (curSettings.sampleRate != sampleRateBox.getText());
+        applyButton.setVisible(curSettings.check());
+        return;
+    }
+
     if (comboBoxThatHasChanged != &deviceBox)
         return;
 
@@ -457,13 +483,17 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     if (deviceBox.getSelectedItemIndex() < 0)
         return;
 
-    //const String deviceId(deviceBox.getText());
     const String deviceId(outputIds[deviceBox.getSelectedId()-1]);
+
+    {
+        curSettings.deviceIdChanged = (curSettings.deviceId != deviceId);
+        applyButton.setVisible(curSettings.check());
+    }
 
     uint minChansOut = 0;
     uint maxChansOut = 0;
-    uint minChansIn = 0;
-    uint maxChansIn = 0;
+    uint minChansIn  = 0;
+    uint maxChansIn  = 0;
     Array<uint> bufferSizes;
     Array<double> sampleRates;
 
@@ -561,4 +591,17 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     args.add(deviceId.upToFirstOccurrenceOf(T(","), false, false));
 
     prefs->setMixerPid(startProcess(args));
+}
+
+//------------------------------------------------------------------------------
+void AudioPreferences::settingsApplied()
+{
+    curSettings.deviceId   = outputIds[deviceBox.getSelectedId()-1];
+    curSettings.bufferSize = bufferSizeBox.getText();
+    curSettings.sampleRate = sampleRateBox.getText();
+    curSettings.deviceIdChanged   = false;
+    curSettings.bufferSizeChanged = false;
+    curSettings.sampleRateChanged = false;
+    curSettings.changed           = false;
+    applyButton.setVisible(false);
 }

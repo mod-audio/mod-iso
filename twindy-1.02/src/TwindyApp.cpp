@@ -77,6 +77,8 @@ void TwindyApp::initialise(const String& commandLine)
     win->toFront(true);
     TWINDY_DBG_MESSAGE("TwindyRootWindow brought to front.");
 
+
+
 #if 0
     TWINDY_DBG_MESSAGE("Initial JACK start test.");
 
@@ -171,8 +173,8 @@ void TwindyApp::restartMODApp()
         pidApp = -1;
     }
 
-//#define APP_PREFIX "/Shared/Personal/FOSS/GIT/MOD/mod-app/source/"
-#define APP_PREFIX
+#define APP_PREFIX "/Shared/Personal/FOSS/GIT/MOD/mod-app/source/"
+// #define APP_PREFIX
     StringArray args;
     args.add(T(APP_PREFIX "mod-app"));
 

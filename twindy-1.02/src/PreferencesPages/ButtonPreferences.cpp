@@ -287,7 +287,7 @@ void TwindyButtonPreferences::saveChanges()
 				prop->setSubProperty(tempstr, *((*menu)[i]));
 		}
 
-		root->prefsChanged();
+		//root->prefsChanged();
 	}
 }
 

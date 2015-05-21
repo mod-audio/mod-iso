@@ -42,7 +42,7 @@
 //----------------------------------------------------------------------------------------------
 TwindyRootWindow::TwindyRootWindow()
     : Component(T("Twindy Window Manager")),
-      currentUpperPanelComp(1),
+      currentUpperPanelComp(0),
       exitButton(0),
       properties(0)
 {
@@ -96,18 +96,6 @@ TwindyRootWindow::TwindyRootWindow()
     workspaces->setIndent(coords.topTabBarIndent);
     addAndMakeVisible(workspaces);
 
-    // Setup up preferences tab.
-    preferences = new TwindyPreferences();
-    preferences->setTracktionScheme(properties->getProperty(T("TracktionScheme")).name);
-    preferences->setPrefColours(colours.propertyPanelBackground,
-                                colours.propertyPanelText,
-                                colours.selectedFilterOutline,
-                                colours.propertyPanelOutline,
-                                colours.mainBackground,
-                                colours.blueButton);
-    preferences->setTabOrientation(TwindyTabbedComponent::TabsAtLeft, coords.leftTabsWidth, coords.leftTabsWidth, 1);
-    workspaces->addTab(TRANS("Preferences"), colours.mainBackground, preferences, false);
-
     // Setup workspaces.
     {
         TwindyUpperPanel* const panelMOD(new TwindyUpperPanel(true));
@@ -120,7 +108,7 @@ TwindyRootWindow::TwindyRootWindow()
                              colours.propertyPanelOutline,
                              colours.mainBackground);
 
-        upperPanelComps.add(panelMOD);
+        upperPanelComps[0] = panelMOD;
         workspaces->addTab(panelMOD->getName(), Colour(37, 37, 37), panelMOD, false);
 
         if (true)
@@ -135,10 +123,22 @@ TwindyRootWindow::TwindyRootWindow()
                                  colours.propertyPanelOutline,
                                  colours.mainBackground);
 
-            upperPanelComps.add(panelDEV);
+            upperPanelComps[1] = panelDEV;
             workspaces->addTab(panelDEV->getName(), Colour(37, 37, 37), panelDEV, false);
         }
     }
+
+    // Setup up preferences tab.
+    preferences = new TwindyPreferences();
+    preferences->setTracktionScheme(properties->getProperty(T("TracktionScheme")).name);
+    preferences->setPrefColours(colours.propertyPanelBackground,
+                                colours.propertyPanelText,
+                                colours.selectedFilterOutline,
+                                colours.propertyPanelOutline,
+                                colours.mainBackground,
+                                colours.blueButton);
+    preferences->setTabOrientation(TwindyTabbedComponent::TabsAtLeft, coords.leftTabsWidth, coords.leftTabsWidth, 1);
+    workspaces->addTab(TRANS("Settings"), colours.mainBackground, preferences, false);
 
     //Set up buttons.
     addAndMakeVisible(exitButton = new DrawableTextButton(T("ExitButton"), TRANS("Power Off...")));
@@ -246,14 +246,12 @@ TwindyRootWindow::TwindyRootWindow()
 
     setupMappingRedirect();
 
-    //Now launch any programs specified in twindyrc.
-    launchStartupPrograms();
-
-    // Start the magic! :)
+    // Final setup
     addAndMakeVisible(errorDisplay);
     errorDisplay->toFront(false);
 
-    workspaces->setCurrentTabIndex(1);
+    setButtonsVisible(false);
+    workspaces->setCurrentTabIndex(0);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -381,71 +379,31 @@ void TwindyRootWindow::buttonClicked(Button* button)
 }
 
 //----------------------------------------------------------------------------------------------
-void TwindyRootWindow::setVisibleUpperPanel(int index)
+void TwindyRootWindow::setVisibleUpperPanel(uint index)
 {
-    const int upperPanelCompSize = upperPanelComps.size();
-
     // Hide currently-visible window, if this isn't the preferences panel.
-    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < upperPanelCompSize)
+    if (currentUpperPanelComp < upperPanelCompSize)
+    {
         if (TwindyUpperPanel* const panel = upperPanelComps[currentUpperPanelComp])
             panel->setWorkspaceIsVisible(false);
+    }
+//     else if (currentUpperPanelComp == upperPanelCompSize)
+//     {
+//         if (TwindyWindow* const window = preferences->getMixerWindow())
+//             window->hide();
+//     }
 
     // Set currentUpperPanelComp, making sure index doesn't point to a non-existant tab.
-    if (index > 1)
-        index = 1;
-    if (index >= 0 && index < upperPanelCompSize && upperPanelComps[index] != nullptr)
+    /**/ if (index == upperPanelCompSize)
+        currentUpperPanelComp = index;
+    else if (index < upperPanelCompSize && upperPanelComps[index] != nullptr)
         currentUpperPanelComp = index;
     else
-        currentUpperPanelComp = -1;
+        currentUpperPanelComp = 0;
 
     // Show newly-visible window, if it isn't the preferences panel.
-    if (currentUpperPanelComp >= 0 && currentUpperPanelComp < upperPanelCompSize)
+    if (currentUpperPanelComp < upperPanelCompSize)
         upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(true);
-}
-
-//----------------------------------------------------------------------------------------------
-void TwindyRootWindow::prefsChanged()
-{
-	const TracktionScheme* prefScheme;
-
-	if (! exitButton)
-            return;
-
-	//Remove all the current tabs, so we can reset the colours.
-	workspaces->clearTabs();
-
-	//Set workspace colours.
-	preferences->setTracktionScheme(properties->getProperty(T("TracktionScheme")).name);
-	prefScheme = preferences->getTracktionScheme();
-	preferences->setPrefColours(prefScheme->getColour(T("propertyPanelBackground")),
-								prefScheme->getColour(T("propertyPanelText")),
-								prefScheme->getColour(T("selectedFilterOutline")),
-								prefScheme->getColour(T("propertyPanelOutline")),
-								prefScheme->getColour(T("mainBackground")),
-								prefScheme->getColour(T("blueButton")));
-	workspaces->addTab(TRANS("Preferences"), prefScheme->getColour(T("mainBackground")), preferences, false);
-
-        for (int i=0, size=upperPanelComps.size(); i<size; ++i)
-        {
-            if (TwindyUpperPanel* const panel = upperPanelComps[i])
-                workspaces->addTab(panel->getName(), Colour(37, 37, 37), panel, false);
-        }
-
-	//Set button colours.
-	leftButton1->setButtonText(properties->getProperty(T("LeftButton1")).name);
-	leftButton1->setBold(properties->getNumSubProperties(T("LeftButton1")) > 0);
-	leftButton2->setButtonText(properties->getProperty(T("LeftButton2")).name);
-	leftButton2->setBold(properties->getNumSubProperties(T("LeftButton2")) > 0);
-	leftButton3->setButtonText(properties->getProperty(T("LeftButton3")).name);
-	leftButton3->setBold(properties->getNumSubProperties(T("LeftButton3")) > 0);
-	leftButton4->setButtonText(properties->getProperty(T("LeftButton4")).name);
-	leftButton4->setBold(properties->getNumSubProperties(T("LeftButton4")) > 0);
-	leftButton5->setButtonText(properties->getProperty(T("LeftButton5")).name);
-	leftButton5->setBold(properties->getNumSubProperties(T("LeftButton5")) > 0);
-	leftButton6->setButtonText(properties->getProperty(T("LeftButton6")).name);
-	leftButton6->setBold(properties->getNumSubProperties(T("LeftButton6")) > 0);
-	leftButton7->setButtonText(properties->getProperty(T("LeftButton7")).name);
-	leftButton7->setBold(properties->getNumSubProperties(T("LeftButton7")) > 0);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -457,7 +415,7 @@ void TwindyRootWindow::updateColours()
     if (! exitButton)
         return;
 
-    if (currentUpperPanelComp == -1)
+    if (currentUpperPanelComp == upperPanelCompSize)
     {
         tempScheme = preferences->getTracktionScheme();
         prefScheme = tempScheme;
@@ -517,26 +475,6 @@ void TwindyRootWindow::loadColours(const String& file)
 }
 
 //----------------------------------------------------------------------------------------------
-void TwindyRootWindow::launchStartupPrograms()
-{
-	long i;
-	TwindyProperty tempprop;
-
-	tempprop = properties->getProperty(T("StartupPrograms"));
-
-	if(tempprop.name != T("nil"))
-	{
-		for(i=0;i<properties->getNumSubProperties(T("StartupPrograms"));++i)
-		{
-			tempprop = properties->getSubProperty(T("StartupPrograms"), i);
-			if(tempprop.value != T("nil"))
-				launchExecutable(static_cast<const char *>(tempprop.value),
-								 true);
-		}
-	}
-}
-
-//----------------------------------------------------------------------------------------------
 void TwindyRootWindow::setButtonsVisible(const bool visible)
 {
     printf("setButtonsVisible(%i)\n", visible);
@@ -558,5 +496,5 @@ void TwindyRootWindow::setButtonsVisible(const bool visible)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::changeToAppTab()
 {
-    workspaces->setCurrentTabIndex(1);
+    workspaces->setCurrentTabIndex(0);
 }
