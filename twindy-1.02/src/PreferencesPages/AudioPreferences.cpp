@@ -466,9 +466,35 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     uint maxChansIn = 0;
     Array<uint> bufferSizes;
     Array<double> sampleRates;
-    getDeviceProperties(deviceId,
-                        minChansOut, maxChansOut, minChansIn, maxChansIn,
-                        bufferSizes, sampleRates, true, true);
+
+    // check for cached info first
+    if (cachedDevInfo.count(deviceId))
+    {
+        const DeviceInfo& deviceInfo(cachedDevInfo.at(deviceId));
+
+        minChansOut = deviceInfo.minChansOut;
+        maxChansOut = deviceInfo.maxChansOut;
+        minChansIn  = deviceInfo.minChansIn;
+        maxChansIn  = deviceInfo.maxChansIn;
+        bufferSizes = deviceInfo.bufferSizes;
+        sampleRates = deviceInfo.sampleRates;
+    }
+    else
+    {
+        getDeviceProperties(deviceId,
+                            minChansOut, maxChansOut, minChansIn, maxChansIn,
+                            bufferSizes, sampleRates, true, true);
+
+        DeviceInfo deviceInfo;
+        deviceInfo.minChansOut = minChansOut;
+        deviceInfo.maxChansOut = maxChansOut;
+        deviceInfo.minChansIn  = minChansIn;
+        deviceInfo.maxChansIn  = maxChansIn;
+        deviceInfo.bufferSizes = bufferSizes;
+        deviceInfo.sampleRates = sampleRates;
+
+        cachedDevInfo[deviceId] = deviceInfo;
+    }
 
     for (int i=0, size=sampleRates.size(); i<size; ++i)
     {

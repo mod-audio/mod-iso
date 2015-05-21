@@ -21,10 +21,28 @@
 #ifndef MISCPREFERENCES_H_
 #define MISCPREFERENCES_H_
 
+#include "../juce_amalgamated.h"
+#include <map>
+
 class TwindyWindow;
 class TwindyPreferences;
 
-#include "../juce_amalgamated.h"
+struct DeviceInfo {
+    uint minChansOut;
+    uint maxChansOut;
+    uint minChansIn;
+    uint maxChansIn;
+    Array<uint> bufferSizes;
+    Array<double> sampleRates;
+
+    DeviceInfo()
+        : minChansOut(0),
+          maxChansOut(0),
+          minChansIn(0),
+          maxChansIn(0) {}
+};
+
+typedef std::map<String,DeviceInfo> DeviceInfoMapping;
 
 /// Preferences page for audio.
 class AudioPreferences : public Component,
@@ -56,6 +74,9 @@ public:
 private:
     // Parent
     TwindyPreferences* const prefs;
+
+    // Array for cached info
+    DeviceInfoMapping cachedDevInfo;
 
     // Widgets.
     TextButton applyButton;
