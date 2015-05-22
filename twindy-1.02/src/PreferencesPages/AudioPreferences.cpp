@@ -20,7 +20,6 @@
 
 #include "AudioPreferences.h"
 #include "../TwindyApp.h"
-#include "../TwindyProperties.h"
 #include "../TwindyPreferences.h"
 #include "../TwindyRootWindow.h"
 #include "../ExtraComponents/TwindyToggleButton.h"

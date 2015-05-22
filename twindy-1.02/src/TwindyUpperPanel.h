@@ -23,6 +23,7 @@
 
 #include "TwindyTabbedComponent.h"
 #include "TwindyWindow.h"
+#include "TracktionScheme.h"
 
 class TwindyUpperTab;
 class TracktionScheme;
@@ -109,15 +110,6 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	///	Indicates that the user has clicked close on one of our tabs.
 	void closeTab(TwindyUpperTab *tab);
 
-	///	Sets this panel's colours.
-	/*!
-		\param path The path to the tracktionscheme specified in twindyrc.
-	 */
-	void setSchemePath(const String& path);
-	///	Returns this panel's colours (the path to the tracktionscheme).
-	const String& getSchemePath() const {return coloursPath;};
-	///	Returns a pointer to this panel's colour scheme.
-	TracktionScheme *getTracktionScheme() const {return colours;};
   private:
 	///	Called when the user closes a window using Twindy's close buttons.
 	void closeWindow(TwindyUpperTab *tab, int index);
@@ -136,10 +128,8 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	///	This workspace's name (what's displayed on the tab).
 	String name;
 
-	///	Path to this panel's colours.
-	String coloursPath;
 	///	The panel's actual colours.
-	TracktionScheme *colours;
+	TracktionScheme colours;
 };
 
 //------------------------------------------------------------------------------

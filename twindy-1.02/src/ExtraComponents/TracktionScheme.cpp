@@ -24,25 +24,15 @@
 #include "DefaultTracktionScheme.h"
 
 //------------------------------------------------------------------------------
-TracktionScheme::TracktionScheme(const String& schemePath):
-path(schemePath)
+TracktionScheme::TracktionScheme()
 {
-	//Make sure the file actually exists first.
-	{
-		File philly(path);
-		if(!philly.exists())
-			createDefaultScheme();
-	}
-
-	phil = new File(path);
-	doc = new XmlDocument(*phil);
+    doc = new XmlDocument(DefaultTracktionScheme);
 }
 
 //------------------------------------------------------------------------------
 TracktionScheme::~TracktionScheme()
 {
-	delete doc;
-	delete phil;
+    delete doc;
 }
 
 //------------------------------------------------------------------------------
@@ -73,51 +63,4 @@ Colour TracktionScheme::getColour(const String& name) const
 	}
 
 	return retval;
-}
-
-//------------------------------------------------------------------------------
-void TracktionScheme::setColour(const String& name, const Colour& newColour)
-{
-	//Make sure the file actually exists first.
-	{
-		File phil(path);
-		if(!phil.exists())
-			createDefaultScheme();
-	}
-
-	File phil(path);
-	XmlDocument doc(phil);
-	XmlElement *rootElement = doc.getDocumentElement();
-	XmlElement *tempElement;
-
-	if(rootElement)
-	{
-		if(rootElement->hasTagName(T("COLOURS")))
-		{
-			for(tempElement=rootElement->getChildByName(T("COLOUR"));
-				tempElement;
-				tempElement=tempElement->getNextElement())
-			{
-				if(tempElement->getStringAttribute(T("name")) == name)
-				{
-					tempElement->setAttribute(T("colour"),
-											  String::toHexString((int)newColour.getARGB()));
-					break;
-				}
-			}
-			rootElement->writeToFile(phil, T(""));
-		}
-		delete rootElement;
-	}
-}
-
-//------------------------------------------------------------------------------
-void TracktionScheme::createDefaultScheme() const
-{
-	String tempstr;
-	File phil(path);
-	phil.create();
-
-	FileOutputStream philly(phil);
-	philly << DefaultTracktionScheme;
 }

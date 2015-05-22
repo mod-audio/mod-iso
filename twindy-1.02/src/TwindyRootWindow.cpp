@@ -30,7 +30,6 @@
 #include "TwindyWindow.h"
 #include "Clock.h"
 #include "DrawableTextButton.h"
-#include "TwindyProperties.h"
 #include "TwindyErrorDisplay.h"
 #include "TwindyTabs.h"
 #include "TwindyPreferences.h"
@@ -43,8 +42,7 @@
 TwindyRootWindow::TwindyRootWindow()
     : Component(T("Twindy Window Manager")),
       currentUpperPanelComp(0),
-      exitButton(0),
-      properties(0)
+      exitButton(0)
 {
     static_cast<TwindyApp*>(JUCEApplication::getInstance())->setRootWindow(this);
 
@@ -55,9 +53,6 @@ TwindyRootWindow::TwindyRootWindow()
 
     // Get coordinates (to know where to put things)
     const Coordinates& coords(getCoordinates());
-
-    // TODO: remove this
-    properties = new TwindyProperties();
 
     // set LookAndFeel and Font
     {
@@ -77,7 +72,17 @@ TwindyRootWindow::TwindyRootWindow()
 #endif
 
     // Load colours.
-    loadColours(properties->getProperty(T("TracktionScheme")).name);
+    TracktionScheme tempScheme;
+
+    colours.mainBackground = tempScheme.getColour(T("mainBackground"));
+    colours.tabAreaBackground = tempScheme.getColour(T("tabAreaBackground"));
+    colours.menuText = tempScheme.getColour(T("menuText"));
+    colours.propertyPanelBackground = tempScheme.getColour(T("propertyPanelBackground"));
+    colours.propertyPanelText = tempScheme.getColour(T("propertyPanelText"));
+    colours.propertyPanelOutline = tempScheme.getColour(T("propertyPanelOutline"));
+    colours.selectedFilterOutline = tempScheme.getColour(T("selectedFilterOutline"));
+    colours.yellowButton = tempScheme.getColour(T("yellowButton"));
+    colours.blueButton = tempScheme.getColour(T("blueButton"));
 
     // This is so our 'root' window never obscures it's 'children'.
     setBroughtToFrontOnMouseClick(false);
@@ -125,7 +130,6 @@ TwindyRootWindow::TwindyRootWindow()
 
     // Setup up preferences tab.
     preferences = new TwindyPreferences();
-    preferences->setTracktionScheme(properties->getProperty(T("TracktionScheme")).name);
     preferences->setPrefColours(colours.propertyPanelBackground,
                                 colours.propertyPanelText,
                                 colours.selectedFilterOutline,
@@ -180,59 +184,13 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton5->setVisible(false);
     leftButton6->setVisible(false);
 
-    TwindyProperty tempProp;
-
     //Clock
     addAndMakeVisible(clock = new Clock());
     clock->setColour(colours.propertyPanelText);
-    tempProp = properties->getProperty(T("ClockIncludeSeconds"));
-    if(tempProp.name == T("nil"))
-    {
-            //It's an older twindyrc, and we need to update it.
-            tempProp.name = T("ClockIncludeSeconds");
-            tempProp.value = T("TRUE");
-            properties->setProperty(T("ClockIncludeSeconds"), tempProp);
-    }
-    if(tempProp.value == T("TRUE"))
-            clock->setIncludeSeconds(true);
-    else
-            clock->setIncludeSeconds(false);
-    //use24HourClock property.
-    tempProp = properties->getProperty(T("ClockUse24HourClock"));
-    if(tempProp.name == T("nil"))
-    {
-            //It's an older twindyrc, and we need to update it.
-            tempProp.name = T("ClockUse24HourClock");
-            tempProp.value = T("FALSE");
-            properties->setProperty(T("ClockUse24HourClock"), tempProp);
-    }
-    if(tempProp.value == T("TRUE"))
-            clock->setUse24HourClock(true);
-    else
-            clock->setUse24HourClock(false);
-    //monthDisplayedFirst property.
-    tempProp = properties->getProperty(T("ClockMonthDisplayedFirst"));
-    if(tempProp.name == T("nil"))
-    {
-            //It's an older twindyrc, and we need to update it.
-            tempProp.name = T("ClockMonthDisplayedFirst");
-            tempProp.value = T("FALSE");
-            properties->setProperty(T("ClockMonthDisplayedFirst"), tempProp);
-    }
-    if(tempProp.value == T("TRUE"))
-            clock->setMonthDisplayedFirst(true);
-    else
-            clock->setMonthDisplayedFirst(false);
-    //dateSeparator property.
-    tempProp = properties->getProperty(T("ClockMonthDateSeparator"));
-    if(tempProp.name == T("nil"))
-    {
-            //It's an older twindyrc, and we need to update it.
-            tempProp.name = T("ClockMonthDateSeparator");
-            tempProp.value = T("/");
-            properties->setProperty(T("ClockMonthDateSeparator"), tempProp);
-    }
-    clock->setDateSeparator(tempProp.value);
+    clock->setIncludeSeconds(true);
+    clock->setUse24HourClock(true);
+    clock->setMonthDisplayedFirst(false);
+    clock->setDateSeparator(T("/"));
 
     updateColours();
 
@@ -264,7 +222,6 @@ TwindyRootWindow::~TwindyRootWindow()
     deleteAllChildren();
 
     delete preferences;
-    delete properties;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -415,32 +372,20 @@ void TwindyRootWindow::setVisibleUpperPanel(uint index)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::updateColours()
 {
-    const TracktionScheme* tempScheme;
-    const TracktionScheme* prefScheme;
+    TracktionScheme tempScheme;
 
     if (! exitButton)
         return;
 
-    if (currentUpperPanelComp == upperPanelCompSize)
-    {
-        tempScheme = preferences->getTracktionScheme();
-        prefScheme = tempScheme;
-    }
-    else
-    {
-        tempScheme = upperPanelComps[currentUpperPanelComp]->getTracktionScheme();
-        prefScheme = preferences->getTracktionScheme();
-    }
-
-    colours.mainBackground = tempScheme->getColour(T("mainBackground"));
-    colours.tabAreaBackground = prefScheme->getColour(T("tabAreaBackground"));
-    colours.menuText = tempScheme->getColour(T("menuText"));
-    colours.propertyPanelBackground = tempScheme->getColour(T("propertyPanelBackground"));
-    colours.propertyPanelText = tempScheme->getColour(T("propertyPanelText"));
-    colours.propertyPanelOutline = tempScheme->getColour(T("propertyPanelOutline"));
-    colours.selectedFilterOutline = tempScheme->getColour(T("selectedFilterOutline"));
-    colours.yellowButton = tempScheme->getColour(T("yellowButton"));
-    colours.blueButton = tempScheme->getColour(T("blueButton"));
+    colours.mainBackground = tempScheme.getColour(T("mainBackground"));
+    colours.tabAreaBackground = tempScheme.getColour(T("tabAreaBackground"));
+    colours.menuText = tempScheme.getColour(T("menuText"));
+    colours.propertyPanelBackground = tempScheme.getColour(T("propertyPanelBackground"));
+    colours.propertyPanelText = tempScheme.getColour(T("propertyPanelText"));
+    colours.propertyPanelOutline = tempScheme.getColour(T("propertyPanelOutline"));
+    colours.selectedFilterOutline = tempScheme.getColour(T("selectedFilterOutline"));
+    colours.yellowButton = tempScheme.getColour(T("yellowButton"));
+    colours.blueButton = tempScheme.getColour(T("blueButton"));
 
     exitButton->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
     exitButton->setTextColour(colours.menuText);
@@ -459,25 +404,9 @@ void TwindyRootWindow::updateColours()
     leftButton7->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
     leftButton7->setTextColour(colours.menuText);
 
-    clock->setColour(prefScheme->getColour(T("propertyPanelText")));
+    clock->setColour(tempScheme.getColour(T("propertyPanelText")));
 
     repaint();
-}
-
-//----------------------------------------------------------------------------------------------
-void TwindyRootWindow::loadColours(const String& file)
-{
-	TracktionScheme tempScheme(file);
-
-	colours.mainBackground = tempScheme.getColour(T("mainBackground"));
-	colours.tabAreaBackground = tempScheme.getColour(T("tabAreaBackground"));
-	colours.menuText = tempScheme.getColour(T("menuText"));
-	colours.propertyPanelBackground = tempScheme.getColour(T("propertyPanelBackground"));
-	colours.propertyPanelText = tempScheme.getColour(T("propertyPanelText"));
-	colours.propertyPanelOutline = tempScheme.getColour(T("propertyPanelOutline"));
-	colours.selectedFilterOutline = tempScheme.getColour(T("selectedFilterOutline"));
-	colours.yellowButton = tempScheme.getColour(T("yellowButton"));
-	colours.blueButton = tempScheme.getColour(T("blueButton"));
 }
 
 //----------------------------------------------------------------------------------------------

@@ -34,10 +34,7 @@ TwindyUpperPanel::TwindyUpperPanel(bool isMOD)
     : TwindyTabbedComponent(T("Upper Panel"), isMOD ? TwindyTabbedComponent::ModeMOD : TwindyTabbedComponent::ModeDev),
       workspaceVisible(false),
       dontShowHideWindows(false),
-      visibleWindow(-1)
-{
-    colours = new TracktionScheme(T("~/.twindy/Default.tracktionscheme"));
-}
+      visibleWindow(-1) {}
 
 //------------------------------------------------------------------------------
 TwindyUpperPanel::~TwindyUpperPanel()
@@ -50,7 +47,6 @@ TwindyUpperPanel::~TwindyUpperPanel()
 		windows[i]->closeWindow();
 		Thread::yield();
 	}
-	delete colours;
 }
 
 //------------------------------------------------------------------------------
@@ -214,15 +210,6 @@ void TwindyUpperPanel::closeTab(TwindyUpperTab *tab)
 			break;
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-void TwindyUpperPanel::setSchemePath(const String& path)
-{
-	coloursPath = path;
-
-	delete colours;
-	colours = new TracktionScheme(coloursPath);
 }
 
 //------------------------------------------------------------------------------

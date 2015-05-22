@@ -45,7 +45,6 @@ class TwindyUpperTab;
 class TwindyWindow;
 class Clock;
 class DrawableTextButton;
-class TwindyProperties;
 class TwindyTabs;
 class TwindyPreferences;
 
@@ -93,8 +92,6 @@ class TwindyRootWindow : public Component,
 	///	Returns a pointer to the preferences panel.
 	TwindyPreferences *getPreferencesPanel() const {return preferences;};
 
-	///	Returns the TwindyProperties instance used to set various settings.
-	TwindyProperties *getProperties() const {return properties;};
 	///	Returns the colour scheme for the indexed workspace.
 	const TwindyColours& getColours() {return colours;};
 	///	Returns a pointer to the clock, so we can change it's properties.
@@ -134,9 +131,6 @@ class TwindyRootWindow : public Component,
 	 */
 	void raiseAllWindows();
 
-	///	Loads all the colours we use from a .tracktionscheme file.
-	void loadColours(const String& file);
-
 	///	TabbedComponent holding all the workspace Components.
 	TwindyTabs *workspaces;
 	///	Array of workspace Components.
@@ -166,8 +160,6 @@ class TwindyRootWindow : public Component,
 	/// Clock to display the current time.
 	Clock* clock;
 
-	/// Object used to read/write various Twindy properties.
-	TwindyProperties* properties;
 	/// The colours we use in this window.
 	TwindyColours colours;
 

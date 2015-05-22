@@ -26,7 +26,6 @@
 //------------------------------------------------------------------------------
 TwindyPreferences::TwindyPreferences()
     : TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences),
-      realColours(T("~/.twindy/Default.tracktionscheme")),
       audio(this),
       about(),
       mixerPid(-1),
@@ -111,12 +110,6 @@ void TwindyPreferences::setMixerWindow(TwindyWindow* w)
         w->show();
     else
         w->hide();
-}
-
-//------------------------------------------------------------------------------
-void TwindyPreferences::setTracktionScheme(const String& path)
-{
-    //realColours = TracktionScheme(path);
 }
 
 //------------------------------------------------------------------------------

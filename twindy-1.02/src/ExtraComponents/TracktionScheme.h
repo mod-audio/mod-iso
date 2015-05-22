@@ -29,26 +29,15 @@ class TracktionScheme
 {
   public:
 	///	Constructor.
-	/*!
-		\param schemePath Path to the tracktionscheme to read from/write to.
-	 */
-	TracktionScheme(const String& schemePath);
+	TracktionScheme();
+
 	///	Destructor.
 	~TracktionScheme();
 
 	///	Returns the named colour.
 	Colour getColour(const String& name) const;
-	///	Sets the named colour.
-	void setColour(const String& name, const Colour& newColour);
-  private:
-	///	Creates a default .tracktionscheme.
-	void createDefaultScheme() const;
 
-	///	Path to the tracktionscheme.
-	String path;
-
-	///	The tracktionscheme file.
-	File *phil;
+private:
 	///	The XmlDocument of the file.
 	XmlDocument *doc;
 };

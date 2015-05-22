@@ -86,7 +86,6 @@ OBJS = $(OBJDIR)/juce_amalgamated.cpp.o \
 	$(OBJDIR)/TwindyErrorDisplay.cpp.o \
 	$(OBJDIR)/TwindyLAF.cpp.o \
 	$(OBJDIR)/TwindyPreferences.cpp.o \
-	$(OBJDIR)/TwindyProperties.cpp.o \
 	$(OBJDIR)/TwindyRootWindow.cpp.o \
 	$(OBJDIR)/TwindyRootWindowXMethods.cpp.o \
 	$(OBJDIR)/TwindyTabs.cpp.o \
@@ -98,11 +97,11 @@ OBJS = $(OBJDIR)/juce_amalgamated.cpp.o \
 	$(OBJDIR)/ExtraComponents/TwindyTabbedComponent.cpp.o \
 	$(OBJDIR)/ExtraComponents/TwindyToggleButton.cpp.o \
 	$(OBJDIR)/PreferencesPages/AboutPage.cpp.o \
-	$(OBJDIR)/PreferencesPages/AudioPreferences.cpp.o \
-	$(OBJDIR)/PreferencesPages/ButtonPreferences.cpp.o \
-	$(OBJDIR)/PreferencesPages/MiscPreferences.cpp.o \
-	$(OBJDIR)/PreferencesPages/StartupPreferences.cpp.o \
-	$(OBJDIR)/PreferencesPages/TracktionSchemeEditor.cpp.o
+	$(OBJDIR)/PreferencesPages/AudioPreferences.cpp.o
+# 	$(OBJDIR)/PreferencesPages/ButtonPreferences.cpp.o \
+# 	$(OBJDIR)/PreferencesPages/MiscPreferences.cpp.o \
+# 	$(OBJDIR)/PreferencesPages/StartupPreferences.cpp.o \
+# 	$(OBJDIR)/PreferencesPages/TracktionSchemeEditor.cpp.o
 
 $(BINDIR)/twindy: $(OBJS)
 	-@mkdir -p $(BINDIR)

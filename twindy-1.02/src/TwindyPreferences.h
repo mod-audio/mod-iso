@@ -53,12 +53,6 @@ public:
     void setMixerPid(pid_t pid);
     void setMixerWindow(TwindyWindow* window);
 
-    /// Called to set the tracktion scheme used by the preferences page.
-    void setTracktionScheme(const String& path);
-
-    /// Returns the tracktionscheme used by the preferences page.
-    const TracktionScheme* getTracktionScheme() const { return &realColours; }
-
     /// Called to save any changes made to the TwindyProperties instance.
     void saveChanges();
 
@@ -76,8 +70,6 @@ protected:
     void visibilityChanged() override;
 
 private:
-    /// The current tracktionscheme for the preferences page.
-    TracktionScheme realColours;
     /// The varius preferences pages
     AudioPreferences audio;
     AboutPage about;
