@@ -329,14 +329,13 @@ void TwindyRootWindow::buttonClicked(Button* button)
                                          TRANS("No")))
         {
             StringArray args;
-
-            args.add(T("dbus-send"));
-            args.add(T("--system"));
-            args.add(T("--print-reply"));
-            args.add(T("--dest=\"org.freedesktop.ConsoleKit\""));
-            args.add(T("/org/freedesktop/ConsoleKit/Manager"));
-            args.add(T("org.freedesktop.ConsoleKit.Manager.Stop"));
-
+            //args.add(T("dbus-send"));
+            //args.add(T("--system"));
+            //args.add(T("--print-reply"));
+            //args.add(T("--dest=\"org.freedesktop.ConsoleKit\""));
+            //args.add(T("/org/freedesktop/ConsoleKit/Manager"));
+            //args.add(T("org.freedesktop.ConsoleKit.Manager.Stop"));
+            args.add(T("twindy-poweroff"));
             startProcess(args);
             JUCEApplication::quit();
         }
