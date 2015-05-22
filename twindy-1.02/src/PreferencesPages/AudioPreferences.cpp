@@ -588,7 +588,9 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     args.add(T("-T"));
     args.add(T("__mod_mixer__"));
     args.add(T("-e"));
-    args.add(T("'alsamixer -D ") + deviceId.upToFirstOccurrenceOf(T(","), false, false) + T("'"));
+    args.add(T("alsamixer"));
+    args.add(T("-D"));
+    args.add(deviceId.upToFirstOccurrenceOf(T(","), false, false));
 
     prefs->setMixerPid(startProcess(args));
 }
