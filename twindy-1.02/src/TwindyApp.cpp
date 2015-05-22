@@ -167,14 +167,13 @@ void TwindyApp::restartMODApp()
         pidApp = -1;
     }
 
-// #define APP_PREFIX "/Shared/Personal/FOSS/GIT/MOD/mod-app/source/"
-#define APP_PREFIX
     StringArray args;
-    args.add(T(APP_PREFIX "mod-app"));
+    args.add(T("mod-app"));
 
     //if (client == nullptr)
     //    args.add(T("--no-autostart"));
-#undef APP_PREFIX
+
+    args.add(T("--using-live-iso"));
 
     pidApp = startProcess(args);
 
