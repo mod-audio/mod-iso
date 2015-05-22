@@ -85,23 +85,8 @@ class TwindyProperties
 						const TwindyProperty& subproperty);
 	///	Removes all the subproperties of the named property.
 	void clearSubProperties(const String& property);
+
   private:
-	///	Creates the ~/.twindy folder and twindyrc file, if they don't exist.
-	void writeConfigFile();
-	///	Writes a Default.tracktionscheme file to ~/.twindy, if it doesn't exist.
-	void writeTracktionScheme();
-
-	///	Searches for a child of element with a name attribute == name, and returns it.
-	/*!
-		Returns a newly-created XmlElement if it doesn't already exist.
-	 */
-	XmlElement *findElementWithName(XmlElement *element, const String& name);
-
-	///	The twindyrc file.
-	/*!
-		This is kept open as long as the object exists.
-	 */
-	XmlDocument *doc;
 };
 
 #endif

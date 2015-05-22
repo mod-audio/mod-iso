@@ -68,8 +68,6 @@ void TwindyApp::initialise(const String& commandLine)
         quit();
     }
 
-    //Font::setDefaultSansSerifFontName("Bitstream Vera Sans");
-
     TWINDY_DBG_MESSAGE("Creating TwindyRootWindow.");
     win = new TwindyRootWindow();
     TWINDY_DBG_MESSAGE("TwindyRootWindow created.");

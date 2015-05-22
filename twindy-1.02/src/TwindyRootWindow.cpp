@@ -59,15 +59,10 @@ TwindyRootWindow::TwindyRootWindow()
     // TODO: remove this
     properties = new TwindyProperties();
 
-    TwindyProperty tempProp;
-
     // set LookAndFeel and Font
     {
-        tempProp.name = T("DejaVu Sans");
-        tempProp.value = T("DejaVu Sans");
-
         TwindyLAF* const laf(new TwindyLAF());
-        laf->setDefaultSansSerifTypefaceName(tempProp.name);
+        laf->setDefaultSansSerifTypefaceName(T("DejaVu Sans"));
         LookAndFeel::setDefaultLookAndFeel(laf);
     }
 
@@ -184,6 +179,8 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton4->setVisible(false);
     leftButton5->setVisible(false);
     leftButton6->setVisible(false);
+
+    TwindyProperty tempProp;
 
     //Clock
     addAndMakeVisible(clock = new Clock());

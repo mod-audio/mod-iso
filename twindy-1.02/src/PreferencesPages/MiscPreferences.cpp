@@ -52,8 +52,8 @@ Component()
 	if(tempProp.name == T("nil"))
 	{
 		//It's an older twindyrc, and we need to update it.
-		tempProp.name = T("Bitstream Vera Sans");
-		tempProp.value = T("Bitstream Vera Sans");
+		tempProp.name = T("DejaVu Sans");
+		tempProp.value = T("DejaVu Sans");
 		prop->setProperty(T("GlobalFont"), tempProp);
 	}
 

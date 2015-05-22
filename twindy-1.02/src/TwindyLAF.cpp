@@ -29,64 +29,6 @@ LookAndFeel()
 	
 }
 
-/*//------------------------------------------------------------------------------
-void TwindyLAF::drawStandardTextButton(Graphics &g,
-  									 TextButton &button,
-  									 bool isMouseOverButton,
-  									 bool isButtonDown)
-{
-	Font oldFont = g.getCurrentFont();
-
-	g.setFont(Font(Typeface(T("Bitstream Vera Sans"),
-				   false,
-				   false)));
-
-	const int width = button.getWidth();
-    const int height = button.getHeight();
-
-    const float indent = 2.0f;
-    const int cornerSize = jmin (roundFloatToInt (width * 0.2f),
-                                 roundFloatToInt (height * 0.4f));
-
-    Path p;
-    p.addRoundedRectangle (indent, indent,
-                           width - indent * 2.0f,
-                           height - indent * 2.0f,
-                           (float)cornerSize);
-
-    if (isMouseOverButton)
-    {
-        if (isButtonDown)
-            g.setColour (button.getTextColour().contrasting());
-        else if (button.getBackgroundColour().getBrightness() > 0.5f)
-            g.setColour (button.getBackgroundColour().darker (0.1f));
-        else
-            g.setColour (button.getBackgroundColour().brighter (0.1f));
-    }
-    else
-    {
-        g.setColour (button.getBackgroundColour());
-    }
-
-    g.fillPath (p);
-
-    g.setColour (button.getBackgroundOutlineColour().withAlpha ((isMouseOverButton) ? 0.6f : 0.4f));
-    g.strokePath (p, PathStrokeType ((isMouseOverButton) ? 2.0f : 1.4f));
-
-    g.setColour (button.getTextColour());
-    g.setFont (jmin (15.0f, button.getHeight() * 0.6f));
-
-    if (! button.isEnabled())
-        g.setOpacity (0.5f);
-
-    g.drawFittedText (button.getButtonText(),
-                      cornerSize / 2, 4,
-                      width - cornerSize, height - 8,
-                      Justification::centred, 2);
-
-	g.setFont(oldFont);
-}*/
-
 //------------------------------------------------------------------------------
 void TwindyLAF::drawButtonBackground(Graphics &g,
 							  Button &button,
@@ -108,7 +50,7 @@ void TwindyLAF::drawButtonBackground(Graphics &g,
                            (float) cornerSize);
 
     //Colour bc (backgroundColour.withMultipliedSaturation (0.3f));
-	Colour bc(backgroundColour);
+    Colour bc(backgroundColour);
 
     if (isMouseOverButton)
     {
