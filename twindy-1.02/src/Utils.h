@@ -120,8 +120,9 @@ pid_t startProcess(const StringArray& args)
 
     if (executable.isEmpty() || ! File(executable).existsAsFile())
     {
-        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
-                                                           TRANS("Requested external tool does not exist."));
+        String msg = TRANS("Requested external tool '%1' does not exist.");
+        msg = msg.replace(T("%1"), args[0], false);
+        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"), msg);
         return -1;
     }
 
