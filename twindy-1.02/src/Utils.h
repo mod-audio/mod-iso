@@ -86,9 +86,39 @@ const Coordinates& getCoordinates()
 // -----------------------------------------------------------------------
 
 static inline
+String getExecutableAbsolutePath(const String& executable)
+{
+    // if the filename is absolute simply return it
+    if (File::isAbsolutePath (executable))
+        return executable;
+
+    // if the filename is relative construct from CWD
+    if (executable[0] == '.')
+        return File::getCurrentWorkingDirectory().getChildFile (executable).getFullPathName();
+
+    // filename is abstract, look up in PATH
+    if (const char* const envpath = ::getenv ("PATH"))
+    {
+        StringArray paths (StringArray::fromTokens (String(envpath), T(":"), T("")));
+
+        for (int i=paths.size(); --i>=0;)
+        {
+            const File filepath (File (paths[i]).getChildFile (executable));
+
+            if (filepath.existsAsFile())
+                return filepath.getFullPathName();
+        }
+    }
+
+    return String();
+}
+
+static inline
 pid_t startProcess(const StringArray& args)
 {
-    if (! File(args[0]).existsAsFile())
+    const String executable(getExecutableAbsolutePath(args[0]));
+
+    if (executable.isEmpty() || ! File(executable).existsAsFile())
     {
         TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
                                                            TRANS("Requested external tool does not exist."));

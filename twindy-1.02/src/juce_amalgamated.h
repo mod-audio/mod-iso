@@ -5760,6 +5760,32 @@ public:
     */
     int addLines (const tchar* stringToBreakUp) throw();
 
+    /** Returns an array containing the tokens in a given string.
+
+        This will tokenise the given string using whitespace characters as the
+        token delimiters, and return these tokens as an array.
+        @see addTokens
+    */
+    static StringArray fromTokens (const tchar* stringToTokenise,
+                                   bool preserveQuotedStrings);
+
+    /** Returns an array containing the tokens in a given string.
+
+        This will tokenise the given string using whitespace characters as the
+        token delimiters, and return these tokens as an array.
+
+        @param stringToTokenise     the string to tokenise
+        @param breakCharacters      a string of characters, any of which will be considered
+                                    to be a token delimiter.
+        @param quoteCharacters      if this string isn't empty, it defines a set of characters
+                                    which are treated as quotes. Any text occurring
+                                    between quotes is not broken up into tokens.
+        @see addTokens
+    */
+    static StringArray fromTokens (const tchar* stringToTokenise,
+                                   const tchar* breakCharacters,
+                                   const tchar* quoteCharacters);
+
     /** Removes all elements from the array. */
     void clear() throw();
 
