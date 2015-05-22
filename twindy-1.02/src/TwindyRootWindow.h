@@ -121,8 +121,6 @@ class TwindyRootWindow : public Component,
   private:
 	///	Tells the Xserver to redirect all MapRequest events to this window.
 	void setupMappingRedirect();
-	///	Launches an executable.
-	void launchExecutable(const char *cmd, bool storePid = false);
 	///	Wrapper to launchExecutable() for lower panel programs.
 	void removeWindow(Window win);
 	///	Gives win focus.

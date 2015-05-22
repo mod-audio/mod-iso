@@ -88,6 +88,13 @@ const Coordinates& getCoordinates()
 static inline
 pid_t startProcess(const StringArray& args)
 {
+    if (! File(args[0]).existsAsFile())
+    {
+        TwindyErrorDisplay::getInstance()->addErrorMessage(TRANS("Error"),
+                                                           TRANS("Requested external tool does not exist."));
+        return -1;
+    }
+
     const int    argc = args.size();
     const char* cargs[argc+1];
 
@@ -101,7 +108,7 @@ pid_t startProcess(const StringArray& args)
     {
     case 0:
         execvp(cargs[0], const_cast<char* const*>(cargs));
-        exit(1);
+        _exit(1);
         return -1;
 
     case -1:
