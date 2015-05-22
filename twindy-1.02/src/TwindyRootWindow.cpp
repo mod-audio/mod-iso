@@ -277,7 +277,7 @@ void TwindyRootWindow::buttonClicked(Button* button)
     if (button == exitButton)
     {
         if (AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
-                                         TRANS("Log Off..."),
+                                         TRANS("Power Off..."),
                                          TRANS("Are you sure you want to quit Live-MOD?"),
                                          TRANS("Yes"),
                                          TRANS("No")))
