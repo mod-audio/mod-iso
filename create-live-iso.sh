@@ -146,7 +146,8 @@ fi
 
 run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-conflicts kxstudio-artwork \
     acpid alsa-base alsa-utils alsa-firmware pm-utils xdg-utils xorg xserver-xorg-video-all \
-    casper lupin-casper dmz-cursor-theme lightdm plymouth nano ufw jackd1 a2jmidid \
+    casper lupin-casper consolekit dbus-x11 dmz-cursor-theme nano ufw jackd1 a2jmidid \
+    lightdm lightdm-gtk-greeter plymouth plymouth-theme-ubuntu-text ttf-dejavu ttf-dejavu-extra \
     mod-app mod-iso mod-sdk mod-sdk-lv2 \
     mod-distortion mod-mda-lv2 mod-pitchshifter mod-utilities \
     artyfx blop-lv2 caps-lv2 fomp sooperlooper-lv2 swh-lv2 tap-lv2 \

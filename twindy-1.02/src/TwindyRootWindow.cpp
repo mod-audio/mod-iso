@@ -324,10 +324,20 @@ void TwindyRootWindow::buttonClicked(Button* button)
     {
         if (AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
                                          TRANS("Log Off..."),
-                                         TRANS("Are you sure you want to quit Twindy?"),
+                                         TRANS("Are you sure you want to quit Live-MOD?"),
                                          TRANS("Yes"),
                                          TRANS("No")))
         {
+            StringArray args;
+
+            args.add(T("dbus-send"));
+            args.add(T("--system"));
+            args.add(T("--print-reply"));
+            args.add(T("--dest=\"org.freedesktop.ConsoleKit\""));
+            args.add(T("/org/freedesktop/ConsoleKit/Manager"));
+            args.add(T("org.freedesktop.ConsoleKit.Manager.Stop"));
+
+            startProcess(args);
             JUCEApplication::quit();
         }
         return;
