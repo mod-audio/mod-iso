@@ -300,7 +300,7 @@ void TwindyRootWindow::buttonClicked(Button* button)
     {
         args.add(T("ingen"));
         args.add(T("-c"));
-        args.add(T("unix:///tmp/mod-app-8888.sock"));
+        args.add(T("unix:///tmp/mod-app-17891.sock"));
         args.add(T("-g"));
     }
     else if (button == leftButton2)
