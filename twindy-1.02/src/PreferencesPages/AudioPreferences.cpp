@@ -322,6 +322,8 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
 
     applyButton.setButtonText(T("Apply Now"));
     applyButton.addButtonListener(this);
+    bufferSizeBox.addListener(this);
+    sampleRateBox.addListener(this);
     deviceBox.addListener(this);
 
     addAndMakeVisible(&applyButton);
@@ -342,6 +344,7 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
         if (deviceBox.getItemText(i).compareIgnoreCase(T("USB")))
         {
             deviceBox.setSelectedItemIndex(i);
+            settingsApplied();
             return;
         }
     }
@@ -353,12 +356,12 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
             continue;
 
         deviceBox.setSelectedItemIndex(i);
+        settingsApplied();
         return;
     }
 
     // fallback
     deviceBox.setSelectedItemIndex(0);
-
     settingsApplied();
 }
 
@@ -384,6 +387,11 @@ StringArray AudioPreferences::getDeviceList() const
 //------------------------------------------------------------------------------
 void AudioPreferences::selectDevice(const String& dev)
 {
+    if (deviceBox.getNumItems() == 0)
+        return;
+
+    const int oldSelection(deviceBox.getSelectedItemIndex());
+
     for (int i=deviceBox.getNumItems(); --i>=0;)
     {
         if (deviceBox.getItemText(i) != dev)
@@ -392,6 +400,11 @@ void AudioPreferences::selectDevice(const String& dev)
         deviceBox.setSelectedItemIndex(i);
     }
 
+    // force scan of selected device/card
+    if (oldSelection == deviceBox.getSelectedItemIndex())
+        comboBoxChanged(&deviceBox);
+
+    // press the button
     buttonClicked(&applyButton);
 }
 
@@ -427,11 +440,7 @@ void AudioPreferences::buttonClicked(Button* button)
     if (button != &applyButton)
         return;
 
-    curSettings.deviceId   = outputIds[deviceBox.getSelectedId()-1];
-    curSettings.bufferSize = bufferSizeBox.getText();
-    curSettings.sampleRate = sampleRateBox.getText();
-
-    TwindyApp* const app = static_cast<TwindyApp*>(JUCEApplication::getInstance());
+    settingsApplied();
 
     StringArray args;
     args.add(T("jackd"));
@@ -452,6 +461,7 @@ void AudioPreferences::buttonClicked(Button* button)
         args.add(T("3"));
     }
 
+    TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
     app->restartJackd(args);
 }
 
@@ -462,6 +472,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     {
         curSettings.bufferSizeChanged = (curSettings.bufferSize != bufferSizeBox.getText());
         applyButton.setVisible(curSettings.check());
+        repaint();
         return;
     }
 
@@ -469,6 +480,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     {
         curSettings.sampleRateChanged = (curSettings.sampleRate != sampleRateBox.getText());
         applyButton.setVisible(curSettings.check());
+        repaint();
         return;
     }
 
@@ -489,6 +501,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     {
         curSettings.deviceIdChanged = (curSettings.deviceId != deviceId);
         applyButton.setVisible(curSettings.check());
+        repaint();
     }
 
     uint minChansOut = 0;
