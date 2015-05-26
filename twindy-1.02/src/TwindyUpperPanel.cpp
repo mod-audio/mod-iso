@@ -85,6 +85,15 @@ void TwindyUpperPanel::setWorkspaceIsVisible(bool val)
 }
 
 //------------------------------------------------------------------------------
+bool TwindyUpperPanel::containsWindow(::Window window)
+{
+    for (int i=windows.size();--i>=0;)
+        if (windows[i]->getWindow() == window)
+            return true;
+    return false;
+}
+
+//------------------------------------------------------------------------------
 void TwindyUpperPanel::addWindow(TwindyWindow *newWindow, TwindyUpperTab *newTab)
 {
 	addTab(getNumTabs(), newTab);

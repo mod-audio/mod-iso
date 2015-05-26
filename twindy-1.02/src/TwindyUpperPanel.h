@@ -51,6 +51,9 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	///	Called from TwindyRootWindow to determine which workspace is currently visible.
 	bool isWorkspaceVisible() const {return workspaceVisible;};
 
+        /// Check if panel contains a window.
+        bool containsWindow(::Window window);
+
 	///	Called from TwindyRootWindow to add a window to this workspace.
 	/*!
 		newWindow will be deleted by TwindyUpperPanel.

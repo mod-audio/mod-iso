@@ -111,10 +111,24 @@ void TwindyRootWindow::callbackFunction(void *event)
     {
         TWINDY_DBG_MESSAGE("MapRequest received.");
 
+        const ::Window window = evt->xmaprequest.window;
+
+#if 0
+        if (TwindyWindow* const win = preferences->getMixerWindow())
+            if (win->getWindow() == window)
+                return;
+
+        for (int i=upperPanelCompSize; --i>=0;)
+        {
+            if (TwindyUpperPanel* const panel = upperPanelComps[i])
+                if (panel->containsWindow(window))
+                    return;
+        }
+#endif
+
         String name;
         uint target;
         XTextProperty textProp;
-        const ::Window window = evt->xmaprequest.window;
 
         //We add all upper windows to the save set, because we might quit
         //unexpectedly while all but the currently mapped window are
@@ -138,9 +152,9 @@ void TwindyRootWindow::callbackFunction(void *event)
             target = 0;
             printf("MOD-App detected\n");
         }
-        else if (true)
+        else if (upperPanelCompSize > 1)
         {
-            target = 1;
+            target = upperPanelCompSize-1;
             printf("name is %s\n", name.toUTF8());
         }
         else
@@ -207,9 +221,13 @@ void TwindyRootWindow::callbackFunction(void *event)
 
             upperPanelComps[target]->addWindow(newWin, newTab);
         }
-        else
+        else if (target == upperPanelCompSize)
         {
             preferences->setMixerWindow(newWin);
+        }
+        else
+        {
+            delete newWin;
         }
 
         break;
