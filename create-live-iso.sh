@@ -64,11 +64,20 @@ fi
 # start bootstrap
 
 if [ ! -d ~/livecd/custom/var/mod-live ]; then
+  sudo mkdir -p ~/livecd
   sudo debootstrap --arch=amd64 vivid ~/livecd/custom http://archive.ubuntu.com/ubuntu/
   sudo mkdir ~/livecd/custom/var/mod-live
 fi
 
 sudo touch ~/livecd/custom/var/mod-live/using-live-iso
+
+# -------------------------------------------------------------------------------------------
+# we need this for later
+
+if [ ! -f ~/livecd/iso-stuff.7z ]; then
+  echo "Please copy iso-stuff.7z to ~/livecd before continuing"
+  exit
+fi
 
 # -------------------------------------------------------------------------------------------
 # enable network
@@ -114,9 +123,9 @@ fi
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3b ]; then
   run_chroot_cmd apt-get update
   run_chroot_cmd apt-get install --no-install-recommends -y software-properties-common wget
-  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.1~kxstudio1_all.deb
-  run_chroot_cmd dpkg -i kxstudio-repos_8.2.1~kxstudio1_all.deb
-  run_chroot_cmd rm kxstudio-repos_8.2.1~kxstudio1_all.deb
+  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.2~kxstudio1_all.deb
+  run_chroot_cmd dpkg -i kxstudio-repos_8.2.2~kxstudio1_all.deb
+  run_chroot_cmd rm kxstudio-repos_8.2.2~kxstudio1_all.deb
   run_chroot_cmd add-apt-repository ppa:kxstudio-debian/kxstudio-mod -y
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-3b
 fi
@@ -211,11 +220,6 @@ sudo mksquashfs ~/livecd/custom ./filesystem.squashfs -noappend -comp xz
 
 # -------------------------------------------------------------------------------------------
 # Create ISO artwork
-
-if [ ! -f ~/livecd/iso-stuff.7z ]; then
-  echo "Please copy iso-stuff.7z to ~/livecd before continuing"
-  exit
-fi
 
 if [ ! -f ~/livecd/cd/.disk/info ]; then
   sudo mkdir -p ~/livecd/cd
