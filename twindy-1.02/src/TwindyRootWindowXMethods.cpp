@@ -130,7 +130,7 @@ void TwindyRootWindow::callbackFunction(void *event)
 
         if (name == T("__mod_mixer__"))
         {
-            target = 2;
+            target = upperPanelCompSize;
             printf("Mixer detected\n");
         }
         else if (name.isEmpty())
@@ -175,7 +175,7 @@ void TwindyRootWindow::callbackFunction(void *event)
             TwindyUpperPanel* const panel(upperPanelComps[target]);
             TwindyWindow*     const twnd(panel->getCurrentWindow());
 
-            if (target == 0)
+            /*if (target == 0)
             {
                 if (twnd != nullptr)
                 {
@@ -184,7 +184,8 @@ void TwindyRootWindow::callbackFunction(void *event)
                     //delete twnd;
                 }
             }
-            else if (panel->isWorkspaceVisible())
+            else*/
+            if (panel->isWorkspaceVisible())
             {
                 if (twnd != nullptr)
                     twnd->hide();
@@ -414,7 +415,7 @@ void TwindyRootWindow::redrawWindowName(Window win)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::raiseAllWindows()
 {
-    if (currentUpperPanelComp >= 0 && upperPanelComps[currentUpperPanelComp]->getNumWindows() > 0)
+    if (currentUpperPanelComp < upperPanelCompSize && upperPanelComps[currentUpperPanelComp]->getNumWindows() > 0)
         XRaiseWindow(display, upperPanelComps[currentUpperPanelComp]->getCurrentWindow()->getWindow());
 
     // We get crashes if Twindy loses focus after a PopupMenu has been shown.

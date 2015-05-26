@@ -30,11 +30,12 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
-TwindyUpperPanel::TwindyUpperPanel(bool isMOD)
-    : TwindyTabbedComponent(T("Upper Panel"), isMOD ? TwindyTabbedComponent::ModeMOD : TwindyTabbedComponent::ModeDev),
+TwindyUpperPanel::TwindyUpperPanel(bool isMOD_)
+    : TwindyTabbedComponent(T("Upper Panel"), isMOD_ ? TwindyTabbedComponent::ModeMOD : TwindyTabbedComponent::ModeDev),
       workspaceVisible(false),
       dontShowHideWindows(false),
-      visibleWindow(-1) {}
+      visibleWindow(-1),
+      isMOD(isMOD_) {}
 
 //------------------------------------------------------------------------------
 TwindyUpperPanel::~TwindyUpperPanel()
@@ -52,24 +53,35 @@ TwindyUpperPanel::~TwindyUpperPanel()
 //------------------------------------------------------------------------------
 void TwindyUpperPanel::setWorkspaceIsVisible(bool val)
 {
-	workspaceVisible = val;
+    workspaceVisible = val;
 
-	if(workspaceVisible)
-	{
-		//Make first window visible.
-		if(windows.size() > 0)
-		{
-			visibleWindow = 0;
-			setCurrentlySelectedTab(0);
-			windows[visibleWindow]->show();
-		}
-	}
-	else
-	{
-		//Hide visible window.
-		if(windows.size() > 0)
-			windows[visibleWindow]->hide();
-	}
+    if (windows.size() == 0)
+        return;
+
+    if (workspaceVisible)
+    {
+        if (isMOD)
+        {
+            visibleWindow = windows.size()-1;
+            setCurrentlySelectedTab(visibleWindow);
+            for (int i=0; i<=visibleWindow; ++i)
+                windows[i]->show();
+        }
+        else
+        {
+            visibleWindow = 0;
+            setCurrentlySelectedTab(0);
+            windows[visibleWindow]->show();
+        }
+    }
+    else
+    {
+        for (int i=windows.size(); --i>=0;)
+            windows[i]->hide();
+
+        // Hide visible window.
+        //windows[visibleWindow]->hide();
+    }
 }
 
 //------------------------------------------------------------------------------

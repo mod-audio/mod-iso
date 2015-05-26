@@ -128,6 +128,9 @@ class TwindyUpperPanel : public TwindyTabbedComponent
 	///	This workspace's name (what's displayed on the tab).
 	String name;
 
+        // This is the 1st MOD tab
+        bool isMOD;
+
 	///	The panel's actual colours.
 	TracktionScheme colours;
 };
