@@ -445,7 +445,6 @@ void AudioPreferences::buttonClicked(Button* button)
     StringArray args;
     args.add(T("jackd"));
     args.add(T("-R"));
-    args.add(T("-T"));
     args.add(T("-d"));
     args.add(T("alsa"));
     args.add(T("-d"));
