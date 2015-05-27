@@ -71,12 +71,8 @@ private:
     // The window.
     TwindyRootWindow* win;
 
-    // The mod-app instance
+    // The processes we started
     pid_t pidApp, pidJackd;
-
-    // The global jack client
-    jack_client_t* client;
-    bool jackWasStartedBeforeUs;
 };
 
 #endif

@@ -106,12 +106,12 @@ OBJS = $(OBJDIR)/juce_amalgamated.cpp.o \
 $(BINDIR)/twindy: $(OBJS)
 	-@mkdir -p $(BINDIR)
 	@echo "Linking twindy"
-	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs alsa jack freetype2 x11 xext xinerama) -lpthread -ldl -o $@
+	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs alsa freetype2 x11 xext xinerama) -lpthread -ldl -o $@
 
 $(BINDIR)/twindy-dbg: $(OBJS)
 	-@mkdir -p $(BINDIR)
 	@echo "Linking twindy-dbg"
-	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs alsa jack freetype2 x11 xext xinerama) -lpthread -ldl -o $@
+	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs alsa freetype2 x11 xext xinerama) -lpthread -ldl -o $@
 
 # --------------------------------------------------------------
 

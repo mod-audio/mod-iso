@@ -32,15 +32,12 @@ using namespace std;
 TwindyApp::TwindyApp()
     : win(nullptr),
       pidApp(-1),
-      pidJackd(-1),
-      client(nullptr),
-      jackWasStartedBeforeUs(false) {}
+      pidJackd(-1) {}
 
 ///-----------------------------------------------------------------------------
 TwindyApp::~TwindyApp()
 {
     jassert(win == nullptr);
-    jassert(client == nullptr);
     jassert(pidApp == -1);
     jassert(pidJackd == -1);
 }
@@ -94,13 +91,6 @@ void TwindyApp::shutdown()
 {
     TWINDY_DBG_MESSAGE("About to shutdown.");
 
-    if (client != nullptr)
-    {
-        jack_deactivate(client);
-        jack_client_close(client);
-        client = nullptr;
-    }
-
     if (pidApp > 0)
     {
         terminateAndWaitForProcess(pidApp);
@@ -122,18 +112,6 @@ void TwindyApp::shutdown()
 ///-----------------------------------------------------------------------------
 bool TwindyApp::restartJackd(const StringArray& args)
 {
-    if (jackWasStartedBeforeUs)
-        return false;
-
-    printf("previous client => : %p %li\n", client, (long)pidJackd);
-
-    if (client != nullptr)
-    {
-        jack_deactivate(client);
-        jack_client_close(client);
-        client = nullptr;
-    }
-
     if (pidJackd > 0)
     {
         terminateAndWaitForProcess(pidJackd);
@@ -142,15 +120,6 @@ bool TwindyApp::restartJackd(const StringArray& args)
 
     if ((pidJackd = startProcess(args)) == -1)
         return false;
-
-#if 0
-    printf("jack_client_open calling...\n");
-    client = jack_client_open("mod-twindy2", JackNoStartServer, nullptr);
-    printf("jack_client_open done!\n");
-
-    if (client == nullptr)
-        return false;
-#endif
 
     restartMODApp();
     return true;
@@ -167,10 +136,6 @@ void TwindyApp::restartMODApp()
 
     StringArray args;
     args.add(T("mod-app"));
-
-    //if (client == nullptr)
-    //    args.add(T("--no-autostart"));
-
     args.add(T("--using-live-iso"));
 
     pidApp = startProcess(args);
