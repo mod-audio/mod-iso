@@ -64,7 +64,7 @@ public:
     void setRootWindow(TwindyRootWindow* newWin) { win = newWin; }
 
     // restart services
-    void restartMODApp();
+    void restartMODApp(bool gitversion = false);
     bool restartJackd(const StringArray& args);
 
 private:
