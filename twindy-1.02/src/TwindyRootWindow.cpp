@@ -189,8 +189,6 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton5->setVisible(false);
     leftButton6->setVisible(false);
 
-    updateColours();
-
     TWINDY_DBG_MESSAGE("About to makeTwindyRootWindow visible and add it to the desktop");
     setVisible(true);
     addToDesktop(ComponentPeer::windowAppearsOnTaskbar);
@@ -357,46 +355,6 @@ void TwindyRootWindow::setVisibleUpperPanel(uint index)
     // Show newly-visible window, if it isn't the preferences panel.
     if (currentUpperPanelComp < upperPanelCompSize)
         upperPanelComps[currentUpperPanelComp]->setWorkspaceIsVisible(true);
-}
-
-//----------------------------------------------------------------------------------------------
-void TwindyRootWindow::updateColours()
-{
-//     TracktionScheme tempScheme;
-//
-//     if (! exitButton)
-//         return;
-//
-//     colours.mainBackground = tempScheme.getColour(T("mainBackground"));
-//     colours.tabAreaBackground = tempScheme.getColour(T("tabAreaBackground"));
-//     colours.menuText = tempScheme.getColour(T("menuText"));
-//     colours.propertyPanelBackground = tempScheme.getColour(T("propertyPanelBackground"));
-//     colours.propertyPanelText = tempScheme.getColour(T("propertyPanelText"));
-//     colours.propertyPanelOutline = tempScheme.getColour(T("propertyPanelOutline"));
-//     colours.selectedFilterOutline = tempScheme.getColour(T("selectedFilterOutline"));
-//     colours.yellowButton = tempScheme.getColour(T("yellowButton"));
-//     colours.blueButton = tempScheme.getColour(T("blueButton"));
-//
-//     exitButton->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
-//     exitButton->setTextColour(colours.menuText);
-//     exitButton2->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
-//     exitButton2->setTextColour(colours.menuText);
-//     leftButton1->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-//     leftButton1->setTextColour(colours.menuText);
-//     leftButton2->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-//     leftButton2->setTextColour(colours.menuText);
-//     leftButton3->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-//     leftButton3->setTextColour(colours.menuText);
-//     leftButton4->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-//     leftButton4->setTextColour(colours.menuText);
-//     leftButton5->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-//     leftButton5->setTextColour(colours.menuText);
-//     leftButton6->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-//     leftButton6->setTextColour(colours.menuText);
-//     leftButton7->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-//     leftButton7->setTextColour(colours.menuText);
-//
-//     repaint();
 }
 
 //----------------------------------------------------------------------------------------------

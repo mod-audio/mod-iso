@@ -91,12 +91,6 @@ class TwindyRootWindow : public Component,
 	///	Returns a pointer to the preferences panel.
 	TwindyPreferences *getPreferencesPanel() const {return preferences;};
 
-	///	Returns the colour scheme for the indexed workspace.
-	const TwindyColours& getColours() {return colours;};
-
-	///	Called to update the colours of the various (visible) Components.
-	void updateColours();
-
 	///	Returns the XServer Window handle to this window.
 	Window getActualWindow();
 
