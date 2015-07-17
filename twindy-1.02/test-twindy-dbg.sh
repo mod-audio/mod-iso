@@ -1,6 +1,10 @@
 #!/bin/bash
 
-Xephyr -keybd ephyr,,,xkbmodel=evdev -br -reset -screen 1400x1000x24 -dpi 96 :2 &
+if [ "$TWINDY_SKIP_LOCAL_TEST"x == ""x ]; then
+  export TWINDY_LOCAL_TEST=1
+fi
+
+Xephyr -keybd ephyr,,,xkbmodel=evdev -br -reset -screen 1280x979x24 -resizeable -dpi 96 :2 &
 sleep 1
 
 export DISPLAY=:2.0

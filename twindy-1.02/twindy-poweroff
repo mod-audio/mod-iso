@@ -1,4 +1,10 @@
 #!/bin/bash
 
+if [ "$TWINDY_LOCAL_TEST"x != ""x ]; then
+  killall twindy twindy-dbg
+  killall gdb
+  exit
+fi
+
 exec dbus-send --system --print-reply \
 --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
