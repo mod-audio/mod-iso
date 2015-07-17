@@ -73,8 +73,16 @@ void TwindyApp::initialise(const String& commandLine)
     win->toFront(true);
     TWINDY_DBG_MESSAGE("TwindyRootWindow brought to front.");
 
+    // Initial values
+    ::setenv("MOD_INGEN_NUM_AUDIO_INS", "2", 1);
+    ::setenv("MOD_INGEN_NUM_AUDIO_OUTS","2", 1);
+    ::setenv("MOD_INGEN_NUM_MIDI_INS",  "0", 1);
+    ::setenv("MOD_INGEN_NUM_MIDI_OUTS", "0", 1);
+    ::setenv("MOD_INGEN_NUM_CV_INS",    "0", 1);
+    ::setenv("MOD_INGEN_NUM_CV_OUTS",   "0", 1);
+
     if (std::getenv("TWINDY_LOCAL_TEST") != nullptr)
-        return restartMODApp(true);
+        return restartMODApp(1);
 
     AlertWindow w(T("Live-MOD"), T("Welcome to Live-MOD!"), AlertWindow::NoIcon);
     w.addTextBlock(T("Before we begin please select which soundcard you plan to use."));
@@ -113,12 +121,16 @@ void TwindyApp::shutdown()
 }
 
 ///-----------------------------------------------------------------------------
-void TwindyApp::restartMODApp(bool gitversion)
+void TwindyApp::restartMODApp(int gitversion)
 {
     if (pidApp > 0)
     {
         terminateAndWaitForProcess(pidApp);
         pidApp = -1;
+    }
+
+    if (gitversion == -1) {
+        gitversion = (std::getenv("TWINDY_LOCAL_TEST") != nullptr) ? 1 : 0;
     }
 
     StringArray args;
@@ -142,7 +154,7 @@ bool TwindyApp::restartJackd(const StringArray& args)
     if ((pidJackd = startProcess(args)) == -1)
         return false;
 
-    restartMODApp();
+    restartMODApp(-1);
     return true;
 }
 

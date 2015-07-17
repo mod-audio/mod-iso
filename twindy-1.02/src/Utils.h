@@ -94,7 +94,7 @@ String getExecutableAbsolutePath(const String& executable)
         return File::getCurrentWorkingDirectory().getChildFile (executable).getFullPathName();
 
     // filename is abstract, look up in PATH
-    if (const char* const envpath = ::getenv ("PATH"))
+    if (const char* const envpath = std::getenv("PATH"))
     {
         StringArray paths (StringArray::fromTokens (String(envpath), T(":"), T("")));
 

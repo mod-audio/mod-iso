@@ -441,6 +441,15 @@ void AudioPreferences::buttonClicked(Button* button)
 
     settingsApplied();
 
+    const DeviceInfo& devInfo(cachedDevInfo[curSettings.deviceId]);
+
+    printf("--------------------------------------------------------------\n");
+    printf("Dev IO changed to %u | %u\n", devInfo.maxChansIn, devInfo.maxChansOut);
+    printf("--------------------------------------------------------------\n");
+
+    ::setenv("MOD_INGEN_NUM_AUDIO_INS",  String(devInfo.maxChansIn).toUTF8(), 1);
+    ::setenv("MOD_INGEN_NUM_AUDIO_OUTS", String(devInfo.maxChansOut).toUTF8(), 1);
+
     StringArray args;
     args.add(T("jackd"));
     args.add(T("-R"));
