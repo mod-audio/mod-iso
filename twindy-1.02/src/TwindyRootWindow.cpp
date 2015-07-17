@@ -42,7 +42,8 @@ TwindyRootWindow::TwindyRootWindow()
     : Component(T("Twindy Window Manager")),
       currentUpperPanelComp(0),
       exitButton(nullptr),
-      exitButton2(nullptr)
+      exitButton2(nullptr),
+      resetButton(nullptr)
 {
     static_cast<TwindyApp*>(JUCEApplication::getInstance())->setRootWindow(this);
 
@@ -150,6 +151,11 @@ TwindyRootWindow::TwindyRootWindow()
     exitButton2->setTextColour(colours.menuText);
     exitButton2->addButtonListener(this);
 
+    addAndMakeVisible(resetButton = new DrawableTextButton(T("ResetButton"), TRANS("Reset")));
+    resetButton->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
+    resetButton->setTextColour(colours.menuText);
+    resetButton->addButtonListener(this);
+
     addAndMakeVisible(leftButton1 = new DrawableTextButton(T("LeftButton1"), TRANS("Ingen (UI)")));
     leftButton1->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
     leftButton1->setTextColour(colours.menuText);
@@ -239,6 +245,10 @@ void TwindyRootWindow::resized()
                            (coords.topTabBarHeight-coords.buttonHeight)/2,
                            coords.buttonWidth, coords.buttonHeight);
 
+    resetButton->setBounds(getWidth()-coords.buttonWidth*2-coords.buttonWidth/3,
+                           (coords.topTabBarHeight-coords.buttonHeight)/2,
+                           coords.buttonWidth, coords.buttonHeight);
+
     const int lowerBorder = getHeight()-coords.buttonHeight*3/2;
     /* */ int tempint     = lowerBorder;
 
@@ -284,6 +294,12 @@ void TwindyRootWindow::buttonClicked(Button* button)
             startProcess(args);
             JUCEApplication::quit();
         }
+        return;
+    }
+
+    if (button == resetButton)
+    {
+        getPreferencesPanel()->restartAudio();
         return;
     }
 

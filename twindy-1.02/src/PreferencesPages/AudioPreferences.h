@@ -62,6 +62,9 @@ public:
     // Select device.
     void selectDevice(const String& dev);
 
+    // Restart audio stuff
+    void restart();
+
 protected:
     // Places and sizes the various components.
     void resized() override;

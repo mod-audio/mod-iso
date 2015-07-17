@@ -386,9 +386,6 @@ StringArray AudioPreferences::getDeviceList() const
 //------------------------------------------------------------------------------
 void AudioPreferences::selectDevice(const String& dev)
 {
-    if (deviceBox.getNumItems() == 0)
-        return;
-
     const int oldSelection(deviceBox.getSelectedItemIndex());
 
     for (int i=deviceBox.getNumItems(); --i>=0;)
@@ -404,6 +401,11 @@ void AudioPreferences::selectDevice(const String& dev)
         comboBoxChanged(&deviceBox);
 
     // press the button
+    buttonClicked(&applyButton);
+}
+
+void AudioPreferences::restart()
+{
     buttonClicked(&applyButton);
 }
 

@@ -134,6 +134,7 @@ class TwindyRootWindow : public Component,
 	/// Exit button.
 	DrawableTextButton* exitButton;
     DrawableTextButton* exitButton2;
+    DrawableTextButton* resetButton;
 	/// Top left button in the lower left.
 	DrawableTextButton* leftButton1;
 	/// Top left button in the lower left.

@@ -69,6 +69,9 @@ public:
     // Select device, used during initialization
     void selectAudioDevice(const String& dev) { audio.selectDevice(dev); }
 
+    // Restart audio stuff
+    void restartAudio() { audio.restart(); }
+
 protected:
     // Called when this component's visiblility changes.
     void visibilityChanged() override;
