@@ -132,6 +132,7 @@ void TwindyApp::restartMODApp(int gitversion)
     if (gitversion == -1) {
         gitversion = (std::getenv("TWINDY_LOCAL_TEST") != nullptr) ? 1 : 0;
     }
+    gitversion = 1;
 
     StringArray args;
     args.add(gitversion ? T("mod-app-git") : T("mod-app"));

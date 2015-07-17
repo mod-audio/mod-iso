@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$TWINDY_SKIP_LOCAL_TEST"x == ""x ]; then
+if [ "$TWINDY_SKIP_LOCAL_TEST"x != "1"x ]; then
   export TWINDY_LOCAL_TEST=1
 fi
 
@@ -10,5 +10,4 @@ sleep 1
 export DISPLAY=:2.0
 gdb -ex run $(dirname $0)/twindy-dbg
 # valgrind --leak-check=full $(dirname $0)/twindy-dbg
-killall ingen
-killall Xephyr
+killall jackd ingen Xephyr

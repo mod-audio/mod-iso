@@ -453,6 +453,22 @@ void AudioPreferences::buttonClicked(Button* button)
     StringArray args;
     args.add(T("jackd"));
     args.add(T("-R"));
+    args.add(T("-P"));
+    args.add(T("89"));
+    args.add(T("-Z"));
+
+    if (true)
+    {
+        // using JACK1
+        args.add(T("-X"));
+        args.add(T("alsa_midi"));
+    }
+    else
+    {
+        // using JACK2
+        args.add(T("-S"));
+    }
+
     args.add(T("-d"));
     args.add(T("alsa"));
     args.add(T("-d"));
@@ -461,6 +477,7 @@ void AudioPreferences::buttonClicked(Button* button)
     args.add(curSettings.sampleRate);
     args.add(T("-p"));
     args.add(curSettings.bufferSize);
+    args.add(T("-s"));
 
     if (deviceBox.getText().containsIgnoreCase(T("usb")))
     {
