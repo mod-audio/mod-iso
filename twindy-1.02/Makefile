@@ -96,7 +96,8 @@ OBJS = $(OBJDIR)/juce_amalgamated.cpp.o \
 	$(OBJDIR)/ExtraComponents/TwindyTabbedComponent.cpp.o \
 	$(OBJDIR)/ExtraComponents/TwindyToggleButton.cpp.o \
 	$(OBJDIR)/PreferencesPages/AboutPage.cpp.o \
-	$(OBJDIR)/PreferencesPages/AudioPreferences.cpp.o
+	$(OBJDIR)/PreferencesPages/AudioPreferences.cpp.o \
+	$(OBJDIR)/PreferencesPages/MidiPreferences.cpp.o
 # 	$(OBJDIR)/PreferencesPages/ButtonPreferences.cpp.o \
 # 	$(OBJDIR)/PreferencesPages/MiscPreferences.cpp.o \
 # 	$(OBJDIR)/PreferencesPages/StartupPreferences.cpp.o \

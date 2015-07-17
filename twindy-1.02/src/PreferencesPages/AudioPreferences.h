@@ -18,8 +18,8 @@
 //	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //	----------------------------------------------------------------------------
 
-#ifndef MISCPREFERENCES_H_
-#define MISCPREFERENCES_H_
+#ifndef AUDIO_PREFERENCES_H_
+#define AUDIO_PREFERENCES_H_
 
 #include "../juce_amalgamated.h"
 #include <map>

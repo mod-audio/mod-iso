@@ -24,8 +24,9 @@
 #include "ExtraComponents/TwindyTabbedComponent.h"
 #include "ExtraComponents/TracktionScheme.h"
 
-#include "PreferencesPages/AboutPage.h"
 #include "PreferencesPages/AudioPreferences.h"
+#include "PreferencesPages/MidiPreferences.h"
+#include "PreferencesPages/AboutPage.h"
 
 /// Preferences page for Twindy.
 class TwindyPreferences : public TwindyTabbedComponent
@@ -75,7 +76,7 @@ protected:
 private:
     /// The varius preferences pages
     AudioPreferences audio;
-    AudioPreferences midi;
+    MidiPreferences midi;
     AboutPage about;
 
     // Used for audio mixer
