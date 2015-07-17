@@ -34,7 +34,6 @@ struct Coordinates {
     int topPadding;
     int topTabBarHeight;
     int topTabBarIndent;
-    int clockWidth;
     int buttonMargin;
     int buttonWidth;
     int buttonHeight;
@@ -46,7 +45,6 @@ struct Coordinates {
         : topPadding(30),
           topTabBarHeight(-1),
           topTabBarIndent(10),
-          clockWidth(100),
           buttonMargin(10),
           buttonWidth(100),
           buttonHeight(25),
@@ -66,7 +64,6 @@ struct Coordinates {
 
         topPadding      = double(topPadding)      * scaling;
         topTabBarIndent = double(topTabBarIndent) * scaling;
-        clockWidth      = double(clockWidth)      * scaling;
         buttonMargin    = double(buttonMargin)    * scaling;
         buttonWidth     = double(buttonWidth)     * scaling;
         buttonHeight    = double(buttonHeight)    * scaling;

@@ -234,7 +234,10 @@ void TwindyRootWindow::resized()
     const Coordinates& coords(getCoordinates());
 
     workspaces->setBounds(0, 0, getWidth(), getHeight());
-    exitButton2->setBounds(getWidth()-coords.clockWidth, 0, coords.clockWidth, coords.topTabBarHeight);
+
+    exitButton2->setBounds(getWidth()-coords.buttonWidth-coords.buttonWidth/4,
+                           (coords.topTabBarHeight-coords.buttonHeight)/2,
+                           coords.buttonWidth, coords.buttonHeight);
 
     const int lowerBorder = getHeight()-coords.buttonHeight*3/2;
     /* */ int tempint     = lowerBorder;
