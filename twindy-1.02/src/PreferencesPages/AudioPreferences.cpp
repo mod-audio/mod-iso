@@ -24,7 +24,6 @@
 #include "../TwindyRootWindow.h"
 #include "../ExtraComponents/TwindyToggleButton.h"
 #include "../ExtraComponents/DrawableTextButton.h"
-#include "../ExtraComponents/Clock.h"
 #include "../Utils.h"
 #include <iostream>
 

@@ -28,7 +28,6 @@
 #include "TwindyUpperPanel.h"
 #include "TwindyTabs.h"
 #include "TwindyWindow.h"
-#include "Clock.h"
 #include "DrawableTextButton.h"
 #include "TwindyErrorDisplay.h"
 #include "TwindyTabs.h"
@@ -42,7 +41,8 @@
 TwindyRootWindow::TwindyRootWindow()
     : Component(T("Twindy Window Manager")),
       currentUpperPanelComp(0),
-      exitButton(0)
+      exitButton(nullptr),
+      exitButton2(nullptr)
 {
     static_cast<TwindyApp*>(JUCEApplication::getInstance())->setRootWindow(this);
 
@@ -145,6 +145,11 @@ TwindyRootWindow::TwindyRootWindow()
     exitButton->setTextColour(colours.menuText);
     exitButton->addButtonListener(this);
 
+    addAndMakeVisible(exitButton2 = new DrawableTextButton(T("ExitButton2"), TRANS("Power Off...")));
+    exitButton2->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
+    exitButton2->setTextColour(colours.menuText);
+    exitButton2->addButtonListener(this);
+
     addAndMakeVisible(leftButton1 = new DrawableTextButton(T("LeftButton1"), TRANS("Ingen (UI)")));
     leftButton1->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
     leftButton1->setTextColour(colours.menuText);
@@ -183,14 +188,6 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton4->setVisible(false);
     leftButton5->setVisible(false);
     leftButton6->setVisible(false);
-
-    //Clock
-    addAndMakeVisible(clock = new Clock());
-    clock->setColour(colours.propertyPanelText);
-    clock->setIncludeSeconds(true);
-    clock->setUse24HourClock(true);
-    clock->setMonthDisplayedFirst(false);
-    clock->setDateSeparator(T("/"));
 
     updateColours();
 
@@ -239,6 +236,7 @@ void TwindyRootWindow::resized()
     const Coordinates& coords(getCoordinates());
 
     workspaces->setBounds(0, 0, getWidth(), getHeight());
+    exitButton2->setBounds(getWidth()-coords.clockWidth, 0, coords.clockWidth, coords.topTabBarHeight);
 
     const int lowerBorder = getHeight()-coords.buttonHeight*3/2;
     /* */ int tempint     = lowerBorder;
@@ -261,8 +259,6 @@ void TwindyRootWindow::resized()
     leftButton1->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
     tempint -= coords.buttonHeight;
 
-    clock->setBounds(getWidth()-coords.clockWidth, 0, coords.clockWidth, coords.topTabBarHeight);
-
     TwindyErrorDisplay::getInstance()->setBounds(getWidth()-coords.buttonMargin-coords.errorDisplayWidth,
                                                  lowerBorder-coords.errorDisplayHeight,
                                                  coords.errorDisplayWidth,
@@ -274,7 +270,7 @@ void TwindyRootWindow::buttonClicked(Button* button)
 {
     StringArray args;
 
-    if (button == exitButton)
+    if (button == exitButton || button == exitButton2)
     {
         if (AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
                                          TRANS("Power Off..."),
@@ -283,12 +279,6 @@ void TwindyRootWindow::buttonClicked(Button* button)
                                          TRANS("No")))
         {
             StringArray args;
-            //args.add(T("dbus-send"));
-            //args.add(T("--system"));
-            //args.add(T("--print-reply"));
-            //args.add(T("--dest=\"org.freedesktop.ConsoleKit\""));
-            //args.add(T("/org/freedesktop/ConsoleKit/Manager"));
-            //args.add(T("org.freedesktop.ConsoleKit.Manager.Stop"));
             args.add(T("twindy-poweroff"));
             startProcess(args);
             JUCEApplication::quit();
@@ -372,41 +362,41 @@ void TwindyRootWindow::setVisibleUpperPanel(uint index)
 //----------------------------------------------------------------------------------------------
 void TwindyRootWindow::updateColours()
 {
-    TracktionScheme tempScheme;
-
-    if (! exitButton)
-        return;
-
-    colours.mainBackground = tempScheme.getColour(T("mainBackground"));
-    colours.tabAreaBackground = tempScheme.getColour(T("tabAreaBackground"));
-    colours.menuText = tempScheme.getColour(T("menuText"));
-    colours.propertyPanelBackground = tempScheme.getColour(T("propertyPanelBackground"));
-    colours.propertyPanelText = tempScheme.getColour(T("propertyPanelText"));
-    colours.propertyPanelOutline = tempScheme.getColour(T("propertyPanelOutline"));
-    colours.selectedFilterOutline = tempScheme.getColour(T("selectedFilterOutline"));
-    colours.yellowButton = tempScheme.getColour(T("yellowButton"));
-    colours.blueButton = tempScheme.getColour(T("blueButton"));
-
-    exitButton->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
-    exitButton->setTextColour(colours.menuText);
-    leftButton1->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-    leftButton1->setTextColour(colours.menuText);
-    leftButton2->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-    leftButton2->setTextColour(colours.menuText);
-    leftButton3->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-    leftButton3->setTextColour(colours.menuText);
-    leftButton4->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-    leftButton4->setTextColour(colours.menuText);
-    leftButton5->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-    leftButton5->setTextColour(colours.menuText);
-    leftButton6->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-    leftButton6->setTextColour(colours.menuText);
-    leftButton7->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
-    leftButton7->setTextColour(colours.menuText);
-
-    clock->setColour(tempScheme.getColour(T("propertyPanelText")));
-
-    repaint();
+//     TracktionScheme tempScheme;
+//
+//     if (! exitButton)
+//         return;
+//
+//     colours.mainBackground = tempScheme.getColour(T("mainBackground"));
+//     colours.tabAreaBackground = tempScheme.getColour(T("tabAreaBackground"));
+//     colours.menuText = tempScheme.getColour(T("menuText"));
+//     colours.propertyPanelBackground = tempScheme.getColour(T("propertyPanelBackground"));
+//     colours.propertyPanelText = tempScheme.getColour(T("propertyPanelText"));
+//     colours.propertyPanelOutline = tempScheme.getColour(T("propertyPanelOutline"));
+//     colours.selectedFilterOutline = tempScheme.getColour(T("selectedFilterOutline"));
+//     colours.yellowButton = tempScheme.getColour(T("yellowButton"));
+//     colours.blueButton = tempScheme.getColour(T("blueButton"));
+//
+//     exitButton->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
+//     exitButton->setTextColour(colours.menuText);
+//     exitButton2->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
+//     exitButton2->setTextColour(colours.menuText);
+//     leftButton1->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+//     leftButton1->setTextColour(colours.menuText);
+//     leftButton2->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+//     leftButton2->setTextColour(colours.menuText);
+//     leftButton3->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+//     leftButton3->setTextColour(colours.menuText);
+//     leftButton4->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+//     leftButton4->setTextColour(colours.menuText);
+//     leftButton5->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+//     leftButton5->setTextColour(colours.menuText);
+//     leftButton6->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+//     leftButton6->setTextColour(colours.menuText);
+//     leftButton7->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
+//     leftButton7->setTextColour(colours.menuText);
+//
+//     repaint();
 }
 
 //----------------------------------------------------------------------------------------------

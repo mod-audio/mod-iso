@@ -43,7 +43,6 @@ struct TwindyColours {
 class TwindyUpperPanel;
 class TwindyUpperTab;
 class TwindyWindow;
-class Clock;
 class DrawableTextButton;
 class TwindyTabs;
 class TwindyPreferences;
@@ -94,8 +93,6 @@ class TwindyRootWindow : public Component,
 
 	///	Returns the colour scheme for the indexed workspace.
 	const TwindyColours& getColours() {return colours;};
-	///	Returns a pointer to the clock, so we can change it's properties.
-	Clock *getClock() const {return clock;};
 
 	///	Called to update the colours of the various (visible) Components.
 	void updateColours();
@@ -142,6 +139,7 @@ class TwindyRootWindow : public Component,
 
 	/// Exit button.
 	DrawableTextButton* exitButton;
+    DrawableTextButton* exitButton2;
 	/// Top left button in the lower left.
 	DrawableTextButton* leftButton1;
 	/// Top left button in the lower left.
@@ -156,9 +154,6 @@ class TwindyRootWindow : public Component,
 	DrawableTextButton* leftButton6;
 	/// Top left button in the lower left.
 	DrawableTextButton* leftButton7;
-
-	/// Clock to display the current time.
-	Clock* clock;
 
 	/// The colours we use in this window.
 	TwindyColours colours;

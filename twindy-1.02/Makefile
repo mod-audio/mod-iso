@@ -91,7 +91,6 @@ OBJS = $(OBJDIR)/juce_amalgamated.cpp.o \
 	$(OBJDIR)/TwindyTabs.cpp.o \
 	$(OBJDIR)/TwindyUpperPanel.cpp.o \
 	$(OBJDIR)/TwindyWindow.cpp.o \
-	$(OBJDIR)/ExtraComponents/Clock.cpp.o \
 	$(OBJDIR)/ExtraComponents/DrawableTextButton.cpp.o \
 	$(OBJDIR)/ExtraComponents/TracktionScheme.cpp.o \
 	$(OBJDIR)/ExtraComponents/TwindyTabbedComponent.cpp.o \
