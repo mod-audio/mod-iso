@@ -62,6 +62,9 @@ public:
     // Get list of audio devices
     StringArray getAudioDevices() const { return audio.getDeviceList(); }
 
+    // Get list of midi devices
+    StringArray getMidiDevices() const { return midi.getDeviceList(); }
+
     // Select device, used during initialization
     void selectAudioDevice(const String& dev) { audio.selectDevice(dev); }
 
@@ -72,6 +75,7 @@ protected:
 private:
     /// The varius preferences pages
     AudioPreferences audio;
+    AudioPreferences midi;
     AboutPage about;
 
     // Used for audio mixer

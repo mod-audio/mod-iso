@@ -27,6 +27,7 @@
 TwindyPreferences::TwindyPreferences()
     : TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences),
       audio(this),
+      midi(this),
       about(),
       mixerPid(-1),
       mixerWindow(nullptr)

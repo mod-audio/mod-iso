@@ -441,14 +441,22 @@ void AudioPreferences::buttonClicked(Button* button)
 
     settingsApplied();
 
-    const DeviceInfo& devInfo(cachedDevInfo[curSettings.deviceId]);
+    unsigned int numIns  = 2;
+    unsigned int numOuts = 2;
+
+    if (curSettings.deviceId.isNotEmpty())
+    {
+        const DeviceInfo& devInfo(cachedDevInfo[curSettings.deviceId]);
+        numIns  = devInfo.maxChansIn;
+        numOuts = devInfo.maxChansOut;
+    }
 
     printf("--------------------------------------------------------------\n");
-    printf("Dev IO changed to %u | %u\n", devInfo.maxChansIn, devInfo.maxChansOut);
+    printf("Dev IO changed to %u | %u\n", numIns, numOuts);
     printf("--------------------------------------------------------------\n");
 
-    ::setenv("MOD_INGEN_NUM_AUDIO_INS",  String(devInfo.maxChansIn).toUTF8(), 1);
-    ::setenv("MOD_INGEN_NUM_AUDIO_OUTS", String(devInfo.maxChansOut).toUTF8(), 1);
+    ::setenv("MOD_INGEN_NUM_AUDIO_INS",  String(numIns).toUTF8(), 1);
+    ::setenv("MOD_INGEN_NUM_AUDIO_OUTS", String(numOuts).toUTF8(), 1);
 
     StringArray args;
     args.add(T("jackd"));
@@ -471,19 +479,24 @@ void AudioPreferences::buttonClicked(Button* button)
 
     args.add(T("-d"));
     args.add(T("alsa"));
-    args.add(T("-d"));
-    args.add(curSettings.deviceId);
+
+    if (curSettings.deviceId.isNotEmpty())
+    {
+        args.add(T("-d"));
+        args.add(curSettings.deviceId);
+
+        if (deviceBox.getText().containsIgnoreCase(T("usb")))
+        {
+            args.add(T("-n"));
+            args.add(T("3"));
+        }
+    }
+
     args.add(T("-r"));
     args.add(curSettings.sampleRate);
     args.add(T("-p"));
     args.add(curSettings.bufferSize);
     args.add(T("-s"));
-
-    if (deviceBox.getText().containsIgnoreCase(T("usb")))
-    {
-        args.add(T("-n"));
-        args.add(T("3"));
-    }
 
     TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
     app->restartJackd(args);
@@ -518,6 +531,8 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     bufferSizeBox.clear();
 
     if (deviceBox.getSelectedItemIndex() < 0)
+        return;
+    if (deviceBox.getSelectedId() <= 0)
         return;
 
     const String deviceId(outputIds[deviceBox.getSelectedId()-1]);
@@ -645,7 +660,8 @@ void AudioPreferences::rescanDevices()
     inputNames.appendNumbersToDuplicates(false, true);
     outputNames.appendNumbersToDuplicates(false, true);
 
-    for (int i=0, size=outputNames.size(); i<size; ++i)
+    int i=0;
+    for (int size=outputNames.size(); i<size; ++i)
     {
         const String& name(outputNames[i]);
 
@@ -654,12 +670,18 @@ void AudioPreferences::rescanDevices()
 
         deviceBox.addItem(name, i+1);
     }
+
+    if (i == 0)
+    {
+        outputNames.add(T("Default"));
+        deviceBox.addItem(T("Default"), -1);
+    }
 }
 
 //------------------------------------------------------------------------------
 void AudioPreferences::settingsApplied()
 {
-    curSettings.deviceId   = outputIds[deviceBox.getSelectedId()-1];
+    curSettings.deviceId   = (deviceBox.getSelectedId() > 0) ? outputIds[deviceBox.getSelectedId()-1] : T("");
     curSettings.bufferSize = bufferSizeBox.getText();
     curSettings.sampleRate = sampleRateBox.getText();
     curSettings.deviceIdChanged   = false;

@@ -84,16 +84,20 @@ void TwindyApp::initialise(const String& commandLine)
     if (std::getenv("TWINDY_LOCAL_TEST") != nullptr)
         return restartMODApp(1);
 
+    TwindyPreferences* const prefs(win->getPreferencesPanel());
+
+    const StringArray midiDevs(prefs->getMidiDevices());
+
     AlertWindow w(T("Live-MOD"), T("Welcome to Live-MOD!"), AlertWindow::NoIcon);
     w.addTextBlock(T("Before we begin please select which soundcard you plan to use."));
     w.addTextBlock(T("If you're not sure which to use, select the first one."));
-    w.addComboBox(T("deviceList"), win->getPreferencesPanel()->getAudioDevices(), T("Soundcard:"));
+    w.addComboBox(T("deviceList"), prefs->getAudioDevices(), T("Soundcard:"));
     w.addButton(T("Ok"), 5, '\n');
 
     if (w.runModalLoop() == 5)
     {
         if (ComboBox* const box = w.getComboBoxComponent(T("deviceList")))
-            win->getPreferencesPanel()->selectAudioDevice(box->getText());
+            prefs->selectAudioDevice(box->getText());
     }
 }
 
