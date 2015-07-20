@@ -138,7 +138,6 @@ void TwindyApp::restartMODApp(int gitversion)
     if (gitversion == -1) {
         gitversion = (std::getenv("TWINDY_LOCAL_TEST") != nullptr) ? 1 : 0;
     }
-    gitversion = 1;
 
     ::setenv("MOD_INGEN_NUM_MIDI_INS",  String(midiDevList.size()).toUTF8(), 1);
 
