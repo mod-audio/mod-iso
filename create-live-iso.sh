@@ -228,8 +228,8 @@ if [ ! -f ~/livecd/cd/.disk/info ]; then
   sudo 7z x -y ../iso-stuff.7z
 
   sudo mkdir -p .disk
-  sudo su root -c 'echo "Live-MOD 2015-05" > .disk/info'
-  sudo su root -c 'echo "http://portalmod.com/" > .disk/release_notes_url'
+  sudo su root -c 'echo "Live-MOD 2015-07" > .disk/info'
+  sudo su root -c 'echo "http://moddevices.com/" > .disk/release_notes_url'
 fi
 
 # -------------------------------------------------------------------------------------------
