@@ -40,12 +40,14 @@ public:
     ~MidiPreferences() override;
 
     // Get list of devices.
-    const StringArray& getDeviceList() const { return deviceNames; }
+    const StringArray& getShortDeviceNames() const { return shortDeviceNames; }
+    const StringArray& getFullDeviceNames() const { return fullDeviceNames; }
 
     StringArray getSelectedDeviceList() const;
 
     // Select devices.
-    void selectDevices(const StringArray& devs);
+    void selectDevice(const String& shortName);
+    void selectDevices(const StringArray& shortNames);
 
     // Rescan audio devices.
     void rescanDevices(bool restore);
@@ -69,7 +71,7 @@ private:
     DrawableText title, subtitle1, subtitle2;
     DrawableText labelSettingsChanged1, labelSettingsChanged2;
 
-    StringArray deviceNames;
+    StringArray shortDeviceNames, fullDeviceNames;
     OwnedArray<TwindyToggleButton> deviceButtons;
 
     bool selectionChanged;

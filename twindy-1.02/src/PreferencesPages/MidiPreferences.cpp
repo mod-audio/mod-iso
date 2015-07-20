@@ -25,7 +25,7 @@
 
 #include <alsa/asoundlib.h>
 
-static void scanMidiDevices(StringArray& deviceNamesFound /*, Array<int>& deviceIdsFound*/)
+static void scanMidiDevices(StringArray& deviceNamesFound, StringArray& fullDeviceNamesFound)
 {
     snd_seq_t* handle = nullptr;
 
@@ -58,14 +58,31 @@ static void scanMidiDevices(StringArray& deviceNamesFound /*, Array<int>& device
                             {
                                 if (snd_seq_query_next_port(handle, portInfo) == 0)
                                 {
-                                    const char* const deviceName(snd_seq_client_info_get_name(clientInfo));
+                                    const char* const deviceNamePtr(snd_seq_client_info_get_name(clientInfo));
 
-                                    if (std::strstr(deviceName, "Midi Through") == nullptr &&
-                                        std::strcmp(deviceName, "OSS sequencer") != 0)
-                                    {
-                                        deviceNamesFound.add(deviceName);
-                                        /*deviceIdsFound.add();*/
-                                    }
+                                    if (std::strstr(deviceNamePtr, "Midi Through") != nullptr)
+                                        continue;
+                                    if (std::strcmp(deviceNamePtr, "OSS sequencer") == 0)
+                                        continue;
+                                    if (std::strcmp(deviceNamePtr, "jackmidi") == 0)
+                                        continue;
+
+                                    const String deviceName(deviceNamePtr);
+                                    const String portName(snd_seq_port_info_get_name(portInfo));
+
+                                    String shortName, fullName;
+
+                                    if (portName.contains(deviceName))
+                                        shortName = portName;
+                                    else
+                                        shortName = deviceName + ": " + portName;
+
+                                    fullName = deviceName + " " + portName + " in";
+
+                                    deviceNamesFound.add(shortName);
+                                    fullDeviceNamesFound.add(fullName);
+
+                                    printf("Found MIDI: %s => '%s'\n", shortName.toUTF8(), fullName.toUTF8());
                                 }
                             }
 
@@ -122,19 +139,35 @@ MidiPreferences::~MidiPreferences()
 }
 
 //------------------------------------------------------------------------------
-void MidiPreferences::selectDevices(const StringArray& devs)
+void MidiPreferences::selectDevice(const String& shortName)
 {
     for (int i = deviceButtons.size(); --i >=0;)
     {
         TwindyToggleButton* const button(deviceButtons[i]);
 
-        if (devs.contains(button->getButtonText()))
+        if (button->getButtonText() != shortName)
+            continue;
+
+        button->setToggleState(true, false);
+        break;
+    }
+}
+
+//------------------------------------------------------------------------------
+void MidiPreferences::selectDevices(const StringArray& shortNames)
+{
+    for (int i = deviceButtons.size(); --i >=0;)
+    {
+        TwindyToggleButton* const button(deviceButtons[i]);
+
+        if (shortNames.contains(button->getButtonText()))
             button->setToggleState(true, false);
         else if (button->getToggleState())
             button->setToggleState(false, false);
     }
 }
 
+//------------------------------------------------------------------------------
 StringArray MidiPreferences::getSelectedDeviceList() const
 {
     StringArray devs;
@@ -144,7 +177,7 @@ StringArray MidiPreferences::getSelectedDeviceList() const
         TwindyToggleButton* const button(deviceButtons[i]);
 
         if (button->getToggleState())
-            devs.add(button->getButtonText());
+            devs.add(fullDeviceNames[i]);
     }
 
     return devs;
@@ -179,6 +212,9 @@ void MidiPreferences::buttonClicked(Button* button)
 
     if (button == &applyButton)
     {
+        applyButton.setVisible(false);
+        selectionChanged = false;
+
         TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
         app->setMidiDevices(getSelectedDeviceList());
         prefs->restartAudio();
@@ -194,6 +230,7 @@ void MidiPreferences::buttonClicked(Button* button)
 void MidiPreferences::rescanDevices(bool restore)
 {
     StringArray selected;
+    const int oldSize = deviceButtons.size();
 
     if (restore)
     {
@@ -208,18 +245,19 @@ void MidiPreferences::rescanDevices(bool restore)
 
     removeAllChildren();
 
-    deviceNames.clear();
+    shortDeviceNames.clear();
+    fullDeviceNames.clear();
     deviceButtons.clear();
 
     addAndMakeVisible(&applyButton);
     addAndMakeVisible(&rescanButton);
     applyButton.setVisible(selectionChanged);
 
-    scanMidiDevices(deviceNames);
+    scanMidiDevices(shortDeviceNames, fullDeviceNames);
 
-    for (int i = deviceNames.size(); --i >=0;)
+    for (int i=0, size=shortDeviceNames.size(); i<size; ++i)
     {
-        const String& deviceName(deviceNames[i]);
+        const String& deviceName(shortDeviceNames[i]);
 
         TwindyToggleButton* const button(new TwindyToggleButton(deviceName));
         button->addButtonListener(this);
@@ -230,5 +268,12 @@ void MidiPreferences::rescanDevices(bool restore)
 
         if (restore && selected.contains(deviceName))
             button->setToggleState(true, false);
+    }
+
+    if (deviceButtons.size() != oldSize && oldSize != 0)
+    {
+        applyButton.setVisible(true);
+        selectionChanged = true;
+        repaint();
     }
 }

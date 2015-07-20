@@ -64,10 +64,14 @@ public:
     StringArray getAudioDevices() const { return audio.getDeviceList(); }
 
     // Get list of midi devices
-    const StringArray& getMidiDevices() const { return midi.getDeviceList(); }
+    const StringArray& getShortMidiDeviceNames() const { return midi.getShortDeviceNames(); }
+    const StringArray& getFullMidiDeviceNames() const { return midi.getFullDeviceNames(); }
 
-    // Select device, used during initialization
+    // Select audio device, used during initialization
     void selectAudioDevice(const String& dev) { audio.selectDevice(dev); }
+
+    // Select midi device, used during initialization
+    void selectMidiDevice(const String& shortName) { midi.selectDevice(shortName); }
 
     // Restart audio stuff
     void restartAudio() { audio.restart(); }

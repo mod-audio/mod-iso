@@ -85,23 +85,30 @@ void TwindyApp::initialise(const String& commandLine)
         return restartMODApp(1);
 
     TwindyPreferences* const prefs(win->getPreferencesPanel());
-    const StringArray& midiDevs(prefs->getMidiDevices());
+
+    const StringArray& midiShortNames(prefs->getShortMidiDeviceNames());
+    const StringArray& midiFullNames(prefs->getFullMidiDeviceNames());
 
     AlertWindow w(T("Live-MOD"), T("Welcome to Live-MOD!"), AlertWindow::NoIcon);
     w.addTextBlock(T("Before we begin please select which soundcard you plan to use."));
     w.addTextBlock(T("If you're not sure which to use, select the first one."));
     w.addComboBox(T("audioDeviceList"), prefs->getAudioDevices(), T("Soundcard:"));
 
-    if (midiDevs.size() > 0)
-        w.addComboBox(T("midiDeviceList"), prefs->getMidiDevices(), T("MIDI Device:"));
+    if (midiShortNames.size() > 0)
+        w.addComboBox(T("midiDeviceList"), midiShortNames, T("MIDI Device:"));
 
     w.addButton(T("Ok"), 5, '\n');
 
     if (w.runModalLoop() == 5)
     {
-        if (midiDevs.size() > 0)
+        if (midiShortNames.size() > 0)
+        {
             if (ComboBox* const box = w.getComboBoxComponent(T("midiDeviceList")))
-                midiDevList.add(box->getText());
+            {
+                midiDevList.add(midiFullNames[box->getSelectedItemIndex()]);
+                prefs->selectMidiDevice(box->getText());
+            }
+        }
 
         if (ComboBox* const box = w.getComboBoxComponent(T("audioDeviceList")))
             prefs->selectAudioDevice(box->getText());
@@ -143,6 +150,7 @@ void TwindyApp::restartMODApp(int gitversion)
     if (gitversion == -1) {
         gitversion = (std::getenv("TWINDY_LOCAL_TEST") != nullptr) ? 1 : 0;
     }
+    gitversion = 1;
 
     ::setenv("MOD_INGEN_NUM_MIDI_INS", String(midiDevList.size()).toUTF8(), 1);
 
