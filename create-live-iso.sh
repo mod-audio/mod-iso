@@ -275,8 +275,8 @@ cd ~/livecd/cd
 
 sudo xorriso -as mkisofs \
     -r \
-    -V "Live-MOD 2015.05" \
-    -o ~/livecd/Live-MOD_2015.05-test3.iso \
+    -V "Live-MOD 2015.07" \
+    -o ~/livecd/Live-MOD_2015.07.iso \
     -J \
     -isohybrid-mbr isolinux/isohdpfx.bin \
     -partition_offset 16 \
