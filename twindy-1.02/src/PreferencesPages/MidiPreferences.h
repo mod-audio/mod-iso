@@ -42,7 +42,9 @@ public:
     // Get list of devices.
     const StringArray& getDeviceList() const { return deviceNames; }
 
-    // Select device.
+    StringArray getSelectedDeviceList() const;
+
+    // Select devices.
     void selectDevices(const StringArray& devs);
 
     // Rescan audio devices.
@@ -70,8 +72,7 @@ private:
     StringArray deviceNames;
     OwnedArray<TwindyToggleButton> deviceButtons;
 
-    // hide apply now section
-    void settingsApplied();
+    bool selectionChanged;
 };
 
 #endif

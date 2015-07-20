@@ -67,12 +67,18 @@ public:
     void restartMODApp(int gitversion);
     bool restartJackd(const StringArray& args);
 
+    // set midi devices, needs mod-app restart
+    void setMidiDevices(const StringArray& devs) { midiDevList = devs; }
+
 private:
     // The window.
     TwindyRootWindow* win;
 
     // The processes we started
     pid_t pidApp, pidJackd;
+
+    // selected midi devs
+    StringArray midiDevList;
 };
 
 #endif

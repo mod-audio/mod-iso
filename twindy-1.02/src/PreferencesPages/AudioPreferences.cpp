@@ -21,9 +21,6 @@
 #include "AudioPreferences.h"
 #include "../TwindyApp.h"
 #include "../TwindyPreferences.h"
-#include "../TwindyRootWindow.h"
-#include "../ExtraComponents/TwindyToggleButton.h"
-#include "../ExtraComponents/DrawableTextButton.h"
 #include "../Utils.h"
 #include <iostream>
 

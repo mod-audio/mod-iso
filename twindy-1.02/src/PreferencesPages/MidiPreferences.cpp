@@ -19,6 +19,8 @@
 //	----------------------------------------------------------------------------
 
 #include "MidiPreferences.h"
+#include "../TwindyApp.h"
+#include "../TwindyPreferences.h"
 #include "../Utils.h"
 
 #include <alsa/asoundlib.h>
@@ -27,7 +29,7 @@ static void scanMidiDevices(StringArray& deviceNamesFound /*, Array<int>& device
 {
     snd_seq_t* handle = nullptr;
 
-    if (snd_seq_open(&handle, "default", SND_SEQ_OPEN_DUPLEX, 0) == 0)
+    if (snd_seq_open(&handle, "default", SND_SEQ_OPEN_INPUT, 0) == 0)
     {
         snd_seq_system_info_t* systemInfo = nullptr;
         snd_seq_client_info_t* clientInfo = nullptr;
@@ -89,7 +91,8 @@ MidiPreferences::MidiPreferences(TwindyPreferences* const p)
     : Component(),
       prefs(p),
       applyButton("applyButton"),
-      rescanButton("rescanButton")
+      rescanButton("rescanButton"),
+      selectionChanged(false)
 {
     Font font;
     Colour color;
@@ -132,6 +135,21 @@ void MidiPreferences::selectDevices(const StringArray& devs)
     }
 }
 
+StringArray MidiPreferences::getSelectedDeviceList() const
+{
+    StringArray devs;
+
+    for (int i = deviceButtons.size(); --i >=0;)
+    {
+        TwindyToggleButton* const button(deviceButtons[i]);
+
+        if (button->getToggleState())
+            devs.add(button->getButtonText());
+    }
+
+    return devs;
+}
+
 //------------------------------------------------------------------------------
 void MidiPreferences::resized()
 {
@@ -146,7 +164,7 @@ void MidiPreferences::paint(Graphics& g)
     subtitle1.drawAt(g, 10, 50);
     subtitle2.drawAt(g, 10, 50 + 15);
 
-//     if (curSettings.changed)
+    if (selectionChanged)
     {
         labelSettingsChanged1.drawAt(g, getWidth()/2, 48);
         labelSettingsChanged2.drawAt(g, getWidth()/2, 48 + 15);
@@ -158,6 +176,18 @@ void MidiPreferences::buttonClicked(Button* button)
 {
     if (button == &rescanButton)
         return rescanDevices(true);
+
+    if (button == &applyButton)
+    {
+        TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
+        app->setMidiDevices(getSelectedDeviceList());
+        prefs->restartAudio();
+        return;
+    }
+
+    applyButton.setVisible(true);
+    selectionChanged = true;
+    repaint();
 }
 
 //------------------------------------------------------------------------------
@@ -183,6 +213,7 @@ void MidiPreferences::rescanDevices(bool restore)
 
     addAndMakeVisible(&applyButton);
     addAndMakeVisible(&rescanButton);
+    applyButton.setVisible(selectionChanged);
 
     scanMidiDevices(deviceNames);
 
@@ -191,17 +222,13 @@ void MidiPreferences::rescanDevices(bool restore)
         const String& deviceName(deviceNames[i]);
 
         TwindyToggleButton* const button(new TwindyToggleButton(deviceName));
-        button->setColours(Colour::fromRGBA(0xffu, 0xd0u, 0xccu, 0xf0u), Colour::fromRGB(0xffu, 0xffu, 0xffu));
+        button->addButtonListener(this);
         button->setBounds(10, 100+i*30, 300, 25);
+        button->setColours(Colour::fromRGBA(0xffu, 0xd0u, 0xccu, 0xf0u), Colour::fromRGB(0xffu, 0xffu, 0xffu));
         addAndMakeVisible(button);
         deviceButtons.add(button);
 
         if (restore && selected.contains(deviceName))
             button->setToggleState(true, false);
     }
-}
-
-//------------------------------------------------------------------------------
-void MidiPreferences::settingsApplied()
-{
 }
