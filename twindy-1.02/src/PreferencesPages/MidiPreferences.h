@@ -22,6 +22,7 @@
 #define MIDI_PREFERENCES_H_
 
 #include "../juce_amalgamated.h"
+#include "../ExtraComponents/TwindyToggleButton.h"
 #include <map>
 
 class TwindyWindow;
@@ -39,10 +40,13 @@ public:
     ~MidiPreferences() override;
 
     // Get list of devices.
-    StringArray getDeviceList() const;
+    const StringArray& getDeviceList() const { return deviceNames; }
 
     // Select device.
-    void selectDevice(const String& dev);
+    void selectDevices(const StringArray& devs);
+
+    // Rescan audio devices.
+    void rescanDevices(bool restore);
 
 protected:
     // Places and sizes the various components.
@@ -59,11 +63,12 @@ private:
     TwindyPreferences* const prefs;
 
     // Widgets.
-    TextButton rescanButton;
+    TextButton applyButton, rescanButton;
     DrawableText title, subtitle1, subtitle2;
+    DrawableText labelSettingsChanged1, labelSettingsChanged2;
 
-    // Rescan audio devices.
-    void rescanDevices();
+    StringArray deviceNames;
+    OwnedArray<TwindyToggleButton> deviceButtons;
 
     // hide apply now section
     void settingsApplied();

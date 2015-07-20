@@ -53,9 +53,6 @@ public:
     // Constructor.
     AudioPreferences(TwindyPreferences* const p);
 
-    // Destructor.
-    ~AudioPreferences() override;
-
     // Get list of devices.
     StringArray getDeviceList() const;
 
@@ -64,6 +61,9 @@ public:
 
     // Restart audio stuff
     void restart();
+
+    // Rescan audio devices.
+    void rescanDevices(bool restore);
 
 protected:
     // Places and sizes the various components.
@@ -112,16 +112,13 @@ private:
     } curSettings;
 
     // Widgets.
-    TextButton applyButton;
+    TextButton applyButton, rescanButton;
     ComboBox deviceBox, sampleRateBox, bufferSizeBox;
     DrawableText title, subtitle1, subtitle2, labelAdvanced, labelBufSize, labelSampleRate;
     DrawableText labelSettingsChanged1, labelSettingsChanged2;
 
     // StringArrays for device discovery.
     StringArray inputNames, outputNames, inputIds, outputIds;
-
-    // Rescan audio devices.
-    void rescanDevices();
 
     // hide apply now section
     void settingsApplied();

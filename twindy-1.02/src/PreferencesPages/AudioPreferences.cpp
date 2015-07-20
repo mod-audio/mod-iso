@@ -296,6 +296,7 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
     : Component(),
       prefs(p),
       applyButton("applyButton"),
+      rescanButton("rescanButton"),
       deviceBox("deviceBox"),
       sampleRateBox("sampleRateBox"),
       bufferSizeBox("bufferSizeBox")
@@ -321,16 +322,21 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
 
     applyButton.setButtonText(T("Apply Now"));
     applyButton.addButtonListener(this);
+
+    rescanButton.setButtonText(T("Rescan"));
+    rescanButton.addButtonListener(this);
+
     bufferSizeBox.addListener(this);
     sampleRateBox.addListener(this);
     deviceBox.addListener(this);
 
     addAndMakeVisible(&applyButton);
+    addAndMakeVisible(&rescanButton);
     addAndMakeVisible(&deviceBox);
     addAndMakeVisible(&sampleRateBox);
     addAndMakeVisible(&bufferSizeBox);
 
-    rescanDevices();
+    rescanDevices(false);
 
     // pick the best available soundcard
     const int numItems(deviceBox.getNumItems());
@@ -362,12 +368,6 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
     // fallback
     deviceBox.setSelectedItemIndex(0);
     settingsApplied();
-}
-
-//------------------------------------------------------------------------------
-AudioPreferences::~AudioPreferences()
-{
-    //deleteAllChildren();
 }
 
 //------------------------------------------------------------------------------
@@ -412,8 +412,9 @@ void AudioPreferences::restart()
 //------------------------------------------------------------------------------
 void AudioPreferences::resized()
 {
-    deviceBox.setBounds(10, 70, 250, 20);
+    deviceBox.setBounds(10, 72, 250, 20);
     applyButton.setBounds(getWidth()/2, 70, 100, 25);
+    rescanButton.setBounds(270, 70, 90, 25);
     sampleRateBox.setBounds(20, 160, 150, 20);
     bufferSizeBox.setBounds(200, 160, 150, 20);
 }
@@ -430,14 +431,17 @@ void AudioPreferences::paint(Graphics& g)
 
     if (curSettings.changed)
     {
-        labelSettingsChanged1.drawAt(g, getWidth()/2, 50);
-        labelSettingsChanged2.drawAt(g, getWidth()/2, 50 + 15);
+        labelSettingsChanged1.drawAt(g, getWidth()/2, 48);
+        labelSettingsChanged2.drawAt(g, getWidth()/2, 48 + 15);
     }
 }
 
 //------------------------------------------------------------------------------
 void AudioPreferences::buttonClicked(Button* button)
 {
+    if (button == &rescanButton)
+        return rescanDevices(true);
+
     if (button != &applyButton)
         return;
 
@@ -649,7 +653,7 @@ void AudioPreferences::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 }
 
 //------------------------------------------------------------------------------
-void AudioPreferences::rescanDevices()
+void AudioPreferences::rescanDevices(bool restore)
 {
     deviceBox.clear();
     inputNames.clear();
@@ -677,6 +681,11 @@ void AudioPreferences::rescanDevices()
     {
         outputNames.add(T("Default"));
         deviceBox.addItem(T("Default"), -1);
+    }
+
+    if (restore)
+    {
+        // TODO
     }
 }
 

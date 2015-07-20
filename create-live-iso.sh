@@ -121,11 +121,11 @@ fi
 # install kxstudio-repos package
 
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3b ]; then
-  run_chroot_cmd apt-get update
+  run_chroot_cmd apt-get update || true
   run_chroot_cmd apt-get install --no-install-recommends -y software-properties-common wget
-  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.2.2~kxstudio1_all.deb
-  run_chroot_cmd dpkg -i kxstudio-repos_8.2.2~kxstudio1_all.deb
-  run_chroot_cmd rm kxstudio-repos_8.2.2~kxstudio1_all.deb
+  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.3.1~kxstudio1_all.deb
+  run_chroot_cmd dpkg -i kxstudio-repos_8.3.1~kxstudio1_all.deb
+  run_chroot_cmd rm kxstudio-repos_8.3.1~kxstudio1_all.deb
   run_chroot_cmd add-apt-repository ppa:kxstudio-debian/kxstudio-mod -y
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-3b
 fi
@@ -133,7 +133,7 @@ fi
 # ------------------------------------------------------------------------------------
 # do a full system update
 
-run_chroot_cmd apt-get update
+run_chroot_cmd apt-get update || true
 run_chroot_cmd apt-get dist-upgrade -y
 
 # -------------------------------------------------------------------------------------------
