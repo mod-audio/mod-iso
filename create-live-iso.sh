@@ -154,7 +154,8 @@ fi
 # Full install
 
 run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-conflicts kxstudio-artwork \
-    acpid alsa-base alsa-utils alsa-firmware pm-utils xdg-utils xorg xserver-xorg-video-all \
+    acpid alsa-base alsa-utils pm-utils xdg-utils xorg xserver-xorg-video-all \
+    alsa-firmware firmware-b43-installer linux-firmware linux-firmware-nonfree \
     casper lupin-casper consolekit dbus-x11 dmz-cursor-theme nano ufw jackd1 a2jmidid \
     libpam-systemd lightdm lightdm-gtk-greeter policykit-1 plymouth plymouth-label ttf-dejavu ttf-dejavu-extra \
     mod-app mod-iso mod-sdk mod-sdk-lv2 \

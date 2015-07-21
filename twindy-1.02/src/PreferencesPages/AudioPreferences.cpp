@@ -28,9 +28,14 @@
 //#define ALSA_PCM_NEW_SW_PARAMS_API
 #include <alsa/asoundlib.h>
 
-#define JUCE_ALSA_LOG(dbgtext)   { juce::String tempDbgBuf ("ALSA: "); tempDbgBuf << dbgtext; Logger::writeToLog (tempDbgBuf); DBG (tempDbgBuf); }
+#ifdef AUDIO_PREFS_SKIP_CODE
+# define JUCE_ALSA_LOG(dbgtext)
+# define JUCE_CHECKED_RESULT(x) (x)
+#else
+# define JUCE_ALSA_LOG(dbgtext)   { juce::String tempDbgBuf ("ALSA: "); tempDbgBuf << dbgtext; Logger::writeToLog (tempDbgBuf); DBG (tempDbgBuf); }
 //#define JUCE_CHECKED_RESULT(x)   (logErrorMessage (x, __LINE__))
-#define JUCE_CHECKED_RESULT(x)   (x)
+# define JUCE_CHECKED_RESULT(x)   (x)
+#endif
 
 /*
  * Get next power of 2.
@@ -148,8 +153,6 @@ static void getDeviceBufferSizes (snd_pcm_t* handle, Array<uint>& bufSizes)
     snd_pcm_hw_params_t* hwParams;
     snd_pcm_hw_params_alloca (&hwParams);
 
-    juce::String tempDbgBuf ("ALSA: getDeviceBufferSizes: ");
-
     if (snd_pcm_hw_params_any (handle, hwParams) >= 0)
     {
         int dir = 0;
@@ -163,19 +166,12 @@ static void getDeviceBufferSizes (snd_pcm_t* handle, Array<uint>& bufSizes)
         for (snd_pcm_uframes_t s = minSize; s <= maxSize; s = nextPowerOfTwo(s+1))
         {
             if (snd_pcm_hw_params_test_period_size (handle, hwParams, minSize, dir) == 0)
-            {
                 bufSizes.addIfNotAlreadyThere (s);
-
-                tempDbgBuf << (int)s << " ";
-            }
 
             if (s == 8192)
                 break;
         }
     }
-
-    Logger::writeToLog (tempDbgBuf);
-    DBG (tempDbgBuf);
 
     //snd_pcm_hw_params_free (hwParams);
 }
@@ -184,8 +180,6 @@ static void getDeviceBufferSizes (snd_pcm_t* handle, Array<uint>& bufSizes)
 static void getDeviceSampleRates (snd_pcm_t* handle, Array<double>& rates)
 {
     const int ratesToTry[] = { 22050, 32000, 44100, 48000, 88200, 96000, 176400, 192000, 0 };
-
-    juce::String tempDbgBuf ("ALSA: getDeviceSampleRates: ");
 
     snd_pcm_hw_params_t* hwParams;
     snd_pcm_hw_params_alloca (&hwParams);
@@ -196,13 +190,8 @@ static void getDeviceSampleRates (snd_pcm_t* handle, Array<double>& rates)
              && snd_pcm_hw_params_test_rate (handle, hwParams, ratesToTry[i], 0) == 0)
         {
             rates.addIfNotAlreadyThere ((double) ratesToTry[i]);
-
-            tempDbgBuf << ratesToTry[i] << " ";
         }
     }
-
-    Logger::writeToLog (tempDbgBuf);
-    DBG (tempDbgBuf);
 
     //snd_pcm_hw_params_free (hwParams);
 }
@@ -285,6 +274,8 @@ static void getDeviceProperties (const String& deviceID,
         }
     }
 }
+
+#ifndef AUDIO_PREFS_SKIP_CODE
 
 using namespace std;
 
@@ -698,3 +689,5 @@ void AudioPreferences::settingsApplied()
     curSettings.changed           = false;
     applyButton.setVisible(false);
 }
+
+#endif // AUDIO_PREFS_SKIP_CODE

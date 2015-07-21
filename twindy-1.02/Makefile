@@ -73,6 +73,11 @@ $(OBJDIR)/%.c.o: src/%.c
 	@echo "Compiling $<"
 	$(CC) $< $(BUILD_C_FLAGS) -c -o $@
 
+discovery: $(OBJDIR)/juce_amalgamated.cpp.o $(OBJDIR)/AudioDiscovery.cpp.o
+	-@mkdir -p $(BINDIR)
+	@echo "Linking discovery"
+	$(CXX) $^ $(LINK_FLAGS) $(shell pkg-config --libs alsa) -lpthread -ldl -o $@
+
 clean:
 	rm -f $(OBJS)
 	rm -f $(BINDIR)/twindy
