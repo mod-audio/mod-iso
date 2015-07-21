@@ -70,8 +70,8 @@ public:
     // Select audio device, used during initialization
     void selectAudioDevice(const String& dev) { audio.selectDevice(dev); }
 
-    // Select midi device, used during initialization
-    void selectMidiDevice(const String& shortName) { midi.selectDevice(shortName); }
+    // Select midi device, used during initialization, returns true if it also provides midi-out
+    bool selectMidiDevice(const String& shortName) { return midi.selectDevice(shortName); }
 
     // Restart audio stuff
     void restartAudio() { audio.restart(); }

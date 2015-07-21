@@ -25,11 +25,11 @@
 
 #include <alsa/asoundlib.h>
 
-static void scanMidiDevices(StringArray& deviceNamesFound, StringArray& fullDeviceNamesFound)
+static void scanMidiDevices(StringArray& deviceNamesFound, StringArray& fullDeviceNamesFound, bool isInput)
 {
     snd_seq_t* handle = nullptr;
 
-    if (snd_seq_open(&handle, "default", SND_SEQ_OPEN_INPUT, 0) == 0)
+    if (snd_seq_open(&handle, "default", isInput ? SND_SEQ_OPEN_INPUT : SND_SEQ_OPEN_OUTPUT, 0) == 0)
     {
         snd_seq_system_info_t* systemInfo = nullptr;
         snd_seq_client_info_t* clientInfo = nullptr;
@@ -77,7 +77,7 @@ static void scanMidiDevices(StringArray& deviceNamesFound, StringArray& fullDevi
                                     else
                                         shortName = deviceName + ": " + portName;
 
-                                    fullName = deviceName + " " + portName + " in";
+                                    fullName = deviceName + " " + portName;
 
                                     deviceNamesFound.add(shortName);
                                     fullDeviceNamesFound.add(fullName);
@@ -139,7 +139,7 @@ MidiPreferences::~MidiPreferences()
 }
 
 //------------------------------------------------------------------------------
-void MidiPreferences::selectDevice(const String& shortName)
+bool MidiPreferences::selectDevice(const String& shortName)
 {
     for (int i = deviceButtons.size(); --i >=0;)
     {
@@ -149,8 +149,11 @@ void MidiPreferences::selectDevice(const String& shortName)
             continue;
 
         button->setToggleState(true, false);
-        break;
+
+        return (deviceHints[i] & SND_SEQ_OPEN_OUTPUT) != 0;
     }
+
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -177,7 +180,12 @@ StringArray MidiPreferences::getSelectedDeviceList() const
         TwindyToggleButton* const button(deviceButtons[i]);
 
         if (button->getToggleState())
-            devs.add(fullDeviceNames[i]);
+        {
+            devs.add(fullDeviceNames[i] + " in");
+
+            if (deviceHints[i] & SND_SEQ_OPEN_OUTPUT)
+                devs.add(fullDeviceNames[i] + " out");
+        }
     }
 
     return devs;
@@ -248,12 +256,28 @@ void MidiPreferences::rescanDevices(bool restore)
     shortDeviceNames.clear();
     fullDeviceNames.clear();
     deviceButtons.clear();
+    deviceHints.clear();
 
     addAndMakeVisible(&applyButton);
     addAndMakeVisible(&rescanButton);
     applyButton.setVisible(selectionChanged);
 
-    scanMidiDevices(shortDeviceNames, fullDeviceNames);
+    scanMidiDevices(shortDeviceNames, fullDeviceNames, true);
+
+    {
+        StringArray shortDeviceNames2, fullDeviceNames2;
+        scanMidiDevices(shortDeviceNames2, fullDeviceNames2, false);
+
+        for (int i=0, size=fullDeviceNames.size(); i<size; ++i)
+        {
+            int hints = SND_SEQ_OPEN_INPUT;
+
+            if (fullDeviceNames2.contains(fullDeviceNames[i]))
+                hints |= SND_SEQ_OPEN_OUTPUT;
+
+            deviceHints.add(hints);
+        }
+    }
 
     for (int i=0, size=shortDeviceNames.size(); i<size; ++i)
     {

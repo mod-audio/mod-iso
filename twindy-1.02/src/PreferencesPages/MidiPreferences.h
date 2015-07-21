@@ -46,7 +46,7 @@ public:
     StringArray getSelectedDeviceList() const;
 
     // Select devices.
-    void selectDevice(const String& shortName);
+    bool selectDevice(const String& shortName);
     void selectDevices(const StringArray& shortNames);
 
     // Rescan audio devices.
@@ -72,6 +72,7 @@ private:
     DrawableText labelSettingsChanged1, labelSettingsChanged2;
 
     StringArray shortDeviceNames, fullDeviceNames;
+    Array<int> deviceHints;
     OwnedArray<TwindyToggleButton> deviceButtons;
 
     bool selectionChanged;

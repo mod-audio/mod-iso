@@ -105,8 +105,10 @@ void TwindyApp::initialise(const String& commandLine)
         {
             if (ComboBox* const box = w.getComboBoxComponent(T("midiDeviceList")))
             {
-                midiDevList.add(midiFullNames[box->getSelectedItemIndex()]);
-                prefs->selectMidiDevice(box->getText());
+                midiDevList.add(midiFullNames[box->getSelectedItemIndex()] + " in");
+
+                if (prefs->selectMidiDevice(box->getText()))
+                    midiDevList.add(midiFullNames[box->getSelectedItemIndex()] + " out");
             }
         }
 
@@ -150,18 +152,32 @@ void TwindyApp::restartMODApp(int gitversion)
     if (gitversion == -1) {
         gitversion = (std::getenv("TWINDY_LOCAL_TEST") != nullptr) ? 1 : 0;
     }
+    gitversion = 1;
 
-    ::setenv("MOD_INGEN_NUM_MIDI_INS", String(midiDevList.size()).toUTF8(), 1);
+    StringArray midiIns, midiOuts;
+
+    for (int i = midiDevList.size(); --i >=0;)
+    {
+        const String& deviceName(midiDevList[i]);
+
+        if (deviceName.endsWith(T(" in")))
+            midiIns.add(deviceName);
+        else
+            midiOuts.add(deviceName);
+    }
+
+    ::setenv("MOD_INGEN_NUM_MIDI_INS", String(midiIns.size()).toUTF8(), 1);
+    ::setenv("MOD_INGEN_NUM_MIDI_OUTS", String(midiOuts.size()).toUTF8(), 1);
 
     StringArray args;
     args.add(gitversion ? T("mod-app-git") : T("mod-app"));
     args.add(T("--using-live-iso"));
 
-    for (int i = midiDevList.size(); --i >=0;)
-    {
-        const String& deviceName(midiDevList[i]);
-        args.add(T("--with-midi-input=\"" + deviceName +  "\""));
-    }
+    for (int i = midiIns.size(); --i >=0;)
+        args.add(T("--with-midi-input=\"" + midiIns[i] +  "\""));
+
+    for (int i = midiOuts.size(); --i >=0;)
+        args.add(T("--with-midi-output=\"" + midiOuts[i] +  "\""));
 
     pidApp = startProcess(args);
 
