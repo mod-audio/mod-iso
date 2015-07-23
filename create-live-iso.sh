@@ -162,7 +162,7 @@ run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-con
     mod-distortion mod-mda-lv2 mod-pitchshifter mod-utilities \
     artyfx blop-lv2 caps-lv2 fomp sooperlooper-lv2 swh-lv2 tap-lv2 \
     distrho-mini-series distrho-mverb \
-    calf-plugins guitarix \
+    calf-plugins guitarix setbfree \
     kxstudio-default-settings patchage jaaa japa
 
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-6b ]; then
