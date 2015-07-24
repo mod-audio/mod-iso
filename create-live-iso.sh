@@ -161,7 +161,7 @@ run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-con
     mod-app mod-iso mod-sdk mod-sdk-lv2 \
     mod-distortion mod-mda-lv2 mod-pitchshifter mod-utilities \
     artyfx blop-lv2 caps-lv2 fomp sooperlooper-lv2 swh-lv2 tap-lv2 \
-    distrho-mini-series distrho-mverb \
+    dpf-plugins \
     calf-plugins guitarix \
     kxstudio-default-settings patchage jaaa japa
 
