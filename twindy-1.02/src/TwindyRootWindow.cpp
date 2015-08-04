@@ -47,30 +47,11 @@ TwindyRootWindow::TwindyRootWindow()
 {
     static_cast<TwindyApp*>(JUCEApplication::getInstance())->setRootWindow(this);
 
-    // Construct this first to make sure we get any error messages that might be generated from the following code.
-    TwindyErrorDisplay* const errorDisplay(new TwindyErrorDisplay());
-    errorDisplay->setBackgroundColour(colours.propertyPanelBackground);
-    errorDisplay->setTextColour(colours.propertyPanelText);
+    // This is so our 'root' window never obscures it's 'children'.
+    setBroughtToFrontOnMouseClick(false);
 
     // Get coordinates (to know where to put things)
     const Coordinates& coords(getCoordinates());
-
-    // set LookAndFeel and Font
-    {
-        TwindyLAF* const laf(new TwindyLAF());
-        laf->setDefaultSansSerifTypefaceName(T("DejaVu Sans"));
-        LookAndFeel::setDefaultLookAndFeel(laf);
-    }
-
-#if 0
-    //Setup text localisation.
-    tempProp = properties->getProperty(T("LocalisationFile"));
-    if ((tempProp.name != T("nil")) && (tempProp.value != T("")))
-    {
-        LocalisedStrings* const tempStrings(LocalisedStrings(File(tempProp.value)));
-        LocalisedStrings::setCurrentMappings(tempStrings);
-    }
-#endif
 
     // Load colours.
     TracktionScheme tempScheme;
@@ -85,8 +66,17 @@ TwindyRootWindow::TwindyRootWindow()
     colours.yellowButton = tempScheme.getColour(T("yellowButton"));
     colours.blueButton = tempScheme.getColour(T("blueButton"));
 
-    // This is so our 'root' window never obscures it's 'children'.
-    setBroughtToFrontOnMouseClick(false);
+    // Construct this first to make sure we get any error messages that might be generated from the following code.
+    TwindyErrorDisplay* const errorDisplay(new TwindyErrorDisplay());
+    errorDisplay->setBackgroundColour(colours.propertyPanelBackground);
+    errorDisplay->setTextColour(colours.propertyPanelText);
+
+    // set LookAndFeel and Font
+    {
+        TwindyLAF* const laf(new TwindyLAF());
+        laf->setDefaultSansSerifTypefaceName(T("DejaVu Sans"));
+        LookAndFeel::setDefaultLookAndFeel(laf);
+    }
 
     MessageManager::getInstance()->registerMapRequestCallback(this);
 
@@ -195,6 +185,9 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton5->setVisible(false);
     leftButton6->setVisible(false);
 
+    Font versionFont(18.0f, Font::bold);
+    versionText.setText(T("Live-MOD " LIVEMOD_VERSION), versionFont);
+
     TWINDY_DBG_MESSAGE("About to makeTwindyRootWindow visible and add it to the desktop");
     setVisible(true);
     addToDesktop(ComponentPeer::windowAppearsOnTaskbar);
@@ -232,6 +225,10 @@ void TwindyRootWindow::paint(Graphics &g)
 
     g.setColour(colours.tabAreaBackground);
     g.fillRect(0, 0, getWidth(), coords.topTabBarHeight);
+
+    float width, v;
+    versionText.getBounds(v, v, width, v);
+    versionText.drawAt(g, getWidth()-coords.buttonWidth*3 - width, coords.topPadding*2/3);
 }
 
 //----------------------------------------------------------------------------------------------

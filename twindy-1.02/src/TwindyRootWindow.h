@@ -155,6 +155,9 @@ class TwindyRootWindow : public Component,
 
         /// An array of the pids for the programs we started via Dev buttons.
 	Array<pid_t> pidArray;
+
+    // Text for displaying "ALPHA"
+    DrawableText versionText;
 };
 
 #endif

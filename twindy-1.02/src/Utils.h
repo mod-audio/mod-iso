@@ -22,6 +22,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#define LIVEMOD_VERSION "2015.08-alpha1"
+
 // -----------------------------------------------------------------------
 
 static inline

@@ -30,8 +30,6 @@ class TwindyLAF : public LookAndFeel
   public:
 	///	Constructor.
 	TwindyLAF();
-	///	Destructor.
-	~TwindyLAF() {};
 
 	/*///	Same as JUCE' default, but with a nicer typeface.
 	void drawStandardTextButton(Graphics &g,
