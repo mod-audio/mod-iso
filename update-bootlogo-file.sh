@@ -7,6 +7,8 @@ mkdir bootlogo-mod
 cp iso-stuff/isolinux/bootlogo .
 cd bootlogo-mod
 7z x ../bootlogo
+cp ../iso-stuff/isolinux/splash.pcx .
+cp ../iso-stuff/isolinux/splash.png .
 cp ../iso-stuff/isolinux/txt.cfg .
 ls | cpio -o > ../bootlogo
 cd ..
