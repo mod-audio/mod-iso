@@ -131,12 +131,12 @@ TwindyRootWindow::TwindyRootWindow()
     workspaces->addTab(TRANS("Settings"), colours.mainBackground, preferences, false);
 
     //Set up buttons.
-    addAndMakeVisible(exitButton = new DrawableTextButton(T("ExitButton"), TRANS("Power Off...")));
+    addAndMakeVisible(exitButton = new DrawableTextButton(T("ExitButton"), TRANS("Power Off")));
     exitButton->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
     exitButton->setTextColour(colours.menuText);
     exitButton->addButtonListener(this);
 
-    addAndMakeVisible(exitButton2 = new DrawableTextButton(T("ExitButton2"), TRANS("Power Off...")));
+    addAndMakeVisible(exitButton2 = new DrawableTextButton(T("ExitButton2"), TRANS("Power Off")));
     exitButton2->setBackgroundColours(colours.yellowButton, colours.yellowButton.darker(2.5f));
     exitButton2->setTextColour(colours.menuText);
     exitButton2->addButtonListener(this);
@@ -264,8 +264,8 @@ void TwindyRootWindow::resized()
     tempint -= coords.buttonHeight;
     leftButton2->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
     tempint -= coords.buttonHeight;
-    leftButton1->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
-    tempint -= coords.buttonHeight;
+    //leftButton1->setBounds(coords.buttonMargin, tempint, coords.buttonWidth, coords.buttonHeight);
+    //tempint -= coords.buttonHeight;
 
     TwindyErrorDisplay::getInstance()->setBounds(getWidth()-coords.buttonMargin-coords.errorDisplayWidth,
                                                  lowerBorder-coords.errorDisplayHeight,
@@ -383,7 +383,7 @@ void TwindyRootWindow::setButtonsVisible(const bool visible)
 
     //exitButton->setVisible(visible);
 
-    leftButton1->setVisible(visible);
+    //leftButton1->setVisible(visible);
     leftButton2->setVisible(visible);
     leftButton3->setVisible(visible);
     //leftButton4->setVisible(visible);
