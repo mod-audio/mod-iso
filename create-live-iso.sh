@@ -227,9 +227,9 @@ if [ ! -f ~/livecd/cd/.disk/info ]; then
 
   sudo 7z x -y ../iso-stuff.7z
 
-  sudo mkdir -p .disk
-  sudo su root -c 'echo "Live-MOD 2015-07" > .disk/info'
-  sudo su root -c 'echo "http://moddevices.com/" > .disk/release_notes_url'
+  #sudo mkdir -p .disk
+  #sudo su root -c 'echo "Live-MOD 2015-07" > .disk/info'
+  #sudo su root -c 'echo "http://moddevices.com/" > .disk/release_notes_url'
 fi
 
 # -------------------------------------------------------------------------------------------
@@ -275,8 +275,8 @@ cd ~/livecd/cd
 
 sudo xorriso -as mkisofs \
     -r \
-    -V "Live-MOD 2015.07" \
-    -o ~/livecd/Live-MOD_2015.07.iso \
+    -V "Live-MOD 2015.08-alpha1" \
+    -o ~/livecd/Live-MOD_2015.08-alpha1.iso \
     -J \
     -isohybrid-mbr isolinux/isohdpfx.bin \
     -partition_offset 16 \
