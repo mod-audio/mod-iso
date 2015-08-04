@@ -1,4 +1,4 @@
-#define DISKNAME  Live-MOD 2015.08
+#define DISKNAME  Live-MOD 2015.08 alpha1
 #define TYPE  binary
 #define TYPEbinary  1
 #define ARCH  amd64
