@@ -66,6 +66,7 @@ fi
 if [ ! -d ~/livecd/custom/var/mod-live ]; then
   sudo mkdir -p ~/livecd
   sudo debootstrap --arch=amd64 vivid ~/livecd/custom http://archive.ubuntu.com/ubuntu/
+  sudo mkdir ~/livecd/custom/var/crash
   sudo mkdir ~/livecd/custom/var/mod-live
 fi
 
@@ -94,13 +95,14 @@ run_chroot_cmd mount -t proc   none /proc    || true
 run_chroot_cmd mount -t sysfs  none /sys     || true
 
 # ------------------------------------------------------------------------------------
-# fix upstart
+# fix things
 
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-1 ]; then
   run_chroot_cmd dpkg-divert --local --rename --add /sbin/initctl
   run_chroot_cmd ln -s /bin/true /sbin/initctl
-  run_chroot_cmd touch /etc/init.d/systemd-logind
-  run_chroot_cmd touch /etc/init.d/modemmanager
+  sudo touch ~/livecd/custom/etc/init.d/systemd-logind
+  sudo touch ~/livecd/custom/etc/init.d/modemmanager
+  echo blacklist b43 | sudo tee ~/livecd/custom/etc/modprobe.d/blacklist-b43.conf
   sudo touch ~/livecd/custom/var/mod-live/initial-setup-1
 fi
 
