@@ -385,7 +385,7 @@ void AudioPreferences::selectDevice(const String& dev)
     }
 
     // force scan of selected device/card
-    if (oldSelection == deviceBox.getSelectedItemIndex())
+    if (oldSelection != deviceBox.getSelectedItemIndex())
         comboBoxChanged(&deviceBox);
 
     // press the button
