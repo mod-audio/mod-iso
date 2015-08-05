@@ -326,34 +326,6 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
 
     rescanDevices(false);
 
-    // pick the best available soundcard
-    const int numItems(deviceBox.getNumItems());
-
-    // let's try some external ones first
-    // if they're connected the user probably wants to use them
-    for (int i=numItems; --i>=0;)
-    {
-        // TODO more checks
-        if (deviceBox.getItemText(i).compareIgnoreCase(T("USB")))
-        {
-            deviceBox.setSelectedItemIndex(i);
-            settingsApplied();
-            return;
-        }
-    }
-
-    // no external cards, select the first one that is not HDMI
-    for (int i=numItems; --i>=0;)
-    {
-        if (deviceBox.getItemText(i).compareIgnoreCase(T("HDMI")))
-            continue;
-
-        deviceBox.setSelectedItemIndex(i);
-        settingsApplied();
-        return;
-    }
-
-    // fallback
     deviceBox.setSelectedItemIndex(0);
     settingsApplied();
 }
@@ -363,10 +335,8 @@ StringArray AudioPreferences::getDeviceList() const
 {
     StringArray devices;
 
-    devices.add(deviceBox.getText());
-
     for (int i=0, numItems=deviceBox.getNumItems(); i<numItems; ++i)
-        devices.addIfNotAlreadyThere(deviceBox.getItemText(i));
+        devices.add(deviceBox.getItemText(i));
 
     return devices;
 }
@@ -654,15 +624,50 @@ void AudioPreferences::rescanDevices(bool restore)
     inputNames.appendNumbersToDuplicates(false, true);
     outputNames.appendNumbersToDuplicates(false, true);
 
-    int i=0;
-    for (int size=outputNames.size(); i<size; ++i)
+    int i, numNames = outputNames.size();
+
+    // 1st pass, add USB cards
+    i=0;
+    for (; i<numNames; ++i)
     {
         const String& name(outputNames[i]);
 
         if (name.startsWith(T("Loopback, Loopback PCM")))
             continue;
 
+        if (name.contains(T("USB")))
+            deviceBox.addItem(name, i+1);
+    }
+
+    // 2nd pass, add non-HDMI cards
+    i=0;
+    for (; i<numNames; ++i)
+    {
+        const String& name(outputNames[i]);
+
+        if (name.startsWith(T("Loopback, Loopback PCM")))
+            continue;
+        if (name.contains(T("USB")))
+            continue;
+        if (name.contains(T("HDMI")))
+            continue;
+
         deviceBox.addItem(name, i+1);
+    }
+
+    // 2rd pass, add HDMI ones
+    i=0;
+    for (; i<numNames; ++i)
+    {
+        const String& name(outputNames[i]);
+
+        if (name.startsWith(T("Loopback, Loopback PCM")))
+            continue;
+        if (name.contains(T("USB")))
+            continue;
+
+        if (name.contains(T("HDMI")))
+            deviceBox.addItem(name, i+1);
     }
 
     if (i == 0)
