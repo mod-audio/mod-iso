@@ -64,11 +64,8 @@ public:
     void setRootWindow(TwindyRootWindow* newWin) { win = newWin; }
 
     // restart services
-    void restartMODApp(int gitversion);
+    void restartMODApp(int gitversion = -1);
     bool restartJackd(const StringArray& args);
-
-    // set midi devices, needs mod-app restart
-    void setMidiDevices(const StringArray& devs) { midiDevList = devs; }
 
 private:
     // The window.
@@ -76,9 +73,6 @@ private:
 
     // The processes we started
     pid_t pidApp, pidJackd;
-
-    // selected midi devs
-    StringArray midiDevList;
 };
 
 #endif

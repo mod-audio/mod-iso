@@ -405,41 +405,16 @@ void AudioPreferences::buttonClicked(Button* button)
 
     settingsApplied();
 
-    unsigned int numIns  = 2;
-    unsigned int numOuts = 2;
+    TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
 
-    if (curSettings.deviceId.isNotEmpty())
-    {
-        const DeviceInfo& devInfo(cachedDevInfo[curSettings.deviceId]);
-        numIns  = devInfo.maxChansIn;
-        numOuts = devInfo.maxChansOut;
-    }
-
-    printf("--------------------------------------------------------------\n");
-    printf("Dev IO changed to %u | %u\n", numIns, numOuts);
-    printf("--------------------------------------------------------------\n");
-
-    ::setenv("MOD_INGEN_NUM_AUDIO_INS",  String(numIns).toUTF8(), 1);
-    ::setenv("MOD_INGEN_NUM_AUDIO_OUTS", String(numOuts).toUTF8(), 1);
+    if (std::getenv("TWINDY_SKIP_JACKD_START") != nullptr)
+        return app->restartMODApp(1);
 
     StringArray args;
     args.add(T("jackd"));
     args.add(T("-R"));
     args.add(T("-P"));
     args.add(T("89"));
-    args.add(T("-Z"));
-
-    if (true)
-    {
-        // using JACK1
-        args.add(T("-X"));
-        args.add(T("alsa_midi"));
-    }
-    else
-    {
-        // using JACK2
-        args.add(T("-S"));
-    }
 
     args.add(T("-d"));
     args.add(T("alsa"));
@@ -460,9 +435,9 @@ void AudioPreferences::buttonClicked(Button* button)
     args.add(curSettings.sampleRate);
     args.add(T("-p"));
     args.add(curSettings.bufferSize);
-    args.add(T("-s"));
+    args.add(T("-X"));
+    args.add(T("raw"));
 
-    TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
     app->restartJackd(args);
 }
 

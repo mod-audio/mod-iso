@@ -73,45 +73,20 @@ void TwindyApp::initialise(const String& commandLine)
     win->toFront(true);
     TWINDY_DBG_MESSAGE("TwindyRootWindow brought to front.");
 
-    // Initial values
-    ::setenv("MOD_INGEN_NUM_AUDIO_INS", "2", 1);
-    ::setenv("MOD_INGEN_NUM_AUDIO_OUTS","2", 1);
-    ::setenv("MOD_INGEN_NUM_MIDI_INS",  "0", 1);
-    ::setenv("MOD_INGEN_NUM_MIDI_OUTS", "0", 1);
-    ::setenv("MOD_INGEN_NUM_CV_INS",    "0", 1);
-    ::setenv("MOD_INGEN_NUM_CV_OUTS",   "0", 1);
-
     if (std::getenv("TWINDY_LOCAL_TEST") != nullptr)
         return restartMODApp(1);
 
     TwindyPreferences* const prefs(win->getPreferencesPanel());
-
-    const StringArray& midiShortNames(prefs->getShortMidiDeviceNames());
-    const StringArray& midiFullNames(prefs->getFullMidiDeviceNames());
 
     AlertWindow w(T("Live-MOD"), T("Welcome to Live-MOD!"), AlertWindow::NoIcon);
     w.addTextBlock(T("Before we begin please select which soundcard you plan to use."));
     w.addTextBlock(T("If you're not sure which to use, select the first one."));
     w.addComboBox(T("audioDeviceList"), prefs->getAudioDevices(), T("Soundcard:"));
 
-    if (midiShortNames.size() > 0)
-        w.addComboBox(T("midiDeviceList"), midiShortNames, T("MIDI Device:"));
-
     w.addButton(T("Ok"), 5, '\n');
 
     if (w.runModalLoop() == 5)
     {
-        if (midiShortNames.size() > 0)
-        {
-            if (ComboBox* const box = w.getComboBoxComponent(T("midiDeviceList")))
-            {
-                midiDevList.add(midiFullNames[box->getSelectedItemIndex()] + " in");
-
-                if (prefs->selectMidiDevice(box->getText()))
-                    midiDevList.add(midiFullNames[box->getSelectedItemIndex()] + " out");
-            }
-        }
-
         if (ComboBox* const box = w.getComboBoxComponent(T("audioDeviceList")))
             prefs->selectAudioDevice(box->getText());
     }
@@ -153,30 +128,9 @@ void TwindyApp::restartMODApp(int gitversion)
         gitversion = (std::getenv("TWINDY_LOCAL_TEST") != nullptr) ? 1 : 0;
     }
 
-    StringArray midiIns, midiOuts;
-
-    for (int i = midiDevList.size(); --i >=0;)
-    {
-        const String& deviceName(midiDevList[i]);
-
-        if (deviceName.endsWith(T(" in")))
-            midiIns.add(deviceName);
-        else
-            midiOuts.add(deviceName);
-    }
-
-    ::setenv("MOD_INGEN_NUM_MIDI_INS", String(midiIns.size()).toUTF8(), 1);
-    ::setenv("MOD_INGEN_NUM_MIDI_OUTS", String(midiOuts.size()).toUTF8(), 1);
-
     StringArray args;
     args.add(gitversion ? T("mod-app-git") : T("mod-app"));
     args.add(T("--using-live-iso"));
-
-    for (int i = midiIns.size(); --i >=0;)
-        args.add(T("--with-midi-input=\"" + midiIns[i] +  "\""));
-
-    for (int i = midiOuts.size(); --i >=0;)
-        args.add(T("--with-midi-output=\"" + midiOuts[i] +  "\""));
 
     pidApp = startProcess(args);
 
@@ -195,7 +149,7 @@ bool TwindyApp::restartJackd(const StringArray& args)
     if ((pidJackd = startProcess(args)) == -1)
         return false;
 
-    restartMODApp(-1);
+    restartMODApp();
     return true;
 }
 

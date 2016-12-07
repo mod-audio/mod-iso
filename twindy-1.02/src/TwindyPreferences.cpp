@@ -27,13 +27,12 @@
 TwindyPreferences::TwindyPreferences()
     : TwindyTabbedComponent(T("Twindy Preferences"), TwindyTabbedComponent::ModePreferences),
       audio(this),
-      midi(this),
       about(),
       mixerPid(-1),
       mixerWindow(nullptr)
 {
     addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("Audio")));
-    addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("MIDI")));
+    //addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("MIDI")));
     addTab(-1, new TwindyTabbedComponentBasicTab(TRANS("About")));
 
     setCurrentlySelectedTab(0);
@@ -64,10 +63,6 @@ void TwindyPreferences::tabWasClicked(int newSelectedIndex,
         break;
 
     case 1:
-        setContentComponent(&midi);
-        break;
-
-    case 2:
         setContentComponent(&about);
         break;
 

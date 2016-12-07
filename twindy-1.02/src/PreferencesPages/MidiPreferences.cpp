@@ -223,8 +223,8 @@ void MidiPreferences::buttonClicked(Button* button)
         applyButton.setVisible(false);
         selectionChanged = false;
 
-        TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
-        app->setMidiDevices(getSelectedDeviceList());
+        //TwindyApp* const app(static_cast<TwindyApp*>(JUCEApplication::getInstance()));
+        //app->setMidiDevices(getSelectedDeviceList());
         prefs->restartAudio();
         return;
     }

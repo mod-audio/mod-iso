@@ -146,7 +146,7 @@ TwindyRootWindow::TwindyRootWindow()
     resetButton->setTextColour(colours.menuText);
     resetButton->addButtonListener(this);
 
-    addAndMakeVisible(leftButton1 = new DrawableTextButton(T("LeftButton1"), TRANS("Ingen (UI)")));
+    addAndMakeVisible(leftButton1 = new DrawableTextButton(T("LeftButton1"), TRANS("/ TODO /")));
     leftButton1->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
     leftButton1->setTextColour(colours.menuText);
     leftButton1->addButtonListener(this);
@@ -302,10 +302,7 @@ void TwindyRootWindow::buttonClicked(Button* button)
 
     /**/ if (button == leftButton1)
     {
-        args.add(T("ingen"));
-        args.add(T("-c"));
-        args.add(T("unix:///tmp/mod-app-17891.sock"));
-        args.add(T("-g"));
+        args.add(T("/TODO/"));
     }
     else if (button == leftButton2)
     {
