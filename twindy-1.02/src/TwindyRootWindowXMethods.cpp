@@ -147,7 +147,7 @@ void TwindyRootWindow::callbackFunction(void *event)
             target = upperPanelCompSize;
             printf("Mixer detected\n");
         }
-        else if (name.isEmpty())
+        else if (name == T("MOD Application") || name.isEmpty()) // FIXME: empty name
         {
             target = 0;
             printf("MOD-App detected\n");

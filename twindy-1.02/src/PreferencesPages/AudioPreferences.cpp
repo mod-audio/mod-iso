@@ -32,9 +32,10 @@
 # define JUCE_ALSA_LOG(dbgtext)
 # define JUCE_CHECKED_RESULT(x) (x)
 #else
-# define JUCE_ALSA_LOG(dbgtext)   { juce::String tempDbgBuf ("ALSA: "); tempDbgBuf << dbgtext; Logger::writeToLog (tempDbgBuf); DBG (tempDbgBuf); }
-//#define JUCE_CHECKED_RESULT(x)   (logErrorMessage (x, __LINE__))
+# define JUCE_ALSA_LOG(dbgtext)
+//# define JUCE_ALSA_LOG(dbgtext)   { juce::String tempDbgBuf ("ALSA: "); tempDbgBuf << dbgtext; Logger::writeToLog (tempDbgBuf); DBG (tempDbgBuf); }
 # define JUCE_CHECKED_RESULT(x)   (x)
+//#define JUCE_CHECKED_RESULT(x)   (logErrorMessage (x, __LINE__))
 #endif
 
 /*
