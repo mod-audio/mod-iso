@@ -174,6 +174,16 @@ if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-6b ]; then
 fi
 
 # -------------------------------------------------------------------------------------------
+# Install local packages, if any
+
+if [ -f local-pkgs/*.deb ]; then
+    sudo mkdir ~/livecd/custom/pkgs
+    sudo cp local-pkgs/*.deb ~/livecd/custom/pkgs/
+    run_chroot_cmd dpkg -i /pkgs/*.deb
+    sudo rm -r ~/livecd/custom/pkgs
+fi
+
+# -------------------------------------------------------------------------------------------
 # Remove unneeded packages
 
 run_chroot_cmd apt-get autoremove
