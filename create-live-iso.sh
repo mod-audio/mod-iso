@@ -2,6 +2,8 @@
 
 set -e
 
+TITLE="Live-MOD_2015.08-alpha1"
+
 # Debian fix
 export PATH=/usr/sbin/:$PATH
 
@@ -65,12 +67,9 @@ fi
 
 if [ ! -d ~/livecd/custom/var/mod-live ]; then
   sudo mkdir -p ~/livecd
-  sudo debootstrap --arch=amd64 vivid ~/livecd/custom http://archive.ubuntu.com/ubuntu/
-  sudo mkdir ~/livecd/custom/var/crash
+  sudo debootstrap --arch=amd64 xenial ~/livecd/custom http://archive.ubuntu.com/ubuntu/
   sudo mkdir ~/livecd/custom/var/mod-live
 fi
-
-sudo touch ~/livecd/custom/var/mod-live/using-live-iso
 
 # -------------------------------------------------------------------------------------------
 # we need this for later
@@ -95,41 +94,30 @@ run_chroot_cmd mount -t proc   none /proc    || true
 run_chroot_cmd mount -t sysfs  none /sys     || true
 
 # ------------------------------------------------------------------------------------
-# fix things
+# proper xenial repos + backports
 
 if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-1 ]; then
-  run_chroot_cmd dpkg-divert --local --rename --add /sbin/initctl
-  run_chroot_cmd ln -s /bin/true /sbin/initctl
-  sudo touch ~/livecd/custom/etc/init.d/systemd-logind
-  sudo touch ~/livecd/custom/etc/init.d/modemmanager
-  echo blacklist b43 | sudo tee ~/livecd/custom/etc/modprobe.d/blacklist-b43.conf
-  sudo touch ~/livecd/custom/var/mod-live/initial-setup-1
-fi
-
-# ------------------------------------------------------------------------------------
-# proper vivid repos + backports
-
-if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-2 ]; then
   echo "
-deb http://archive.ubuntu.com/ubuntu/ vivid main restricted universe multiverse
-deb http://archive.ubuntu.com/ubuntu/ vivid-updates main restricted universe multiverse
-deb http://archive.ubuntu.com/ubuntu/ vivid-backports main restricted universe multiverse
-deb http://security.ubuntu.com/ubuntu vivid-security main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ xenial main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse
+deb http://security.ubuntu.com/ubuntu xenial-security main restricted universe multiverse
 " | sudo tee ~/livecd/custom/etc/apt/sources.list >/dev/null
-  sudo touch ~/livecd/custom/var/mod-live/initial-setup-2
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-1
 fi
 
 # ------------------------------------------------------------------------------------
 # install kxstudio-repos package
 
-if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3b ]; then
+if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-2 ]; then
   run_chroot_cmd apt-get update || true
-  run_chroot_cmd apt-get install --no-install-recommends -y software-properties-common wget
-  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_8.3.1~kxstudio1_all.deb
-  run_chroot_cmd dpkg -i kxstudio-repos_8.3.1~kxstudio1_all.deb
-  run_chroot_cmd rm kxstudio-repos_8.3.1~kxstudio1_all.deb
+  run_chroot_cmd apt-get install --no-install-recommends -y software-properties-common wget apt-transport-https libglibmm-2.4-1v5
+  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_9.4.1%7Ekxstudio1_all.deb
+  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos-gcc5_9.4.1%7Ekxstudio1_all.deb
+  run_chroot_cmd dpkg -i *.deb
+  run_chroot_cmd rm *.deb
   run_chroot_cmd add-apt-repository ppa:kxstudio-debian/kxstudio-mod -y
-  sudo touch ~/livecd/custom/var/mod-live/initial-setup-3b
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-2
 fi
 
 # ------------------------------------------------------------------------------------
@@ -141,15 +129,15 @@ run_chroot_cmd apt-get dist-upgrade -y
 # -------------------------------------------------------------------------------------------
 # Base Install + kernel
 
-if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-4 ]; then
+if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-3 ]; then
   run_chroot_cmd apt-get install --no-install-recommends -y ubuntu-standard laptop-detect
-  sudo touch ~/livecd/custom/var/mod-live/initial-setup-4
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-3
 fi
 
-if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-5 ]; then
+if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-4 ]; then
   # skip grub install/configure to HDD here
   run_chroot_cmd apt-get install --no-install-recommends -y linux-lowlatency linux-image-lowlatency linux-headers-lowlatency
-  sudo touch ~/livecd/custom/var/mod-live/initial-setup-5
+  sudo touch ~/livecd/custom/var/mod-live/initial-setup-4
 fi
 
 # -------------------------------------------------------------------------------------------
@@ -158,20 +146,15 @@ fi
 run_chroot_cmd apt-get install --no-install-recommends -y kxstudio-meta-live-conflicts kxstudio-artwork \
     acpid alsa-base alsa-utils pm-utils xdg-utils xorg xserver-xorg-video-all \
     alsa-firmware linux-firmware linux-firmware-nonfree \
-    casper lupin-casper consolekit dbus-x11 dmz-cursor-theme nano ufw jackd1 \
+    casper lupin-casper consolekit dbus-x11 dmz-cursor-theme nano ufw jackd2 \
     libpam-systemd lightdm lightdm-gtk-greeter policykit-1 plymouth plymouth-label ttf-dejavu ttf-dejavu-extra \
-    mod-app mod-iso mod-sdk mod-sdk-lv2 lv2-dev \
+    mod-artwork mod-app mod-iso mod-sdk mod-sdk-lv2 lv2-dev \
     mod-distortion mod-mda-lv2 mod-pitchshifter mod-utilities \
     artyfx blop-lv2 caps-lv2 fomp sooperlooper-lv2 swh-lv2 tap-lv2 \
-    dpf-plugins calf-plugins guitarix gxvoxtonebender setbfree \
-    kxstudio-default-settings patchage jaaa japa
-
-if [ ! -f ~/livecd/custom/var/mod-live/initial-setup-6b ]; then
-  run_chroot_cmd wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio-mod/+files/mod-artwork_20150204.2_all.deb
-  run_chroot_cmd dpkg -i mod-artwork_20150204.2_all.deb
-  run_chroot_cmd rm mod-artwork_20150204.2_all.deb
-  sudo touch ~/livecd/custom/var/mod-live/initial-setup-6b
-fi
+    dpf-plugins guitarix gxvoxtonebender setbfree \
+    kxstudio-default-settings patchage jaaa japa \
+    alsa-tools libpam-ck-connector libtxc-dxtn-s2tc0 xfonts-scalable xserver-xorg-video-intel xserver-xorg-video-qxl
+# python3-lilv
 
 # -------------------------------------------------------------------------------------------
 # Install local packages, if any
@@ -188,15 +171,6 @@ fi
 
 run_chroot_cmd apt-get autoremove
 run_chroot_cmd apt-get clean
-
-# ------------------------------------------------------------------------------------
-# revert upstart fix
-
-run_chroot_cmd rm /etc/init.d/modemmanager
-run_chroot_cmd rm /etc/init.d/systemd-logind
-run_chroot_cmd rm /sbin/initctl
-run_chroot_cmd dpkg-divert --local --rename --remove /sbin/initctl
-sudo rm ~/livecd/custom/var/mod-live/initial-setup-1
 
 # -------------------------------------------------------------------------------------------
 # Cleanup
@@ -239,8 +213,8 @@ if [ ! -f ~/livecd/cd/.disk/info ]; then
 
   sudo 7z x -y ../iso-stuff.7z
 
-  #sudo mkdir -p .disk
-  #sudo su root -c 'echo "Live-MOD 2015-07" > .disk/info'
+  sudo mkdir -p .disk
+  sudo su root -c 'echo "${TITLE}" > .disk/info'
   #sudo su root -c 'echo "http://moddevices.com/" > .disk/release_notes_url'
 fi
 
@@ -287,8 +261,8 @@ cd ~/livecd/cd
 
 sudo xorriso -as mkisofs \
     -r \
-    -V "Live-MOD 2015.08-alpha1" \
-    -o ~/livecd/Live-MOD_2015.08-alpha1.iso \
+    -V "${TITLE}" \
+    -o ~/livecd/${TITLE}.iso \
     -J \
     -isohybrid-mbr isolinux/isohdpfx.bin \
     -partition_offset 16 \
