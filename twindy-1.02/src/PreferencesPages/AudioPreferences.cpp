@@ -288,30 +288,33 @@ AudioPreferences::AudioPreferences(TwindyPreferences* const p)
       rescanButton("rescanButton"),
       deviceBox("deviceBox"),
       sampleRateBox("sampleRateBox"),
-      bufferSizeBox("bufferSizeBox")
+      bufferSizeBox("bufferSizeBox"),
+      scaling(getSystemScaling())
 {
     Font font;
     Colour color;
 
-    font = Font(25.0f, Font::bold);
+    font = Font(25.0f*scaling, Font::bold);
     title.setText(T("Audio Configuration"), font);
 
-    font = Font(16.0f, Font::plain);
+    font = Font(16.0f*scaling, Font::plain);
     subtitle1.setText(T("MOD needs you to configure the Audio Interface."), font);
     subtitle2.setText(T("Please select your audio device from the list below."), font);
     labelSettingsChanged1.setText(T("Audio device settings have been changed,"), font);
     labelSettingsChanged2.setText(T("click 'Apply Now' to restart the audio service."), font);
 
-    font = Font(15.0f, Font::plain);
+    font = Font(15.0f*scaling, Font::plain);
     labelAdvanced.setText(T("Sample rate and buffer size. Change values only if you know what you're doing."), font);
 
-    font = Font(14.0f, Font::plain);
+    font = Font(14.0f*scaling, Font::plain);
     labelBufSize.setText(T("Buffer Size"), font);
     labelSampleRate.setText(T("Sample Rate"), font);
 
+    applyButton.setFont(font);
     applyButton.setButtonText(T("Apply Now"));
     applyButton.addButtonListener(this);
 
+    rescanButton.setFont(font);
     rescanButton.setButtonText(T("Rescan"));
     rescanButton.addButtonListener(this);
 
@@ -371,27 +374,27 @@ void AudioPreferences::restart()
 //------------------------------------------------------------------------------
 void AudioPreferences::resized()
 {
-    deviceBox.setBounds(10, 72, 250, 20);
-    applyButton.setBounds(getWidth()/2, 70, 100, 25);
-    rescanButton.setBounds(270, 70, 90, 25);
-    sampleRateBox.setBounds(20, 160, 150, 20);
-    bufferSizeBox.setBounds(200, 160, 150, 20);
+    deviceBox.setBounds(10*scaling, 72*scaling, 250*scaling, 20*scaling);
+    applyButton.setBounds(getWidth()/2, 70*scaling, 100*scaling, 25*scaling);
+    rescanButton.setBounds(270*scaling, 70*scaling, 90*scaling, 25*scaling);
+    sampleRateBox.setBounds(20*scaling, 160*scaling, 150*scaling, 20*scaling);
+    bufferSizeBox.setBounds(200*scaling, 160*scaling, 150*scaling, 20*scaling);
 }
 
 //------------------------------------------------------------------------------
 void AudioPreferences::paint(Graphics& g)
 {
-    title.drawAt(g, 10, 25);
-    subtitle1.drawAt(g, 10, 50);
-    subtitle2.drawAt(g, 10, 50 + 15);
-    labelAdvanced.drawAt(g, 10, 140);
-    labelSampleRate.drawAt(g, 20, 155);
-    labelBufSize.drawAt(g, 200, 155);
+    title.drawAt(g, 10*scaling, 25*scaling);
+    subtitle1.drawAt(g, 10*scaling, 50*scaling);
+    subtitle2.drawAt(g, 10*scaling, (50 + 15)*scaling);
+    labelAdvanced.drawAt(g, 10*scaling, 140*scaling);
+    labelSampleRate.drawAt(g, 20*scaling, 155*scaling);
+    labelBufSize.drawAt(g, 200*scaling, 155*scaling);
 
     if (curSettings.changed)
     {
-        labelSettingsChanged1.drawAt(g, getWidth()/2, 48);
-        labelSettingsChanged2.drawAt(g, getWidth()/2, 48 + 15);
+        labelSettingsChanged1.drawAt(g, getWidth()/2, 48*scaling);
+        labelSettingsChanged2.drawAt(g, getWidth()/2, 48*scaling + 15*scaling);
     }
 }
 

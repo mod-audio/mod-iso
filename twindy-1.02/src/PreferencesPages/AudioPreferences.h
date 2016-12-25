@@ -44,6 +44,26 @@ struct DeviceInfo {
 
 typedef std::map<String,DeviceInfo> DeviceInfoMapping;
 
+class FontTextButton : public TextButton
+{
+public:
+    FontTextButton(const String& buttonName)
+        : TextButton(buttonName) {}
+
+    void setFont(const juce::Font f)
+    {
+        font = f;
+    }
+
+private:
+    juce::Font font;
+
+    virtual const juce::Font getFont()
+    {
+        return font;
+    }
+};
+
 /// Preferences page for audio.
 class AudioPreferences : public Component,
                          private ButtonListener,
@@ -112,10 +132,11 @@ private:
     } curSettings;
 
     // Widgets.
-    TextButton applyButton, rescanButton;
+    FontTextButton applyButton, rescanButton;
     ComboBox deviceBox, sampleRateBox, bufferSizeBox;
     DrawableText title, subtitle1, subtitle2, labelAdvanced, labelBufSize, labelSampleRate;
     DrawableText labelSettingsChanged1, labelSettingsChanged2;
+    double scaling;
 
     // StringArrays for device discovery.
     StringArray inputNames, outputNames, inputIds, outputIds;

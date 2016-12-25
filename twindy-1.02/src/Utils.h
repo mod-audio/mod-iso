@@ -57,6 +57,7 @@ struct Coordinates {
     int errorDisplayWidth;
     int errorDisplayHeight;
     int leftTabsWidth;
+    int mixerTopPadding;
     float versionFontSize;
 
     Coordinates()
@@ -69,6 +70,7 @@ struct Coordinates {
           errorDisplayWidth(200),
           errorDisplayHeight(60),
           leftTabsWidth(-1),
+          mixerTopPadding(230),
           versionFontSize(18.0f)
     {
         double scaling = getSystemScaling();
@@ -86,6 +88,7 @@ struct Coordinates {
         buttonMargin    = double(buttonMargin)    * scaling;
         buttonWidth     = double(buttonWidth)     * scaling;
         buttonHeight    = double(buttonHeight)    * scaling;
+        mixerTopPadding = double(mixerTopPadding) * scaling;
         versionFontSize = versionFontSize         * scaling;
 
         topTabBarHeight = topPadding;

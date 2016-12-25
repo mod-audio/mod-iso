@@ -99,9 +99,9 @@ void TwindyRootWindow::callbackFunction(void *event)
                             getHeight()-coords.topPadding-coords.buttonMargin*2-6);
 
     const Rectangle rectMixer(coords.leftTabsWidth+coords.buttonMargin+2,
-                              230+coords.topPadding,
+                              coords.mixerTopPadding+coords.topPadding,
                               getWidth()-coords.leftTabsWidth-coords.buttonMargin*2-4,
-                              getHeight()-(230+coords.topPadding)-coords.buttonMargin-2);
+                              getHeight()-(coords.mixerTopPadding+coords.topPadding)-coords.buttonMargin-2);
 
     XEvent* const evt = static_cast<XEvent*>(event);
 
