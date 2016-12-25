@@ -27,9 +27,24 @@
 // -----------------------------------------------------------------------
 
 static inline
+double getSystemScalingImpl()
+{
+    if (const char* const QT_SCALE_FACTOR = getenv("QT_SCALE_FACTOR"))
+    {
+        const double scaling = atof(QT_SCALE_FACTOR);
+
+        if (scaling >= 0.5 && scaling <= 10.0)
+            return scaling;
+    }
+
+    return 1.0;
+}
+
+static inline
 double getSystemScaling()
 {
-    return 1.0;
+    static const double scaling = getSystemScalingImpl();
+    return scaling;
 }
 
 struct Coordinates {
