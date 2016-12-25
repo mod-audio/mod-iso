@@ -73,7 +73,7 @@ void TwindyApp::initialise(const String& commandLine)
     win->toFront(true);
     TWINDY_DBG_MESSAGE("TwindyRootWindow brought to front.");
 
-    if (std::getenv("TWINDY_LOCAL_TEST") != nullptr)
+    if (std::getenv("TWINDY_SKIP_JACKD_START") != nullptr)
         return restartMODApp(1);
 
     TwindyPreferences* const prefs(win->getPreferencesPanel());
