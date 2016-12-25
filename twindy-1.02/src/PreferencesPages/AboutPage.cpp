@@ -43,56 +43,66 @@ AboutPage::AboutPage()
     addAndMakeVisible(authorLabel = new Label(T("authorLabel"), tempstr));
     authorLabel->setFont(tempFont);
     authorLabel->setColour(Label::textColourId, textColour);
+    authorLabel->setJustificationType(Justification::centredLeft);
 
     tempstr = T("Website:");
     addAndMakeVisible(websiteLabel = new Label(T("websiteLabel"), tempstr));
     websiteLabel->setFont(tempFont);
     websiteLabel->setColour(Label::textColourId, textColour);
+    websiteLabel->setJustificationType(Justification::centredLeft);
 
     tempstr = T("Credits:");
     addAndMakeVisible(creditsLabel = new Label(T("creditsLabel"), tempstr));
     creditsLabel->setFont(tempFont);
     creditsLabel->setColour(Label::textColourId, textColour);
+    creditsLabel->setJustificationType(Justification::centredLeft);
 
     tempstr = T("About:");
     addAndMakeVisible(descriptionLabel = new Label(T("descriptionLabel"), tempstr));
     descriptionLabel->setFont(tempFont);
     descriptionLabel->setColour(Label::textColourId, textColour);
+    descriptionLabel->setJustificationType(Justification::topLeft);
 
     tempstr = T("License:");
     addAndMakeVisible(licenseLabel = new Label(T("licenseLabel"), tempstr));
     licenseLabel->setFont(tempFont);
     licenseLabel->setColour(Label::textColourId, textColour);
+    licenseLabel->setJustificationType(Justification::centredLeft);
 
     tempstr = T("falkTX");
     addAndMakeVisible(author = new Label(T("author"), tempstr));
     tempFont.setBold(false);
     author->setFont(tempFont);
     author->setColour(Label::textColourId, textColour);
+    author->setJustificationType(Justification::centredLeft);
 
-    tempstr = T("https://github.com/portalmod/mod-iso");
+    tempstr = T("https://github.com/moddevices/mod-iso");
     addAndMakeVisible(website = new Label(T("website"), tempstr));
     website->setFont(tempFont);
     website->setColour(Label::textColourId, textColour);
+    website->setJustificationType(Justification::centredLeft);
 
     tempstr  = T("Niall Moody, for making Twindy. See: http://www.niallmoody.com/twindy/\n");
     tempstr << T("Julian Storer, for making JUCE. See: http://www.rawmaterialsoftware.com/juce/");
     addAndMakeVisible(credits = new Label(T("credits"), tempstr));
     credits->setFont(tempFont);
     credits->setColour(Label::textColourId, textColour);
+    credits->setJustificationType(Justification::topLeft);
 
     tempstr  = T("Publications, products, content or services referenced herein or on the website are the exclusive");
-    tempstr << T(" trademarks or servicemarks of MOD.\nOther product and company names mentioned in the site may be the");
-    tempstr << T(" trademarks of their respective owners.\nAll software is available under the GPL license, see");
+    tempstr << T(" trademarks or servicemarks of MOD.\nOther product and company names mentioned in the site may be");
+    tempstr << T(" the trademarks of their respective owners.\nAll software is available under the GPL license, see");
     tempstr << T(" https://www.gnu.org/licenses/gpl-2.0.html for details.");
     addAndMakeVisible(description = new Label(T("description"), tempstr));
     description->setFont(tempFont);
     description->setColour(Label::textColourId, textColour);
+    description->setJustificationType(Justification::topLeft);
 
     tempstr = T("GPL - see the COPYING file for details.");
     addAndMakeVisible(license = new Label(T("license"), tempstr));
     license->setFont(tempFont);
     license->setColour(Label::textColourId, textColour);
+    license->setJustificationType(Justification::centredLeft);
 }
 
 //------------------------------------------------------------------------------
