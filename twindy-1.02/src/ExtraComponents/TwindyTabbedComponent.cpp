@@ -38,6 +38,7 @@
 #include "juce_amalgamated.h"
 
 #include "TwindyTabbedComponent.h"
+#include "Utils.h"
 
 
 //==============================================================================
@@ -207,11 +208,12 @@ TwindyTabbedComponent::TwindyTabbedComponent (const String& name, OperationMode 
     : Component (name),
       mode (m),
       orientation (TabsAtTop),
+      scaling (getSystemScaling()),
       currentTab (-1),
-      tabAreaWidth (25),
-      overlapPixels (4),
-      xGap (4),
-      yGap (4),
+      tabAreaWidth (25 * scaling),
+      overlapPixels (4 * scaling),
+      xGap (4 * scaling),
+      yGap (4 * scaling),
       leftTopInset (0),
       rightBottomInset (0),
       fillCol (Colours::grey),
@@ -220,9 +222,9 @@ TwindyTabbedComponent::TwindyTabbedComponent (const String& name, OperationMode 
       selectedOutlineCol (Colours::white),
       normalOutlineCol (Colours::white),
       contents (0),
-      cornerSize (7.0f),
-      normalOutlineThickness (1.25f),
-      selectedOutlineThickness (1.25f)
+      cornerSize (7.0f * scaling),
+      normalOutlineThickness (1.25f * scaling),
+      selectedOutlineThickness (1.25f * scaling)
 {
     addAndMakeVisible (tabs = new TwindyTabHolderComponent());
 
@@ -616,7 +618,8 @@ void TwindyTabbedComponent::resized()
 
 //==============================================================================
 TwindyTabbedComponentBasicTab::TwindyTabbedComponentBasicTab (const String& text)
-    : Component (text)
+    : Component (text),
+      scaling (getSystemScaling())
 {
     setRepaintsOnMouseActivity (true);
     setSize (50, 50);
@@ -639,7 +642,7 @@ void TwindyTabbedComponentBasicTab::paintTab (Graphics& g, bool isTheCurrentTab,
     g.setColour ((isMouseOver()) ? Colour::contrasting (t->getTextColour(), t->getFillColour())
                                  : t->getTextColour());
 
-    g.setFont (jmin (20.0f, getHeight() * 0.8f));
+    g.setFont (jmin (20.0f, getHeight() * 0.8f) * scaling);
 
     g.drawText (getName(), 4, 2, getWidth() - 8, getHeight() - 4,
                 Justification::centred, true);

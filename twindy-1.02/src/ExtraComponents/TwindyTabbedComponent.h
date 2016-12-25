@@ -165,6 +165,7 @@ private:
 
     OperationMode mode;
     TabOrientation orientation;
+    double scaling;
     int currentTab, tabAreaWidth, overlapPixels, xGap, yGap, leftTopInset, rightBottomInset;
     Colour fillCol, deselectedTabCol, textCol, selectedOutlineCol, normalOutlineCol;
     Component* contents;
@@ -207,6 +208,8 @@ public:
     void mouseWheelMove (const MouseEvent& e, float wheelIncrementX, float wheelIncrementY);
 
 private:
+    double scaling;
+
     void paint (Graphics& g);
 
     explicit TwindyTabbedComponentBasicTab (const TwindyTabbedComponentBasicTab&);

@@ -185,7 +185,7 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton5->setVisible(false);
     leftButton6->setVisible(false);
 
-    Font versionFont(18.0f, Font::bold);
+    Font versionFont(coords.versionFontSize, Font::bold);
     versionText.setText(T("Live-MOD " LIVEMOD_VERSION), versionFont);
 
     TWINDY_DBG_MESSAGE("About to makeTwindyRootWindow visible and add it to the desktop");
