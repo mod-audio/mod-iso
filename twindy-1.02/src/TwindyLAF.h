@@ -31,11 +31,6 @@ class TwindyLAF : public LookAndFeel
 	///	Constructor.
 	TwindyLAF();
 
-	/*///	Same as JUCE' default, but with a nicer typeface.
-	void drawStandardTextButton(Graphics &g,
-  								TextButton &button,
-  								bool isMouseOverButton,
-  								bool isButtonDown);*/
 	///	Over-ridden so we can control the colour of our DrawableTextButton's backgrounds.
 	void drawButtonBackground(Graphics &g,
 							  Button &button,
@@ -105,6 +100,14 @@ class TwindyLAF : public LookAndFeel
 									int titleSpaceW,
                                     const Image* icon,
                                     bool drawTitleTextOnLeft);
+
+    const Font getAlertWindowFont();
+    const Font getComboBoxFont(ComboBox& box);
+    const Font getPopupMenuFont();
+
+
+private:
+      const double scaling;
 };
 
 #endif

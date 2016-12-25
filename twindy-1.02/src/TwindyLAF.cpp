@@ -21,12 +21,13 @@
 
 #include "juce_amalgamated.h"
 #include "TwindyLAF.h"
+#include "Utils.h"
 
 //------------------------------------------------------------------------------
-TwindyLAF::TwindyLAF():
-LookAndFeel()
+TwindyLAF::TwindyLAF()
+    : LookAndFeel(),
+      scaling(getSystemScaling())
 {
-
 }
 
 //------------------------------------------------------------------------------
@@ -36,10 +37,10 @@ void TwindyLAF::drawButtonBackground(Graphics &g,
 							  bool isMouseOverButton,
 							  bool isButtonDown)
 {
-	const int width = button.getWidth();
+    const int width = button.getWidth();
     const int height = button.getHeight();
 
-    const float indent = 2.0f;
+    const float indent = scaling*2.0;
     const int cornerSize = jmin (roundFloatToInt (width * 0.4f),
                                  roundFloatToInt (height * 0.4f));
 
@@ -83,17 +84,17 @@ void TwindyLAF::drawPopupMenuItem(Graphics& g,
                                   Image* image,
                                   const Colour* const textColourToUse)
 {
-	const float halfH = height * 0.5f;
+    const float halfH = height * 0.5f;
 
     if (isSeparator)
     {
-        const float separatorIndent = 5.5f;
+        const float separatorIndent = 5.5f*scaling;
 
         g.setColour (Colours::black.withAlpha (0.2f));
         g.drawLine (separatorIndent, halfH, width - separatorIndent, halfH);
 
         g.setColour (Colours::white.withAlpha (0.4f));
-        g.drawLine (separatorIndent, halfH + 1.0f, width - separatorIndent, halfH + 1.0f);
+        g.drawLine (separatorIndent, halfH + scaling, width - separatorIndent, halfH + scaling);
     }
     else
     {
@@ -116,11 +117,14 @@ void TwindyLAF::drawPopupMenuItem(Graphics& g,
         if (! isActive)
             g.setOpacity (0.3f);
 
-        g.setFont (getPopupMenuFont());
-        const int leftBorder = (height * 5) / 4;
-        const int rightBorder = 4;
+        Font font = getPopupMenuFont();
+        font.setHeight(font.getHeight()*scaling);
+        g.setFont (font);
 
-		g.setFont(14.0f);
+        const int leftBorder = (height * 5) / 4;
+        const int rightBorder = 4*scaling;
+
+        g.setFont(14.0f*scaling);
 
         if (image != 0)
         {
@@ -409,4 +413,27 @@ void TwindyLAF::drawDocumentWindowTitleBar(DocumentWindow& window,
 
     g.setColour (window.getBackgroundColour().contrasting (isActive ? 0.7f : 0.4f));
     g.drawText (window.getName(), textX, 0, textW, h, Justification::centredLeft, true);
+}
+
+//------------------------------------------------------------------------------
+
+const Font TwindyLAF::getAlertWindowFont()
+{
+    Font font = LookAndFeel::getAlertWindowFont();
+    font.setHeight(font.getHeight()*scaling);
+    return font;
+}
+
+const Font TwindyLAF::getComboBoxFont(ComboBox& box)
+{
+    Font font = LookAndFeel::getComboBoxFont(box);
+    font.setHeight(font.getHeight()*scaling);
+    return font;
+}
+
+const Font TwindyLAF::getPopupMenuFont()
+{
+    Font font = LookAndFeel::getPopupMenuFont();
+    font.setHeight(font.getHeight()*scaling);
+    return font;
 }
