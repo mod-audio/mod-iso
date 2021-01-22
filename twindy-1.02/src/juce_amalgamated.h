@@ -10507,7 +10507,7 @@ public:
     {
         other.lockSet();
         numUsed = other.numUsed;
-        setAllocatedSize (other.numUsed);
+        this->setAllocatedSize (other.numUsed);
         memcpy (this->elements, other.elements, numUsed * sizeof (ElementType));
         other.unlockSet();
     }

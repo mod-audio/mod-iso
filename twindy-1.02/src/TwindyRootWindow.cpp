@@ -151,7 +151,7 @@ TwindyRootWindow::TwindyRootWindow()
     leftButton1->setTextColour(colours.menuText);
     leftButton1->addButtonListener(this);
 
-    addAndMakeVisible(leftButton2 = new DrawableTextButton(T("LeftButton2"), TRANS("Patchage")));
+    addAndMakeVisible(leftButton2 = new DrawableTextButton(T("LeftButton2"), TRANS("Patchbay")));
     leftButton2->setBackgroundColours(colours.blueButton, colours.blueButton.darker(2.5f));
     leftButton2->setTextColour(colours.menuText);
     leftButton2->addButtonListener(this);
@@ -306,7 +306,7 @@ void TwindyRootWindow::buttonClicked(Button* button)
     }
     else if (button == leftButton2)
     {
-        args.add(T("patchage"));
+        args.add(T("catia"));
     }
     else if (button == leftButton3)
     {
