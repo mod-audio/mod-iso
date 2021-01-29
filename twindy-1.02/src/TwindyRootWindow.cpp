@@ -29,7 +29,6 @@
 #include "TwindyTabs.h"
 #include "TwindyWindow.h"
 #include "DrawableTextButton.h"
-#include "TwindyErrorDisplay.h"
 #include "TwindyTabs.h"
 #include "TwindyPreferences.h"
 #include "TwindyApp.h"

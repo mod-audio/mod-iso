@@ -76,7 +76,7 @@ static int xErrorHandler(Display* const dpy, XErrorEvent* const event)
     {
         std::string tempstr;
         tempstr = "X Error: ";
-        tempstr += event->error_code;
+        tempstr += std::to_string((int)event->error_code);
         TWINDY_DBG_MESSAGE(tempstr);
     }
 
